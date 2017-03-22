@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spark:beans xmlns:spark="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <spark:bean id="sparkConf" class="com.eastcom.aggregator.bean.SparkProperties">
+        <spark:property name="master" value="yarn-cluster"/>
+        <spark:property name="paropertiesMap">
+            <spark:map key-type="java.lang.String" value-type="java.lang.String">
+                <spark:entry key="spark.executor.cores" value="1"/>
+                <spark:entry key="spark.executor.memory" value="10G"/>
+                <spark:entry key="spark.dynamicAllocation.maxExecutors" value="30"/>
+                <spark:entry key="spark.driver.memory" value="8G"/>
+                <spark:entry key="spark.task.maxFailures" value="10"/>
+                <spark:entry key="spark.storage.memoryFraction" value="0.3"/>
+                <spark:entry key="spark.shuffle.memoryFraction" value="0.2"/>
+                <spark:entry key="spark.storage.unrollFraction" value="0.6"/>
+                <spark:entry key="spark.default.parallelism" value="600"/>
+                <spark:entry key="spark.sql.autoBroadcastJoinThreshold" value="10485760"/>
+                <spark:entry key="spark.sql.shuffle.partitions" value="600"/>
+                <spark:entry key="spark.sql.broadcastTimeout" value="3600"/>
+            </spark:map>
+        </spark:property>
+    </spark:bean>
+
+</spark:beans>

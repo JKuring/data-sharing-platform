@@ -1,0 +1,15 @@
+create '#{TABLE_NAME}', {NAME=>'cf',VERSIONS=>1,COMPRESSION=>'SNAPPY',TTL=>2592000,CONFIGURATION=>{'SPLIT_POLICY' => 'org.apache.hadoop.hbase.regionserver.ConstantSizeRegionSplitPolicy'}}, SPLITS_FILE=>'splits.txt'
+
+alter '#{TABLE_NAME}',METHOD => 'table_att','coprocessor'=>'|org.apache.hadoop.hbase.coprocessor.AggregateImplementation||'
+
+create 'test_table',
+{NAME=>'cf',
+VERSIONS=>1,
+COMPRESSION=>'SNAPPY',
+TTL=>2592000,
+CONFIGURATION=>{'SPLIT_POLICY' => 'org.apache.hadoop.hbase.regionserver.ConstantSizeRegionSplitPolicy'}},
+SPLITS_FILE=>'splits.txt'
+
+alter 'test_table',
+METHOD => 'table_att',
+'coprocessor'=>'|org.apache.hadoop.hbase.coprocessor.AggregateImplementation||'

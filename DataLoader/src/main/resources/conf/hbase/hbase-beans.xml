@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hbase:beans
+        xmlns:hbase="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:hdp="http://www.springframework.org/schema/hadoop"
+
+
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/hadoop
+          http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+
+
+    <!--配置必须为classpath的根目录下，否则配置加载会出现异常问题-->
+    <hdp:configuration resources="classpath:core-site.xml,classpath:hbase-site.xml,classpath:hdfs-site.xml,classpath:ssl-client.xml"/>
+
+    <hdp:hbase-configuration configuration-ref="hadoopConfiguration"/>
+
+    <!--dao-->
+    <hbase:bean id="hbaseDaoImpl" class="com.eastcom.dataloader.dao.HBaseDaoImpl">
+        <hbase:constructor-arg ref="hbaseConfiguration"/>
+    </hbase:bean>
+    <!--自定义-->
+    <!--config-->
+
+    <!--ThreadPool-->
+    <hbase:bean id="taskExecutor"
+                class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <hbase:property name="corePoolSize" value="10"/>
+        <hbase:property name="keepAliveSeconds" value="300"/>
+        <hbase:property name="maxPoolSize" value="50"/>
+        <hbase:property name="queueCapacity" value="100"/>
+    </hbase:bean>
+
+</hbase:beans>

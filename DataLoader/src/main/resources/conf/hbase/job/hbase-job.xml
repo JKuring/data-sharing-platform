@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hbase:beans xmlns:hbase="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <hbase:import resource="classpath:hbase/table/hbase-table.xml"/>
+
+    <!--gn-->
+    <hbase:bean id="xdr_data:ps_gn_pdp_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_pdp_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_pdp_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_pdp"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="3,17"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:ps_gn_pdp_event_ipapn_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_pdp_event_ipapn_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_pdp_event_ipapn"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_pdp"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="8,13,17"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:ps_gn_dns_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_dns_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_dns_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_dns"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="3,16"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:ps_gn_email_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_email_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_email_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_email"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="3,16"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:ps_gn_ftp_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_ftp_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_ftp_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_ftp"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="3,16"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+
+    <hbase:bean id="xdr_data:ps_gn_general_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_general_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_general_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_general"/>
+        <hbase:property name="granularity" value="D"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="3,16"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:ps_gn_http_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_http_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_http_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_http"/>
+        <hbase:property name="granularity" value="D"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="3,16"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:ps_gn_im_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_im_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_im_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_im"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="3,16"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:ps_gn_mms_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_mms_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_mms_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_mms"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="3,16"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:ps_gn_p2p_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_p2p_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_p2p_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_p2p"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="3,16"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:ps_gn_rtsp_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_rtsp_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_rtsp_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_rtsp"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="3,16"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:ps_gn_voip_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_voip_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_voip_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_voip"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="3,16"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ls|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <!--lte-->
+
+    <!--mc-->
+    <hbase:bean id="xdr_data:mc_switch_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:mc_switch_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_switch_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_switch"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="18,0"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ss|yyyy-MM-dd HH:mm:ss|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:mc_poweronoff_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:mc_poweronoff_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_poweronoff_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_power"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="9,0"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ss|yyyy-MM-dd HH:mm:ss|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:mc_locationupdate_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:mc_locationupdate_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_locationupdate_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_location"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="11,0"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ss|yyyy-MM-dd HH:mm:ss|yyyyMMddHHmm"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:mc_voicecall_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:mc_voicecall_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_voicecall_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_call"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="20,0,raw|1"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ss|yyyy-MM-dd HH:mm:ss|yyyyMMddHHmm,"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=",,"/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:mc_voicecall_event_callee_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:mc_voicecall_event_callee_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_voicecall_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_call"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="21,0,raw|2"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ss|yyyy-MM-dd HH:mm:ss|yyyyMMddHHmm,"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=",,"/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:mc_paging_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:mc_paging_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_paging_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_paging"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="9,0,raw|1"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ss|yyyy-MM-dd HH:mm:ss|yyyyMMddHHmm,"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=",,"/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:mc_paging_event_callee_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:mc_paging_event_callee_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_paging_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_paging"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="10,0,raw|2"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ss|yyyy-MM-dd HH:mm:ss|yyyyMMddHHmm,"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=",,"/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:mc_smssendrecieve_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:mc_smssendrecieve_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_smssendrecieve_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_sms"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="9,0,raw|1"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ss|yyyy-MM-dd HH:mm:ss|yyyyMMddHHmm,"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=",,"/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:mc_smssendrecieve_event_callee_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:mc_smssendrecieve_event_callee_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_smssendrecieve_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_sms"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="10,0,raw|2"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ss|yyyy-MM-dd HH:mm:ss|yyyyMMddHHmm,"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=",,"/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+
+    <hbase:bean id="xdr_data:nc_bicc_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:nc_bicc_event_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:nc_bicc_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/mc/nc_bicc"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="9,0,raw|1"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ss|yyyy-MM-dd HH:mm:ss|yyyyMMddHHmm,"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=","/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+    <hbase:bean id="xdr_data:nc_bicc_event_callee_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
+        <hbase:constructor-arg name="jobName" value="xdr_data:nc_bicc_event_callee_job"/>
+        <hbase:constructor-arg name="tableEntity" ref="xdr_data:nc_bicc_event"/>
+        <hbase:property name="dataPath" value="/rawdata/xdr/mc/nc_bicc"/>
+        <hbase:property name="granularity" value="O"/>
+        <hbase:property name="delay" value="900"/>
+        <hbase:property name="propertiesMap">
+            <hbase:map key-type="java.lang.String" value-type="java.lang.String">
+                <hbase:entry key="importtsv.columns" value="HBASE_ROW_KEY,cf"/>
+                <hbase:entry key="importtsv.bulk.output1" value="/tmp/hbload"/>
+                <!--<hbase:entry key="importtsv.value.encrypts" value="chars"/>-->
+                <hbase:entry key="importtsv.mapper.class" value="com.example.service.mapreduce.TsvImporterPutMapper"/>
+                <hbase:entry key="mapreduce.map.memory.mb" value="2048"/>
+                <hbase:entry key="hbase.client.retries.number" value="10"/>
+                <hbase:entry key="importtsv.rowkey.indexs" value="10,0,raw|2"/>
+                <hbase:entry key="importtsv.rowkey.strategies" value="r,ss|yyyy-MM-dd HH:mm:ss|yyyyMMddHHmm,"/>
+                <hbase:entry key="importtsv.rowkey.encrypts" value=",,"/>
+                <hbase:entry key="importtsv.separator" value="\|"/>
+                <hbase:entry key="create.table" value="no"/>
+            </hbase:map>
+        </hbase:property>
+    </hbase:bean>
+
+</hbase:beans>
