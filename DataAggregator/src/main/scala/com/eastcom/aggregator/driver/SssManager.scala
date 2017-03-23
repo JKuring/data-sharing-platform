@@ -6,9 +6,8 @@ import akka.actor.Actor
 import com.eastcom.aggregator.confparser.SssNode
 import com.eastcom.aggregator.context.Context
 import com.eastcom.aggregator.message.{SssJobMessage, SssResultMessage}
-import com.eastcom.common.message.CommonMeaageProducer
 import org.apache.log4j.Logger
-import org.springframework.amqp.core.{Message, MessageProperties}
+import org.springframework.amqp.core.MessageProperties
 
 /**
  * Created by slp on 2016/2/18.
@@ -18,7 +17,7 @@ class SssManager(tplPath: String, timeid: String) extends Actor {
   private val hiveExecutor = new SssHiveExecutor(tplPath, timeid)
   private val hbaseExecutor = new SssHbaseExecutor(tplPath, timeid)
   private val hiveOldExecutor = new SssHiveOldExecutor(tplPath, timeid)
-  private val mqProducer= CommonMeaageProducer.producerCollection.get("q_aggr_spark")
+//  private val mqProducer= CommonMeaageProducer.producerCollection.get("q_aggr_spark")
 
   private val startTime = "startTime"
   private val endTime = "endTime"
@@ -28,11 +27,10 @@ class SssManager(tplPath: String, timeid: String) extends Actor {
     case SssJobMessage(node: SssNode) => {
       try {
         val startTime = new Date().getTime
-        val message = CommonMeaageProducer.message
         logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Start exec job with table [ ${node.getTplName} ] at time [ $timeid ] ...")
         try
           exec(node)
-          mqProducer.send(new Message(("").getBytes, message.getMessageProperties))
+//          mqProducer.send(new Message(("").getBytes, message.getMessageProperties))
         catch {
           case e: Exception => {
             Thread.sleep(30000l)

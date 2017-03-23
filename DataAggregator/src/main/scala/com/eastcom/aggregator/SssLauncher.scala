@@ -2,7 +2,6 @@ package com.eastcom.aggregator
 
 import akka.actor.{ActorSystem, Props}
 import com.cloudera.spark.hbase.HBaseContext
-import com.eastcom.aggregator.bean.SparkProperties
 import com.eastcom.aggregator.confparser.SssConfParser
 import com.eastcom.aggregator.context.Context
 import com.eastcom.aggregator.driver.SssDriver
@@ -19,7 +18,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 object SssLauncher {
   val logging = Logger.getLogger(getClass)
 
-  def launch(args: Array[String],confProperties: SparkProperties) {
+  def main(args: Array[String]): Unit = {
     // Read args from command line
     val Array(confFile, initCmdPath, tplPath, zookeeper_hosts, zookeeper_port, sessions, timeid, appIdDir, timeout) =
       if (args == null || args.isEmpty) {
@@ -30,11 +29,11 @@ object SssLauncher {
 
     // 配置spark configuration
     val sparkConf = new SparkConf()
-    sparkConf.setMaster(confProperties.getMaster)
-    val properties = confProperties.getParopertiesMap
-    for (key <- properties){
-      sparkConf.set(key,properties.get(key))
-    }
+//    sparkConf.setMaster(confProperties.getMaster)
+//    val properties = confProperties.getParopertiesMap
+//    for (key <- properties){
+//      sparkConf.set(key,properties.get(key))
+//    }
     // 创建SparkContext
     val sc = new SparkContext(sparkConf.setAppName(s"spark sql job at time=${timeid}"))
 

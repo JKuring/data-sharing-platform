@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <spark:bean id="sparkConf" class="com.eastcom.aggregator.bean.SparkProperties">
+    <spark:bean id="sparkConf" class="com.eastcom.common.bean.SparkProperties">
         <spark:property name="master" value="yarn-cluster"/>
         <spark:property name="paropertiesMap">
             <spark:map key-type="java.lang.String" value-type="java.lang.String">

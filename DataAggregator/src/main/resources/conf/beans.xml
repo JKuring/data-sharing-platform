@@ -4,10 +4,14 @@
                   xmlns:context="http://www.springframework.org/schema/context"
                   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <!-- load mq factory-->
+    <aggregator:import resource="classpath:conf/work/rabbitmq.xml"/>
+
+    <!-- task types -->
+    <aggregator:import resource="classpath:conf/work/task-types.xml"/>
+
     <context:component-scan base-package="com.eastcom"/>
 
-    <aggregator:import resource="classpath:org/apache/spark/spark-conf.xml"/>
-
-    <aggregator:import resource="classpath:rabbitmq.xml"/>
+    <aggregator:import resource="classpath:conf/spark/spark-conf.xml"/>
 
 </aggregator:beans>

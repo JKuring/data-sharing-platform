@@ -1,12 +1,15 @@
 package com.eastcom.aggregator.service;
 
-import com.eastcom.aggregator.SssLauncher;
+import com.eastcom.aggregator.bean.MQConf;
 import com.eastcom.aggregator.bean.SparkJobs;
-import com.eastcom.aggregator.bean.SparkProperties;
 import com.eastcom.aggregator.interfaces.service.JobService;
 import com.eastcom.aggregator.interfaces.service.MessageService;
 import com.eastcom.aggregator.utils.parser.JsonParser;
+import com.eastcom.common.bean.SparkProperties;
+import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.message.CommonMeaageProducer;
+import com.eastcom.common.utils.MergeArrays;
+import org.apache.spark.deploy.SparkSubmit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -17,6 +20,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,15 +32,15 @@ public class JobServiceImpl implements JobService<Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
 
-    @Autowired
-    private JsonParser jsonParser;
+    private final TaskType taskType;
 
-    @Autowired
-    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    private final JsonParser jsonParser;
 
-    @Autowired
-    private SparkProperties sparkProperties;
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
+    private final SparkProperties sparkProperties;
+
+    private final MQConf mqConf;
 
     private Map<String, RabbitTemplate> mqProducer = CommonMeaageProducer.producerCollection;
 
@@ -47,40 +52,53 @@ public class JobServiceImpl implements JobService<Message> {
     private String endTime = "endTime";
     private String status = "status";
 
+    // task types
+    private static final String AGGREGATE_SPARK = "AGGREGATE_SPARK";
+
+    @Autowired
+    public JobServiceImpl(TaskType taskType, JsonParser jsonParser, ThreadPoolTaskExecutor threadPoolTaskExecutor, SparkProperties sparkProperties, MQConf mqConf) {
+        this.taskType = taskType;
+        this.jsonParser = jsonParser;
+        this.threadPoolTaskExecutor = threadPoolTaskExecutor;
+        this.sparkProperties = sparkProperties;
+        this.mqConf = mqConf;
+    }
+
 
     public void excute(Message message) {
         int jobType = 0;
-        // save message for scala
         MessageProperties messageProperties = message.getMessageProperties();
         Map<String, Object> header = messageProperties.getHeaders();
         try {
             jobType = (Integer) header.get(MessageService.Header.jobType);
-            switch (jobType) {
-                case MessageService.TaskType.CREATE_TABLE_HBASE:
-                    doSparkAggregationJob(message);
-                    break;
-                default:
-                    throw new Exception("invalid task type!");
+            Map<Integer, String> taskTypesMap = taskType.getTaskTypesMap();
+            if (taskTypesMap.containsKey(jobType)) {
+                String taskType = taskTypesMap.get(jobType);
+                switch (taskType) {
+                    case AGGREGATE_SPARK:
+                        doSparkAggregationJob(message);
+                        break;
+                    default:
+                        throw new Exception("invalid task type!");
+                }
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
-            messageProperties.setHeader(status, 1);
-            q_aggr_spark.send(new Message(("execute the task: "+jobType+", exception: "+e.getMessage()).getBytes(),message.getMessageProperties()));
-
+            q_aggr_spark.send(new Message(("execute the task: "+jobType+", exception: "+e.getMessage()).getBytes(),getMessageProperties(messageProperties, 1)));
         }
     }
 
     @Override
     public void doSparkAggregationJob(Message message) {
         final MessageProperties messageProperties = message.getMessageProperties();
-        Map<String, Object> headMap = messageProperties.getHeaders();
+        final Map<String, Object> headMap = messageProperties.getHeaders();
         final String taskId = (String) headMap.get(MessageService.Header.taskId);
         String context = new String(message.getBody());
         try {
             if (taskId != null) {
                 logger.info("start the task: {}.", taskId);
                 final SparkJobs sparkJobs = jsonParser.parseJsonToObject(context.getBytes(), SparkJobs.class);
-                logger.info("the loading job name: {}.", sparkJobs.getTplPath());
+                logger.info("the name of aggregated job: {}.", sparkJobs.getTplPath());
                 try {
                     threadPoolTaskExecutor.execute(new Runnable() {
                         @Override
@@ -90,12 +108,12 @@ public class JobServiceImpl implements JobService<Message> {
                             String appId = null;
                             messageProperties.setHeader(startTime, System.currentTimeMillis());
                             try {
-                                SssLauncher.launch(sparkJobs.getParameters(),sparkProperties);
+                                SparkSubmit.main(MergeArrays.merge(sparkProperties.toStingArray(),sparkJobs.getParameters(),mqConf.getParameters(),getHeadArrays(headMap)));
                             } catch (Exception e) {
-                                logger.error("Failed to load table, Exception: {}.", e.getMessage());
+                                logger.error("Failed to aggregate table, Exception: {}.", e.getMessage());
                                 result = 1;
                             } finally {
-                                q_aggr_spark.send(new Message(("Finish loading task: " + taskId + ", application id: " + appId).getBytes(), getMessageProperties(messageProperties, result)));
+                                q_aggr_spark.send(new Message(("Finish aggregating task: " + taskId + ", application id: " + appId).getBytes(), getMessageProperties(messageProperties, result)));
                             }
                         }
                     });
@@ -115,6 +133,16 @@ public class JobServiceImpl implements JobService<Message> {
         messageProperties.setHeader(endTime, System.currentTimeMillis());
         messageProperties.setHeader(status, result);
         return messageProperties;
+    }
+
+    private String[] getHeadArrays(Map<String,Object> headMap){
+        List<String> tmp = new ArrayList<>();
+        for (String key: headMap.keySet()
+             ) {
+            tmp.add(key);
+            tmp.add((String) headMap.get(key));
+        }
+        return tmp.toArray(new String[tmp.size()]);
     }
 
 

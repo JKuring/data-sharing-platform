@@ -1,0 +1,10 @@
+{
+  "name": "spark_test",
+  "confFile":"work/conf/load_control_hour.conf",
+  "initCmdPath":"",
+  "tplPath":"",
+  "zookeeper_hosts":"",
+  "zookeeper_port":"",
+  "appIdDir":"",
+  "timeid":"#minuteminus(15)#"
+}

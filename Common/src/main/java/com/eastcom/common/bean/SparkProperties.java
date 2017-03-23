@@ -1,4 +1,4 @@
-package com.eastcom.dataloader.bean;
+package com.eastcom.common.bean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +78,7 @@ public class SparkProperties {
         this.paropertiesMap = paropertiesMap;
     }
 
-    public String[] toStingArray(String[] jobParameters){
+    public String[] toStingArray(){
         List<String> parameters = new ArrayList<>();
         parameters.add("--master"); parameters.add(master);
         parameters.add("--driver-memory");parameters.add(driver_memory);
@@ -93,10 +93,10 @@ public class SparkProperties {
             parameters.add(key+"="+paropertiesMap.get(key));
         }
 
-        for (String param: jobParameters
-             ) {
-            parameters.add(param);
-        }
+//        for (String param: jobParameters
+//             ) {
+//            parameters.add(param);
+//        }
 
         return parameters.toArray(new String[parameters.size()]);
     }

@@ -22,10 +22,4 @@ public interface MessageService {
         public static final String content_type = "content_type";
     }
 
-    class TaskType {
-        public static final int CREATE_TABLE_HBASE = 101;
-        public static final int DELETE_TABLE_HBASE = 111;
-        public static final int LOAD_TABLE_HBASE = 203;
-        public static final int LOAD_TABLE_SPARK = 201;
-    }
 }
