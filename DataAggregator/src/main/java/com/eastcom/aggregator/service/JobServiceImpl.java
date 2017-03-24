@@ -5,6 +5,7 @@ import com.eastcom.aggregator.bean.SparkJobs;
 import com.eastcom.aggregator.interfaces.service.JobService;
 import com.eastcom.aggregator.interfaces.service.MessageService;
 import com.eastcom.aggregator.utils.parser.JsonParser;
+import com.eastcom.aggregator.utils.parser.MqHeadParser;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.message.CommonMeaageProducer;
@@ -20,8 +21,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -108,7 +107,7 @@ public class JobServiceImpl implements JobService<Message> {
                             String appId = null;
                             messageProperties.setHeader(startTime, System.currentTimeMillis());
                             try {
-                                SparkSubmit.main(MergeArrays.merge(sparkProperties.toStingArray(),sparkJobs.getParameters(),mqConf.getParameters(),getHeadArrays(headMap)));
+                                SparkSubmit.main(MergeArrays.merge(sparkProperties.toStingArray(),sparkJobs.getParameters(),mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap)));
                             } catch (Exception e) {
                                 logger.error("Failed to aggregate table, Exception: {}.", e.getMessage());
                                 result = 1;
@@ -134,17 +133,6 @@ public class JobServiceImpl implements JobService<Message> {
         messageProperties.setHeader(status, result);
         return messageProperties;
     }
-
-    private String[] getHeadArrays(Map<String,Object> headMap){
-        List<String> tmp = new ArrayList<>();
-        for (String key: headMap.keySet()
-             ) {
-            tmp.add(key);
-            tmp.add((String) headMap.get(key));
-        }
-        return tmp.toArray(new String[tmp.size()]);
-    }
-
 
     @Override
     public String getName() {

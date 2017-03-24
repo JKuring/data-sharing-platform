@@ -2,6 +2,7 @@ package com.eastcom.aggregator.driver
 
 import akka.actor.{Actor, Props}
 import akka.routing.RoundRobinRouter
+import com.eastcom.aggregator.bean.MQConf
 import com.eastcom.aggregator.confparser.{SssJob, SssNode}
 import com.eastcom.aggregator.context.Context
 import com.eastcom.aggregator.exception.SssException
@@ -9,14 +10,14 @@ import com.eastcom.aggregator.message.{SssJobMessage, SssResultMessage, SssStart
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.hive.HiveContext
 
-import scala.collection.mutable.{ListBuffer, Map}
+import scala.collection.mutable.ListBuffer
 
 /**
  * Created by slp on 2016/2/18.
  */
-class SssDriver(val job: SssJob) extends Thread with Actor {
+class SssDriver(val job: SssJob, val mqConf: MQConf, val headProperties: Array[String]) extends Thread with Actor {
   val sqlContext = Context.getContext(Context.hiveContext).asInstanceOf[HiveContext]
-  val workerRouter = context.actorOf(Props(new SssManager(job.tplPath, job.timeid)).withRouter(RoundRobinRouter(job.sessions)), "sssWorkerRouter")
+  val workerRouter = context.actorOf(Props(new SssManager(job.tplPath, job.timeid,mqConf,headProperties)).withRouter(RoundRobinRouter(job.sessions)), "sssWorkerRouter")
 
   val finishNodes = ListBuffer[String]()
   val tplNodes = Map[String, SssNode]()

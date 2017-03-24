@@ -2,7 +2,7 @@ package com.eastcom.aggregator
 
 import akka.actor.{ActorSystem, Props}
 import com.cloudera.spark.hbase.HBaseContext
-import com.eastcom.aggregator.confparser.SssConfParser
+import com.eastcom.aggregator.confparser.{MqConfParser, SssConfParser}
 import com.eastcom.aggregator.context.Context
 import com.eastcom.aggregator.driver.SssDriver
 import com.eastcom.aggregator.exception.SssException
@@ -12,28 +12,33 @@ import org.apache.log4j.Logger
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
 
+
 /**
- * Created by slp on 2016/2/17.
- */
+  * Created by slp on 2016/2/17.
+  */
 object SssLauncher {
   val logging = Logger.getLogger(getClass)
 
   def main(args: Array[String]): Unit = {
+    val sparkJobsParams = (for (i <- 0 until 7) yield args(i)).toArray
+    val mqConfParams = (for (i <- 7 until 13) yield args(i)).toArray
+    val headParams = (for (i <- 13 until args.length) yield args(i)).toArray
+
     // Read args from command line
-    val Array(confFile, initCmdPath, tplPath, zookeeper_hosts, zookeeper_port, sessions, timeid, appIdDir, timeout) =
-      if (args == null || args.isEmpty) {
-        throw new SssException("parameter list ( confFile , udfPath , tplPath , zookeeper_hosts , zookeeper_port , sessions , timeid , timeout(min))")
-      } else {
-        args
-      }
+
+    if (args == null || args.isEmpty) {
+      throw new SssException("parameter list ( confFile , udfPath , tplPath , zookeeper_hosts , zookeeper_port , sessions , timeid , timeout(min))")
+    }
+    val Array(confFile, initCmdPath, tplPath, zookeeper_hosts, zookeeper_port, sessions, timeid, appIdDir, timeout) = sparkJobsParams
+    val Array(userName, password, host, port, exchange, routingKey) = mqConfParams
 
     // 配置spark configuration
     val sparkConf = new SparkConf()
-//    sparkConf.setMaster(confProperties.getMaster)
-//    val properties = confProperties.getParopertiesMap
-//    for (key <- properties){
-//      sparkConf.set(key,properties.get(key))
-//    }
+    //    sparkConf.setMaster(confProperties.getMaster)
+    //    val properties = confProperties.getParopertiesMap
+    //    for (key <- properties){
+    //      sparkConf.set(key,properties.get(key))
+    //    }
     // 创建SparkContext
     val sc = new SparkContext(sparkConf.setAppName(s"spark sql job at time=${timeid}"))
 
@@ -58,8 +63,11 @@ object SssLauncher {
     }
 
     val sohJob = SssConfParser.parser(confFile, initCmdPath, tplPath, sessions.toInt, timeid)
+    val mqConf = MqConfParser.parser(userName, password, host, port, exchange, routingKey)
+//    val headProperties = MqHeadParser.getHeadProperties(headParams)
+
     val system = ActorSystem(s"spark-sql-job-${timeid}")
-    val masterRouter = system.actorOf(Props(new SssDriver(sohJob)), "sssMasterRouter")
+    val masterRouter = system.actorOf(Props(new SssDriver(sohJob,mqConf,headParams)), "sssMasterRouter")
     masterRouter ! SssStartMessage
 
     val timeoutMS = timeout.toLong * 60 * 1000

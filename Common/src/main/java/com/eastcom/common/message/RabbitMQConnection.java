@@ -1,5 +1,6 @@
 package com.eastcom.common.message;
 
+
 import com.rabbitmq.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,12 @@ public class RabbitMQConnection {
             logger.error("can not close the connection, exception: {}.",e.getMessage());
         }
     }
+
+    public Channel getChannel(Connection connection, String exchangeName, String routingKey) throws IOException {
+        Channel channel = connection.createChannel();
+        return channel;
+    }
+
 
     public static void main(String[] args) throws IOException, TimeoutException {
 

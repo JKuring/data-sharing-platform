@@ -4,6 +4,7 @@ import java.util.regex.Matcher._
 import java.util.regex.Pattern
 import java.util.regex.Pattern._
 
+import com.eastcom.aggregator.confparser.SssNode
 import org.apache.log4j.Logger
 import org.apache.spark.SparkContext
 import org.joda.time.DateTime
