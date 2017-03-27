@@ -1,13 +1,11 @@
 package com.eastcom.dataloader.service;
 
 
-import com.eastcom.common.message.CommonMeaageProducer;
 import com.eastcom.dataloader.interfaces.service.JobService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -20,13 +18,15 @@ public class MessageServiceImpl implements MessageListener {
     @Autowired
     private JobService<Message> jobService;
 
-    @Autowired
-    private RabbitTemplate q_load;
+//    @Autowired
+//    private RabbitTemplate q_load;
 
-    @Autowired
-    private void iniMQProducer(){
-        CommonMeaageProducer.producerCollection.put(q_load.getClass().getName(),q_load);
-    }
+//    @Autowired
+//    private void iniMQProducer(){
+//        String mq_name = q_load.getRoutingKey();
+//        CommonMeaageProducer.producerCollection.put(mq_name,q_load);
+//        logger.info("put the {} mq handle to map",mq_name);
+//    }
 
     @Override
     public void onMessage(Message message) {

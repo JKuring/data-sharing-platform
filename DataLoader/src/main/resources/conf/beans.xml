@@ -8,10 +8,10 @@
        http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- load mq factory-->
-    <controller:import resource="classpath:conf/work/rabbitmq.xml"/>
+    <controller:import resource="classpath:work/rabbitmq.xml"/>
 
     <!-- task types -->
-    <controller:import resource="classpath:conf/work/task-types.xml"/>
+    <controller:import resource="classpath:work/task-types.xml"/>
 
     <context:component-scan base-package="com.eastcom"/>
 

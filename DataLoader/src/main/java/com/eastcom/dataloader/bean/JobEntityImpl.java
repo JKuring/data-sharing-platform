@@ -1,7 +1,6 @@
 package com.eastcom.dataloader.bean;
 
 
-import com.eastcom.dataloader.interfaces.dto.HBaseEntity;
 import com.eastcom.dataloader.interfaces.dto.JobEntity;
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
@@ -17,7 +16,7 @@ import java.util.Map;
  */
 @Component
 @Scope("prototype")
-public class JobEntityImpl implements JobEntity<HBaseEntity> {
+public class JobEntityImpl implements JobEntity<String> {
 
     private static final Logger logger = LoggerFactory.getLogger(JobEntityImpl.class);
 
@@ -36,19 +35,19 @@ public class JobEntityImpl implements JobEntity<HBaseEntity> {
     private int delay;
     private Map<String, String> propertiesMap = new HashMap<String, String>();
 
-    private HBaseEntity tableEntity;
+    private String tableEntity;
 
-    public JobEntityImpl(String jobName, HBaseEntity tableEntity) {
+    public JobEntityImpl(String jobName, String tableEntity) {
         this.jobName = jobName;
         this.tableEntity = tableEntity;
     }
 
 
-    public HBaseEntity getTableEntity() {
+    public String getTableEntity() {
         return tableEntity;
     }
 
-    public synchronized void setTableEntity(HBaseEntity tableEntity) {
+    public synchronized void setTableEntity(String tableEntity) {
         this.tableEntity = tableEntity;
     }
 
@@ -61,11 +60,11 @@ public class JobEntityImpl implements JobEntity<HBaseEntity> {
     }
 
     public long getCreateTime() {
-        return 0;
+        return createTime;
     }
 
     public synchronized void setCreateTime(long createTime) {
-
+        this.createTime = createTime;
     }
 
     public long getStartTime() {

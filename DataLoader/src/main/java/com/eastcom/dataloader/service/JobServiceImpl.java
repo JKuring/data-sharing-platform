@@ -5,14 +5,15 @@ import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.message.CommonMeaageProducer;
 import com.eastcom.common.utils.MergeArrays;
+import com.eastcom.common.utils.parser.JsonParser;
+import com.eastcom.common.utils.time.TimeTransform;
 import com.eastcom.dataloader.bean.HBaseJobs;
 import com.eastcom.dataloader.bean.SparkJobs;
 import com.eastcom.dataloader.interfaces.dto.JobEntity;
 import com.eastcom.dataloader.interfaces.service.HBaseService;
 import com.eastcom.dataloader.interfaces.service.JobService;
 import com.eastcom.dataloader.interfaces.service.MessageService;
-import com.eastcom.dataloader.utils.parser.JsonParser;
-import org.apache.spark.deploy.SparkSubmit;
+import org.apache.spark.deploy.SparkSubmit$;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -35,11 +36,9 @@ public class JobServiceImpl implements JobService<Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
 
-    ApplicationContext applicationContext = Loader.applicationContext;
+    private ApplicationContext applicationContext;
 
     private final TaskType taskType;
-
-    private final JsonParser jsonParser;
 
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
@@ -49,7 +48,8 @@ public class JobServiceImpl implements JobService<Message> {
 
     private Map<String, RabbitTemplate> mqProducer = CommonMeaageProducer.producerCollection;
 
-    private RabbitTemplate q_load = mqProducer.get("q_load");
+    @Autowired
+    private RabbitTemplate q_load;
 
     // back head
     private String startTime = "startTime";
@@ -61,9 +61,8 @@ public class JobServiceImpl implements JobService<Message> {
     private static final String LOAD_TABLE_SPARK = "LOAD_TABLE_SPARK";
 
     @Autowired
-    public JobServiceImpl(TaskType taskType, JsonParser jsonParser, ThreadPoolTaskExecutor threadPoolTaskExecutor, HBaseService<JobEntity> hbaseService, SparkProperties sparkProperties) {
+    public JobServiceImpl(TaskType taskType, ThreadPoolTaskExecutor threadPoolTaskExecutor, HBaseService<JobEntity> hbaseService, SparkProperties sparkProperties) {
         this.taskType = taskType;
-        this.jsonParser = jsonParser;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.hbaseService = hbaseService;
         this.sparkProperties = sparkProperties;
@@ -112,12 +111,12 @@ public class JobServiceImpl implements JobService<Message> {
         try {
             if (taskId != null) {
                 logger.info("start the task: {}.", taskId);
-                HBaseJobs hBaseJobs = jsonParser.parseJsonToObject(context.getBytes(), HBaseJobs.class);
+                HBaseJobs hBaseJobs = JsonParser.parseJsonToObject(context.getBytes(), HBaseJobs.class);
                 String jobName = hBaseJobs.getName();
                 // ioc
-                final JobEntity jobEntity = (JobEntity) applicationContext.getBean(hBaseJobs.getName());
+                final JobEntity jobEntity = (JobEntity) Loader.applicationContext.getBean(jobName);
                 jobEntity.setJobStartTime(System.currentTimeMillis());
-                jobEntity.setCreateTime(Long.parseLong(hBaseJobs.getTime()));
+                jobEntity.setCreateTime(TimeTransform.getTimestamp(hBaseJobs.getTime()));
                 logger.info("the loading job name: {}.", jobName);
                 try {
                     threadPoolTaskExecutor.execute(new Runnable() {
@@ -157,7 +156,7 @@ public class JobServiceImpl implements JobService<Message> {
         try {
             if (taskId != null) {
                 logger.info("start the task: {}.", taskId);
-                final SparkJobs sparkJobs = jsonParser.parseJsonToObject(context.getBytes(), SparkJobs.class);
+                final SparkJobs sparkJobs = JsonParser.parseJsonToObject(context.getBytes(), SparkJobs.class);
                 logger.info("the name of loaded job: {}.", sparkJobs.getTplPath());
 
                 try {
@@ -170,7 +169,7 @@ public class JobServiceImpl implements JobService<Message> {
                             messageProperties.setHeader(startTime, System.currentTimeMillis());
                             try {
                                 // submit code to cluster
-                                SparkSubmit.main(MergeArrays.merge(sparkProperties.toStingArray(),sparkJobs.getParameters()));
+                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toStingArray(),sparkJobs.getParameters()));
                             } catch (Exception e) {
                                 logger.error("Failed to load table, Exception: {}.", e.getMessage());
                                 result = 1;
@@ -180,7 +179,7 @@ public class JobServiceImpl implements JobService<Message> {
                         }
                     });
                 } catch (Exception e) {
-                    logger.debug("Thread pool: {}.", e.getMessage());
+                    logger.error("Thread pool: {}.", e.getMessage());
                 }
             } else {
                 throw new Exception("Unable task!");

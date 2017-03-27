@@ -4,13 +4,13 @@ import com.eastcom.aggregator.bean.MQConf;
 import com.eastcom.aggregator.bean.SparkJobs;
 import com.eastcom.aggregator.interfaces.service.JobService;
 import com.eastcom.aggregator.interfaces.service.MessageService;
-import com.eastcom.aggregator.utils.parser.JsonParser;
-import com.eastcom.aggregator.utils.parser.MqHeadParser;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.message.CommonMeaageProducer;
 import com.eastcom.common.utils.MergeArrays;
-import org.apache.spark.deploy.SparkSubmit;
+import com.eastcom.common.utils.parser.JsonParser;
+import com.eastcom.common.utils.parser.MqHeadParser;
+import org.apache.spark.deploy.SparkSubmit$;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -33,8 +33,6 @@ public class JobServiceImpl implements JobService<Message> {
 
     private final TaskType taskType;
 
-    private final JsonParser jsonParser;
-
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     private final SparkProperties sparkProperties;
@@ -43,7 +41,8 @@ public class JobServiceImpl implements JobService<Message> {
 
     private Map<String, RabbitTemplate> mqProducer = CommonMeaageProducer.producerCollection;
 
-    private RabbitTemplate q_aggr_spark = mqProducer.get("q_aggr_spark");
+    @Autowired
+    private RabbitTemplate q_aggr_spark;
 
 
     // back head
@@ -55,9 +54,8 @@ public class JobServiceImpl implements JobService<Message> {
     private static final String AGGREGATE_SPARK = "AGGREGATE_SPARK";
 
     @Autowired
-    public JobServiceImpl(TaskType taskType, JsonParser jsonParser, ThreadPoolTaskExecutor threadPoolTaskExecutor, SparkProperties sparkProperties, MQConf mqConf) {
+    public JobServiceImpl(TaskType taskType, ThreadPoolTaskExecutor threadPoolTaskExecutor, SparkProperties sparkProperties, MQConf mqConf) {
         this.taskType = taskType;
-        this.jsonParser = jsonParser;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.sparkProperties = sparkProperties;
         this.mqConf = mqConf;
@@ -96,7 +94,7 @@ public class JobServiceImpl implements JobService<Message> {
         try {
             if (taskId != null) {
                 logger.info("start the task: {}.", taskId);
-                final SparkJobs sparkJobs = jsonParser.parseJsonToObject(context.getBytes(), SparkJobs.class);
+                final SparkJobs sparkJobs = JsonParser.parseJsonToObject(context.getBytes(), SparkJobs.class);
                 logger.info("the name of aggregated job: {}.", sparkJobs.getTplPath());
                 try {
                     threadPoolTaskExecutor.execute(new Runnable() {
@@ -107,7 +105,7 @@ public class JobServiceImpl implements JobService<Message> {
                             String appId = null;
                             messageProperties.setHeader(startTime, System.currentTimeMillis());
                             try {
-                                SparkSubmit.main(MergeArrays.merge(sparkProperties.toStingArray(),sparkJobs.getParameters(),mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap)));
+                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toStingArray(),sparkJobs.getParameters(),mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap)));
                             } catch (Exception e) {
                                 logger.error("Failed to aggregate table, Exception: {}.", e.getMessage());
                                 result = 1;

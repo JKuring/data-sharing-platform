@@ -1,4 +1,4 @@
-package com.eastcom.aggregator.utils.time;
+package com.eastcom.common.utils.time;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

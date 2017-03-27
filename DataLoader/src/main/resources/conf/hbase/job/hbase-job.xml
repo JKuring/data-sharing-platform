@@ -2,13 +2,12 @@
 <hbase:beans xmlns:hbase="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-
-    <hbase:import resource="classpath:hbase/table/hbase-table.xml"/>
+    
 
     <!--gn-->
     <hbase:bean id="xdr_data:ps_gn_pdp_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_pdp_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_pdp_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_pdp_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_pdp"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -31,7 +30,7 @@
 
     <hbase:bean id="xdr_data:ps_gn_pdp_event_ipapn_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_pdp_event_ipapn_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_pdp_event_ipapn"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_pdp_event_ipapn"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_pdp"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -54,7 +53,7 @@
 
     <hbase:bean id="xdr_data:ps_gn_dns_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_dns_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_dns_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_dns_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_dns"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -77,7 +76,7 @@
 
     <hbase:bean id="xdr_data:ps_gn_email_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_email_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_email_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_email_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_email"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -100,7 +99,7 @@
 
     <hbase:bean id="xdr_data:ps_gn_ftp_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_ftp_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_ftp_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_ftp_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_ftp"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -124,7 +123,7 @@
 
     <hbase:bean id="xdr_data:ps_gn_general_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_general_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_general_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_general_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_general"/>
         <hbase:property name="granularity" value="D"/>
         <hbase:property name="delay" value="900"/>
@@ -147,7 +146,7 @@
 
     <hbase:bean id="xdr_data:ps_gn_http_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_http_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_http_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_http_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_http"/>
         <hbase:property name="granularity" value="D"/>
         <hbase:property name="delay" value="900"/>
@@ -170,7 +169,7 @@
 
     <hbase:bean id="xdr_data:ps_gn_im_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_im_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_im_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_im_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_im"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -193,7 +192,7 @@
 
     <hbase:bean id="xdr_data:ps_gn_mms_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_mms_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_mms_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_mms_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_mms"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -216,7 +215,7 @@
 
     <hbase:bean id="xdr_data:ps_gn_p2p_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_p2p_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_p2p_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_p2p_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_p2p"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -239,7 +238,7 @@
 
     <hbase:bean id="xdr_data:ps_gn_rtsp_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_rtsp_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_rtsp_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_rtsp_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_rtsp"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -262,7 +261,7 @@
 
     <hbase:bean id="xdr_data:ps_gn_voip_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:ps_gn_voip_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:ps_gn_voip_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:ps_gn_voip_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/gn/gn_voip"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -288,7 +287,7 @@
     <!--mc-->
     <hbase:bean id="xdr_data:mc_switch_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:mc_switch_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_switch_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:mc_switch_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_switch"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -311,7 +310,7 @@
 
     <hbase:bean id="xdr_data:mc_poweronoff_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:mc_poweronoff_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_poweronoff_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:mc_poweronoff_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_power"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -334,7 +333,7 @@
 
     <hbase:bean id="xdr_data:mc_locationupdate_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:mc_locationupdate_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_locationupdate_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:mc_locationupdate_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_location"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -357,7 +356,7 @@
 
     <hbase:bean id="xdr_data:mc_voicecall_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:mc_voicecall_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_voicecall_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:mc_voicecall_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_call"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -380,7 +379,7 @@
 
     <hbase:bean id="xdr_data:mc_voicecall_event_callee_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:mc_voicecall_event_callee_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_voicecall_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:mc_voicecall_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_call"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -403,7 +402,7 @@
 
     <hbase:bean id="xdr_data:mc_paging_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:mc_paging_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_paging_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:mc_paging_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_paging"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -426,7 +425,7 @@
 
     <hbase:bean id="xdr_data:mc_paging_event_callee_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:mc_paging_event_callee_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_paging_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:mc_paging_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_paging"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -449,7 +448,7 @@
 
     <hbase:bean id="xdr_data:mc_smssendrecieve_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:mc_smssendrecieve_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_smssendrecieve_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:mc_smssendrecieve_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_sms"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -472,7 +471,7 @@
 
     <hbase:bean id="xdr_data:mc_smssendrecieve_event_callee_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:mc_smssendrecieve_event_callee_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:mc_smssendrecieve_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:mc_smssendrecieve_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/mc/mc_sms"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -496,7 +495,7 @@
 
     <hbase:bean id="xdr_data:nc_bicc_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:nc_bicc_event_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:nc_bicc_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:nc_bicc_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/mc/nc_bicc"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>
@@ -519,7 +518,7 @@
 
     <hbase:bean id="xdr_data:nc_bicc_event_callee_job" class="com.eastcom.dataloader.bean.JobEntityImpl">
         <hbase:constructor-arg name="jobName" value="xdr_data:nc_bicc_event_callee_job"/>
-        <hbase:constructor-arg name="tableEntity" ref="xdr_data:nc_bicc_event"/>
+        <hbase:constructor-arg name="tableEntity" value="xdr_data:nc_bicc_event"/>
         <hbase:property name="dataPath" value="/rawdata/xdr/mc/nc_bicc"/>
         <hbase:property name="granularity" value="O"/>
         <hbase:property name="delay" value="900"/>

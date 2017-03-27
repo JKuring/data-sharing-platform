@@ -1,10 +1,9 @@
 package com.eastcom.dataloader.dao;
 
 
+import com.eastcom.common.utils.HBaseUtils;
+import com.eastcom.common.utils.kerberos.HBaseKerberos;
 import com.eastcom.dataloader.interfaces.dao.HBaseDao;
-import com.eastcom.dataloader.interfaces.dto.HBaseEntity;
-import com.eastcom.dataloader.utils.HBaseUtils;
-import com.eastcom.dataloader.utils.kerberos.HBaseKerberos;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
@@ -28,7 +27,7 @@ import java.util.concurrent.Executors;
 /**
  * Created by linghang.kong on 2016/12/21.
  */
-public class HBaseDaoImpl implements HBaseDao<HBaseEntity> {
+public class HBaseDaoImpl implements HBaseDao<String> {
 
     public static final String ROWKEY_COLUMN_SPEC = "HBASE_ROW_KEY";
     public static final String TIMESTAMPKEY_COLUMN_SPEC = "HBASE_TS_KEY";
@@ -37,12 +36,7 @@ public class HBaseDaoImpl implements HBaseDao<HBaseEntity> {
     public static final String CELL_TTL_COLUMN_SPEC = "HBASE_CELL_TTL";
     private static final Logger logger = LoggerFactory.getLogger(HBaseDaoImpl.class);
     private static final int CONNECTION_POOL_SIZE = 10;
-//    @Autowired
-//    @Qualifier("coprocessor")
-//    Object coprocessor;
-//    @Autowired
-//    @Qualifier("splitPolicy")
-//    Object splitPolicy;
+
 
     private Configuration configuration;
     private Connection connection;
@@ -160,31 +154,31 @@ public class HBaseDaoImpl implements HBaseDao<HBaseEntity> {
         return cfSet;
     }
 
-    public HBaseEntity get(Class<HBaseEntity> entityClazz, Serializable id) {
+    public String get(Class<String> entityClazz, Serializable id) {
         return null;
     }
 
-    public Serializable save(HBaseEntity entity) {
+    public Serializable save(String entity) {
         return null;
     }
 
-    public void update(HBaseEntity entity) {
+    public void update(String entity) {
 
     }
 
-    public void delete(HBaseEntity entity) {
+    public void delete(String entity) {
 
     }
 
-    public void delete(Class<HBaseEntity> entityClazz, Serializable id) {
+    public void delete(Class<String> entityClazz, Serializable id) {
 
     }
 
-    public List<HBaseEntity> findAll(Class<HBaseEntity> entityClazz) {
+    public List<String> findAll(Class<String> entityClazz) {
         return null;
     }
 
-    public long findCount(Class<HBaseEntity> entityClazz) {
+    public long findCount(Class<String> entityClazz) {
         return 0;
     }
 

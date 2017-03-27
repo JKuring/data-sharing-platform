@@ -20,7 +20,7 @@ class SssDriver(val job: SssJob, val mqConf: MQConf, val headProperties: Array[S
   val workerRouter = context.actorOf(Props(new SssManager(job.tplPath, job.timeid,mqConf,headProperties)).withRouter(RoundRobinRouter(job.sessions)), "sssWorkerRouter")
 
   val finishNodes = ListBuffer[String]()
-  val tplNodes = Map[String, SssNode]()
+  var tplNodes = Map[String, SssNode]()
   val execTplNodes = {
     val nodes = ListBuffer[String]()
     job.nodesMap.foreach(ns => {

@@ -1,9 +1,9 @@
-package com.eastcom.datacontroller.utils;
+package com.eastcom.common.utils;
 
 
 
-import com.eastcom.datacontroller.utils.kerberos.HBaseKerberos;
-import com.eastcom.datacontroller.utils.time.TimeTransform;
+import com.eastcom.common.utils.kerberos.HBaseKerberos;
+import com.eastcom.common.utils.time.TimeTransform;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -132,13 +132,13 @@ public class HBaseUtils {
                     logger.error("Can't close the table {}, exception: {}.", table.getName(), e.getMessage());
                 }
             }
-            logger.info("Incremental load complete for table=" + tableName);
+            logger.info("Incremental load complete for table {}.", tableName);
 
-            logger.info("Removing output directory {}", dataPath);
             try {
                 if (!FileSystem.get(configuration).delete(dataPath, true)) {
                     logger.error("Removing output directory {} failed", dataPath);
                 }
+                logger.info("Removing output directory {}", dataPath);
             } catch (IOException e) {
                 e.printStackTrace();
             }

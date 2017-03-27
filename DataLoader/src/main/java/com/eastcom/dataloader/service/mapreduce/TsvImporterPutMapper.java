@@ -1,4 +1,4 @@
-package com.eastcom.datacontroller.service.mapreduce;
+package com.eastcom.dataloader.service.mapreduce;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.classification.InterfaceAudience;
@@ -41,12 +41,6 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
     private String rowKeySeparator = SEP_DEFAULT;
     private boolean skipBadLines;
     private Counter badLineCount;
-    private String[] columnK;
-    private String[] strategyK;
-    private String[] encryptKeys;
-    private String[] encryptValues;
-    private char[] KEYNUM_ENCRYPT_MAP = "8374012596".toCharArray();
-    private char[] KEYNUM_DECRYPT_MAP = "4561379208".toCharArray();
 
     public boolean getSkipBadLines() {
         return this.skipBadLines;
@@ -121,6 +115,12 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
         encryptValues = valueEncrypts.split(",");
 
     }
+
+    private String[] columnK;
+    private String[] strategyK;
+
+    private String[] encryptKeys;
+    private String[] encryptValues;
 
     @SuppressWarnings("deprecation")
     public void map(LongWritable offset, Text value,
@@ -208,7 +208,7 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
                 }
             }
 
-            if (part == null || part.length() == 0)
+            if (part == null ||  part.length() == 0 )
                 return null;
 
             part = keyStrategyChange(part, i);
@@ -313,7 +313,7 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
         String hs = "";
         String stmp = "";
         for (int i = 0; i < bytes.length; i++) {
-            stmp = (java.lang.Integer.toHexString(bytes[i] & 0XFF));
+            stmp = (Integer.toHexString(bytes[i] & 0XFF));
             if (stmp.length() == 1)
                 hs = hs + "0" + stmp;
             else
@@ -361,6 +361,9 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
         }
         return part;
     }
+
+    private char[] KEYNUM_ENCRYPT_MAP = "8374012596".toCharArray();
+    private char[] KEYNUM_DECRYPT_MAP = "4561379208".toCharArray();
 
     public String encryptChars(String text, String charset) {
         try {

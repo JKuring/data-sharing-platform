@@ -17,6 +17,14 @@ public class SparkJobs {
     public SparkJobs() {
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getConfFile() {
         return confFile;
     }

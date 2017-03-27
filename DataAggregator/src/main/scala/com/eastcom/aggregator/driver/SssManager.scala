@@ -1,15 +1,13 @@
 package com.eastcom.aggregator.driver
 
-import java.util.Date
-
 import akka.actor.Actor
 import com.eastcom.aggregator.bean.MQConf
 import com.eastcom.aggregator.confparser.SssNode
 import com.eastcom.aggregator.context.Context
 import com.eastcom.aggregator.message.{SssJobMessage, SssResultMessage}
-import com.eastcom.aggregator.utils.parser.MqHeadParser
-import com.eastcom.aggregator.utils.time.TimeTransform
 import com.eastcom.common.message.RabbitMQConnection
+import com.eastcom.common.utils.parser.MqHeadParser
+import com.eastcom.common.utils.time.TimeTransform
 import com.rabbitmq.client.AMQP.BasicProperties
 import org.apache.log4j.Logger
 
@@ -21,7 +19,7 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
   private val hiveExecutor = new SssHiveExecutor(tplPath, timeid)
   private val hbaseExecutor = new SssHbaseExecutor(tplPath, timeid)
   private val hiveOldExecutor = new SssHiveOldExecutor(tplPath, timeid)
-  private val mqConnection = new RabbitMQConnection(mqConf.getUserName, mqConf.getPassword, mqConf.getHost, Integer.parseInt(mqConf.getPort));
+  private val mqConnection = new RabbitMQConnection(mqConf.getUserName, mqConf.getPassword, mqConf.getHost, Integer.parseInt(mqConf.getPort))
 
   private val startTime = "startTime"
   private val endTime = "endTime"
@@ -34,10 +32,10 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
       try {
         val startTime = new Date().getTime
         logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Start exec job with table [ ${node.getTplName} ] at time [ $timeid ] ...")
-        try
+        try {
           exec(node)
           channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, 2), "".getBytes)
-        catch {
+        }catch {
           case e: Exception => {
             Thread.sleep(30000l)
             exec(node)
@@ -60,7 +58,7 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
     } else if (Context.hbaseType == node.getType) {
       hbaseExecutor.executor(node)
     } else if (Context.hiveType == node.getType) {
-      hiveExecutor.executor(node);
+      hiveExecutor.executor(node)
     }
   }
 

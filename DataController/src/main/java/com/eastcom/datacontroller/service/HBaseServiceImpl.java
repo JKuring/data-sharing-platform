@@ -1,10 +1,10 @@
 package com.eastcom.datacontroller.service;
 
+import com.eastcom.common.utils.HBaseUtils;
 import com.eastcom.datacontroller.dao.HBaseDaoImpl;
 import com.eastcom.datacontroller.interfaces.dto.HBaseEntity;
 import com.eastcom.datacontroller.interfaces.dto.JobEntity;
 import com.eastcom.datacontroller.interfaces.service.HBaseService;
-import com.eastcom.datacontroller.utils.HBaseUtils;
 import org.apache.hadoop.hbase.TableName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

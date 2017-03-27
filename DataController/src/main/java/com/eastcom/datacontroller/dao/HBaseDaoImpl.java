@@ -1,10 +1,10 @@
 package com.eastcom.datacontroller.dao;
 
 
+import com.eastcom.common.utils.HBaseUtils;
+import com.eastcom.common.utils.kerberos.HBaseKerberos;
 import com.eastcom.datacontroller.interfaces.dao.HBaseDao;
 import com.eastcom.datacontroller.interfaces.dto.HBaseEntity;
-import com.eastcom.datacontroller.utils.HBaseUtils;
-import com.eastcom.datacontroller.utils.kerberos.HBaseKerberos;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;

@@ -1,10 +1,9 @@
 package com.eastcom.dataloader.service;
 
+import com.eastcom.common.utils.HBaseUtils;
 import com.eastcom.dataloader.dao.HBaseDaoImpl;
-import com.eastcom.dataloader.interfaces.dto.HBaseEntity;
 import com.eastcom.dataloader.interfaces.dto.JobEntity;
 import com.eastcom.dataloader.interfaces.service.HBaseService;
-import com.eastcom.dataloader.utils.HBaseUtils;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.HTable;
@@ -58,9 +57,7 @@ public class HBaseServiceImpl implements HBaseService<JobEntity> {
 
     public boolean partition(JobEntity jobEntity) {
         boolean result = false;
-        HBaseEntity hBaseEntity = (HBaseEntity) jobEntity.getTableEntity();
-        String tableName = hBaseEntity.getName();
-        if (hBaseEntity.isCurrentIsCreated()) {
+        String tableName = (String) jobEntity.getTableEntity();
             Map tableParametters = jobEntity.getPropertiesMap();
             String currentTimeTableName = HBaseUtils.getCurrentTimeTableName(tableName, jobEntity.getCreateTime(), jobEntity.getDelay(), jobEntity.getGranularity());
             String[] tmpTableName = tableName.split(":");
@@ -84,9 +81,6 @@ public class HBaseServiceImpl implements HBaseService<JobEntity> {
             } catch (Exception e) {
                 logger.error("Upload data failing! Upload data to {}, the load path is {}.", currentTimeTableName, dataPath);
             }
-        } else {
-            logger.warn("the table {} has been not created.", tableName);
-        }
         return result;
     }
 

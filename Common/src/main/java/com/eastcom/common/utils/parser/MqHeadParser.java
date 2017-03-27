@@ -1,4 +1,4 @@
-package com.eastcom.aggregator.utils.parser;
+package com.eastcom.common.utils.parser;
 
 
 import java.util.ArrayList;

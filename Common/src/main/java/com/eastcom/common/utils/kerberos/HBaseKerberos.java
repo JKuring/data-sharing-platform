@@ -1,4 +1,4 @@
-package com.eastcom.dataloader.utils.kerberos;
+package com.eastcom.common.utils.kerberos;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.security.User;
@@ -28,9 +28,7 @@ public class HBaseKerberos {
             logger.info("kerberos configuration path: {}.", confDirPath);
             logger.debug("zookeeper.sasl.clientconfig: {}.", System.getProperty("zookeeper.sasl.clientconfig"));
             logger.debug("zookeeper.server.principal: {}.", System.getProperty("zookeeper.server.principal"));
-            // set zookeeper server pricipal
-//            System.setProperty("zookeeper.sasl.clientconfig", "client");
-//            System.setProperty("zookeeper.server.principal", "zookeeper/hadoop.hadoop_b.com");
+
             // jaas.configuration file, it is included in the client pakcage file
             System.setProperty("java.security.auth.login.config", confDirPath + "jaas.conf");
             // set the kerberos server info,point to the kerberosclient
@@ -40,7 +38,7 @@ public class HBaseKerberos {
             configuration.set("username.client.keytab.file", confDirPath + "user.keytab");
             // set "hbaseuser1" as the new create user name
             configuration.set("username.client.kerberos.principal", "wg_B@HADOOP_B.COM");
-//            configuration.set("hbase.zookeeper.quorum","shyp-bigdata-b-cn01,shyp-bigdata-b-cn04,shyp-bigdata-b-cn02,shyp-bigdata-b-cn05,shyp-bigdata-b-cn03");
+
             try {
                 String hostName = InetAddress.getLocalHost().getCanonicalHostName();
                 logger.debug("hadoop.security.authentication: {}.", configuration.get("hadoop.security.authentication"));

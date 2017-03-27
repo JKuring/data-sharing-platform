@@ -1,6 +1,8 @@
 package com.eastcom.datacontroller.service;
 
 
+import com.eastcom.common.utils.parser.JsonParser;
+import com.eastcom.common.utils.time.TimeTransform;
 import com.eastcom.datacontroller.bean.HBaseEntityImpl;
 import com.eastcom.datacontroller.bean.HBaseJobs;
 import com.eastcom.datacontroller.bean.JobEntityImpl;
@@ -9,8 +11,6 @@ import com.eastcom.datacontroller.interfaces.dto.JobEntity;
 import com.eastcom.datacontroller.interfaces.service.HBaseService;
 import com.eastcom.datacontroller.interfaces.service.JobService;
 import com.eastcom.datacontroller.interfaces.service.MessageService;
-import com.eastcom.datacontroller.utils.parser.JsonParser;
-import com.eastcom.datacontroller.utils.time.TimeTransform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -30,9 +30,6 @@ import java.util.Map;
 public class JobServiceImpl implements JobService<Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
-
-    @Autowired
-    private JsonParser jsonParser;
 
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
@@ -81,7 +78,7 @@ public class JobServiceImpl implements JobService<Message> {
         try {
             if (taskId != null) {
                 logger.info("start the task: {}.", taskId);
-                HBaseJobs hBaseJobs = jsonParser.parseJsonToObject(context.getBytes(), HBaseJobs.class);
+                HBaseJobs hBaseJobs = JsonParser.parseJsonToObject(context.getBytes(), HBaseJobs.class);
                 for (String tableName : hBaseJobs.getName()
                         ) {
                     final JobEntity jobEntity = new JobEntityImpl((String) headMap.get(MessageService.Header.jobName), getHBaseEntity(tableName, hBaseJobs));
@@ -129,13 +126,10 @@ public class JobServiceImpl implements JobService<Message> {
         try {
             if (taskId != null) {
                 logger.info("start the task: {}.", taskId);
-                HBaseJobs hBaseJobs = jsonParser.parseJsonToObject(context.getBytes(), HBaseJobs.class);
+                HBaseJobs hBaseJobs = JsonParser.parseJsonToObject(context.getBytes(), HBaseJobs.class);
                 for (String tableName : hBaseJobs.getName()
                         ) {
                     final JobEntityImpl jobEntity = new JobEntityImpl((String) headMap.get(MessageService.Header.jobName), getHBaseEntity(tableName, hBaseJobs));
-                    jobEntity.setJobStartTime(System.currentTimeMillis());
-                    jobEntity.setCreateTime(Long.parseLong(hBaseJobs.getTime()));
-                    jobEntity.setPreDays(hBaseJobs.getPreDays());
                     jobEntity.setGranularity(hBaseJobs.getGranularity());
                     logger.info("delete the table: {}.", tableName);
                     threadPoolTaskExecutor.execute(new Runnable() {
