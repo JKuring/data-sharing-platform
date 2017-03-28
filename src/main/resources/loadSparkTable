@@ -1,5 +1,5 @@
 {
-  "name": "spark_test",
+  "name": "spark_load_test",
   "confFile":"work/conf/load_control_hour.conf",
   "initCmdPath":"",
   "tplPath":"",

@@ -22,16 +22,7 @@
     <hbase:bean id="hbaseDaoImpl" class="com.eastcom.dataloader.dao.HBaseDaoImpl">
         <hbase:constructor-arg ref="hbaseConfiguration"/>
     </hbase:bean>
-    <!--自定义-->
-    <!--config-->
 
-    <!--ThreadPool-->
-    <hbase:bean id="taskExecutor"
-                class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-        <hbase:property name="corePoolSize" value="10"/>
-        <hbase:property name="keepAliveSeconds" value="300"/>
-        <hbase:property name="maxPoolSize" value="50"/>
-        <hbase:property name="queueCapacity" value="100"/>
-    </hbase:bean>
+
 
 </hbase:beans>

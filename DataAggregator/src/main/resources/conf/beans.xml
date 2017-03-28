@@ -5,13 +5,25 @@
                   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- load mq factory-->
-    <aggregator:import resource="classpath:conf/work/rabbitmq.xml"/>
+    <aggregator:import resource="classpath:work/rabbitmq.xml"/>
 
     <!-- task types -->
-    <aggregator:import resource="classpath:conf/work/task-types.xml"/>
+    <aggregator:import resource="classpath:work/task-types.xml"/>
+
+    <aggregator:import resource="classpath:spark/spark-conf.xml"/>
+
+    <aggregator:import resource="classpath:work/mq-bean-conf.xml"/>
 
     <context:component-scan base-package="com.eastcom"/>
 
-    <aggregator:import resource="classpath:conf/spark/spark-conf.xml"/>
+
+    <!--ThreadPool-->
+    <aggregator:bean id="taskExecutor"
+                class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <aggregator:property name="corePoolSize" value="10"/>
+        <aggregator:property name="keepAliveSeconds" value="300"/>
+        <aggregator:property name="maxPoolSize" value="50"/>
+        <aggregator:property name="queueCapacity" value="100"/>
+    </aggregator:bean>
 
 </aggregator:beans>

@@ -149,6 +149,7 @@
             <!--<scope>provided</scope>-->
         </dependency>
 
+        <!-- 带 scala 2.10.5 compile-->
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming_${scala.compat.version}</artifactId>

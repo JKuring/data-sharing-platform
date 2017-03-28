@@ -32,3 +32,7 @@
 1、测试框架，mq消息收发跑通：剩余aggregate的没有测
 2、由于后期需要移植job到数据库，所以load中的job剥离了table的耦合
 3、把utils的共用东西都放到了common中
+
+2017年3月28日
+
+1、测试 aggregate的sprk 测试完成

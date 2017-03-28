@@ -11,10 +11,20 @@ public class SparkJobs {
     private String tplPath;
     private String zookeeper_hosts;
     private String zookeeper_port;
-    private String appIdDir;
+    private String sessions;
     private String timeid;
+    private String appIdDir;
+    private String timeout;
 
     public SparkJobs() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getConfFile() {
@@ -57,12 +67,12 @@ public class SparkJobs {
         this.zookeeper_port = zookeeper_port;
     }
 
-    public String getAppIdDir() {
-        return appIdDir;
+    public String getSessions() {
+        return sessions;
     }
 
-    public void setAppIdDir(String appIdDir) {
-        this.appIdDir = appIdDir;
+    public void setSessions(String sessions) {
+        this.sessions = sessions;
     }
 
     public String getTimeid() {
@@ -73,7 +83,23 @@ public class SparkJobs {
         this.timeid = timeid;
     }
 
+    public String getAppIdDir() {
+        return appIdDir;
+    }
+
+    public void setAppIdDir(String appIdDir) {
+        this.appIdDir = appIdDir;
+    }
+
+    public String getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(String timeout) {
+        this.timeout = timeout;
+    }
+
     public String[] getParameters() {
-        return new String[]{confFile,initCmdPath,tplPath,zookeeper_hosts,zookeeper_port,appIdDir,timeid};
+        return new String[]{confFile,initCmdPath,tplPath,zookeeper_hosts,zookeeper_port,sessions,timeid,appIdDir,timeout};
     }
 }

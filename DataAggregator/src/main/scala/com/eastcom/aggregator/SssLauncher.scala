@@ -20,9 +20,9 @@ object SssLauncher {
   val logging = Logger.getLogger(getClass)
 
   def main(args: Array[String]): Unit = {
-    val sparkJobsParams = (for (i <- 0 until 7) yield args(i)).toArray
-    val mqConfParams = (for (i <- 7 until 13) yield args(i)).toArray
-    val headParams = (for (i <- 13 until args.length) yield args(i)).toArray
+    val sparkJobsParams = (for (i <- 0 until 9) yield args(i)).toArray
+    val mqConfParams = (for (i <- 9 until 15) yield args(i)).toArray
+    val headParams = (for (i <- 15 until args.length) yield args(i)).toArray
 
     // Read args from command line
 

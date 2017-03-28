@@ -1,5 +1,7 @@
 package com.eastcom.aggregator.driver
 
+import java.util.Date
+
 import akka.actor.Actor
 import com.eastcom.aggregator.bean.MQConf
 import com.eastcom.aggregator.confparser.SssNode

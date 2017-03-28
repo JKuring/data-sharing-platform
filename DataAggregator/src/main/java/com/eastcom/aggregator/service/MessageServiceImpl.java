@@ -16,7 +16,7 @@ public class MessageServiceImpl implements MessageListener {
     private static final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
 
     @Autowired
-    JobService jobService;
+    private JobService<Message> jobService;
 
 //    @Autowired
 //    private RabbitTemplate q_aggr_spark;
