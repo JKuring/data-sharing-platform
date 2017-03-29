@@ -9,12 +9,12 @@ public interface BaseEntity {
      *
      * @return null
      */
-    public String getName();
+    String getName();
 
     /**
      * get entity name;
      *
      * @param name entity name
      */
-    public void setName(String name);
+    void setName(String name);
 }

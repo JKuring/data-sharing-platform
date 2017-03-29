@@ -1,4 +1,4 @@
 {
   "name": "xdr_data:ps_gn_http_event_job",
-  "time":"#minuteminus(0)#"
+  "time": "#minuteminus(0)#"
 }

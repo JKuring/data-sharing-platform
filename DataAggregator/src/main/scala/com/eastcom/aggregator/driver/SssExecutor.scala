@@ -1,8 +1,8 @@
 package com.eastcom.aggregator.driver
 
 /**
- * Created by slp on 2016/2/23.
- */
+  * Created by slp on 2016/2/23.
+  */
 class SssExecutor(tplPath: String, timeid: String) extends Serializable {
   val stat_month = if (timeid.length >= 6) timeid.substring(0, 6) else timeid
   val stat_date = if (timeid.length >= 8) timeid.substring(0, 8) else timeid

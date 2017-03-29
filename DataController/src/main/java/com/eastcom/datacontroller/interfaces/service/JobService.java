@@ -6,20 +6,20 @@ package com.eastcom.datacontroller.interfaces.service;
 public interface JobService<T> extends BaseService<String> {
 
 
-    public void excute(T message);
+    void excute(T message);
 
     /**
      * create HBase table
      *
      * @param message
      */
-    public void doHBaseCreateTableJob(T message);
+    void doHBaseCreateTableJob(T message);
 
     /**
      * delete HBase table
      *
      * @param message
      */
-    public void doHBaseDeleteTableJob(T message);
+    void doHBaseDeleteTableJob(T message);
 
 }

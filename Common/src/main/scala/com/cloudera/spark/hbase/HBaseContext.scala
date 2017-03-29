@@ -638,7 +638,6 @@ class HBaseContext(@transient sc: SparkContext,
       val fs = FileSystem.newInstance(SparkHadoopUtil.get.conf)
 
 
-
       val inputStream = fs.open(new Path(tmpHdfsConfgFile))
       tmpHdfsConfiguration = new Configuration(false)
       tmpHdfsConfiguration.readFields(inputStream)

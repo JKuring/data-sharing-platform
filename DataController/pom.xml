@@ -20,8 +20,6 @@
     </dependencies>
 
 
-
-
     <build>
         <plugins>
 
@@ -34,7 +32,7 @@
                     <target>1.7</target>
                     <encoding>UTF-8</encoding>
                     <!--<compilerArguments>-->
-                        <!--<extdirs>${project.basedir}/../suyan-lib</extdirs>&lt;!&ndash;编译依赖指定外部lib&ndash;&gt;-->
+                    <!--<extdirs>${project.basedir}/../suyan-lib</extdirs>&lt;!&ndash;编译依赖指定外部lib&ndash;&gt;-->
                     <!--</compilerArguments>-->
                 </configuration>
             </plugin>

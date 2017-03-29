@@ -7,8 +7,8 @@ import com.eastcom.aggregator.exception.SssException
 import org.apache.spark.sql.hive.HiveContext
 
 /**
- * Created by slp on 2016/2/17.
- */
+  * Created by slp on 2016/2/17.
+  */
 class SssHiveOldExecutor(tplPath: String, timeid: String) extends SssExecutor(tplPath, timeid) {
   val sqlContext = Context.getContext(Context.hiveContext).asInstanceOf[HiveContext]
 

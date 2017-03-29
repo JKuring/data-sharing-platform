@@ -1,10 +1,10 @@
 {
   "name": "spark_load_test",
-  "confFile":"work/conf/load_control_hour.conf",
-  "initCmdPath":"",
-  "tplPath":"",
-  "zookeeper_hosts":"127.0.0.1",
-  "zookeeper_port":"12345",
-  "appIdDir":"tmp/test",
-  "timeid":"#minuteminus(15)#"
+  "confFile": "work/conf/load_control_hour.conf",
+  "initCmdPath": "",
+  "tplPath": "",
+  "zookeeper_hosts": "127.0.0.1",
+  "zookeeper_port": "12345",
+  "appIdDir": "tmp/test",
+  "timeid": "#minuteminus(15)#"
 }

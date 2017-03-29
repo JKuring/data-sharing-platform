@@ -18,16 +18,6 @@ public class MessageServiceImpl implements MessageListener {
     @Autowired
     private JobService<Message> jobService;
 
-//    @Autowired
-//    private RabbitTemplate q_aggr_spark;
-//
-//    @Autowired
-//    private void iniMQProducer(){
-//        String mq_name = q_aggr_spark.getClass().getName();
-//        CommonMeaageProducer.producerCollection.put(mq_name,q_aggr_spark);
-//        logger.info("put the {} mq handle to map",mq_name);
-//    }
-
     @Override
     public void onMessage(Message message) {
         jobService.excute(message);

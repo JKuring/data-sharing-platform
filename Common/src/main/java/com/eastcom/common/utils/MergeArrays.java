@@ -8,18 +8,18 @@ import java.util.List;
  */
 public class MergeArrays {
 
-    public static String[] merge(String[]... arrays ){
+    public static String[] merge(String[]... arrays) {
         int lengths = 0;
-        for (String[] a: arrays
-             ) {
-            lengths+=a.length;
+        for (String[] a : arrays
+                ) {
+            lengths += a.length;
         }
         List<String> tmp = new ArrayList<>();
 
-        for (String[] a: arrays
-             ) {
-            for (String s: a
-                 ) {
+        for (String[] a : arrays
+                ) {
+            for (String s : a
+                    ) {
                 tmp.add(s);
             }
         }

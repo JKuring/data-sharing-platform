@@ -19,7 +19,7 @@
 
     <!--ThreadPool-->
     <aggregator:bean id="taskExecutor"
-                class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+                     class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
         <aggregator:property name="corePoolSize" value="10"/>
         <aggregator:property name="keepAliveSeconds" value="300"/>
         <aggregator:property name="maxPoolSize" value="50"/>

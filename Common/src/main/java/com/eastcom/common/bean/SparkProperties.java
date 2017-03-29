@@ -9,18 +9,18 @@ import java.util.Map;
  */
 public class SparkProperties {
     private String master;
-    
+
     private String driver_memory;
-    
+
     private String num_executors;
-    
+
     private String executor_memory;
-    
+
     private String executor_cores;
-    
+
     private String clazz;
 
-    private Map<String,String> paropertiesMap;
+    private Map<String, String> paropertiesMap;
 
     public String getMaster() {
         return master;
@@ -78,19 +78,25 @@ public class SparkProperties {
         this.paropertiesMap = paropertiesMap;
     }
 
-    public String[] toStingArray(){
+    public String[] toStingArray() {
         List<String> parameters = new ArrayList<>();
-        parameters.add("--master"); parameters.add(master);
-        parameters.add("--driver-memory");parameters.add(driver_memory);
-        parameters.add("--num-executors");parameters.add(num_executors);
-        parameters.add("--executor-memory");parameters.add(executor_memory);
-        parameters.add("--executor-cores");parameters.add(executor_cores);
-        parameters.add("--class");parameters.add(clazz);
+        parameters.add("--master");
+        parameters.add(master);
+        parameters.add("--driver-memory");
+        parameters.add(driver_memory);
+        parameters.add("--num-executors");
+        parameters.add(num_executors);
+        parameters.add("--executor-memory");
+        parameters.add(executor_memory);
+        parameters.add("--executor-cores");
+        parameters.add(executor_cores);
+        parameters.add("--class");
+        parameters.add(clazz);
 
-        for (String key:paropertiesMap.keySet()
-             ) {
+        for (String key : paropertiesMap.keySet()
+                ) {
             parameters.add("--conf");
-            parameters.add(key+"="+paropertiesMap.get(key));
+            parameters.add(key + "=" + paropertiesMap.get(key));
         }
 
 //        for (String param: jobParameters

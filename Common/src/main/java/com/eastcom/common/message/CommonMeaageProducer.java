@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public class CommonMeaageProducer {
 
-    public static Map<String,RabbitTemplate> producerCollection = new HashMap<>();
+    public static Map<String, RabbitTemplate> producerCollection = new HashMap<>();
 
 }

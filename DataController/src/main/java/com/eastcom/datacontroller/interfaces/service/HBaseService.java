@@ -7,10 +7,10 @@ import java.io.IOException;
  */
 public interface HBaseService<T> extends BaseService<String> {
 
-    public void createTable(T hBaseEntity) throws IOException;
+    void createTable(T hBaseEntity) throws IOException;
 
-    public void delete(T hBaseEntity);
+    void delete(T hBaseEntity);
 
-    public boolean partition(T hBaseEntity);
+    boolean partition(T hBaseEntity);
 
 }

@@ -3,6 +3,7 @@ package com.eastcom.dataloader.service;
 import com.eastcom.Loader;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.bean.TaskType;
+import com.eastcom.common.interfaces.service.MessageService;
 import com.eastcom.common.message.CommonMeaageProducer;
 import com.eastcom.common.utils.MergeArrays;
 import com.eastcom.common.utils.parser.JsonParser;
@@ -12,7 +13,6 @@ import com.eastcom.dataloader.bean.SparkJobs;
 import com.eastcom.dataloader.interfaces.dto.JobEntity;
 import com.eastcom.dataloader.interfaces.service.HBaseService;
 import com.eastcom.dataloader.interfaces.service.JobService;
-import com.eastcom.dataloader.interfaces.service.MessageService;
 import org.apache.spark.deploy.SparkSubmit$;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,6 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +34,6 @@ import java.util.Map;
 public class JobServiceImpl implements JobService<Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
-
-    private ApplicationContext applicationContext;
 
     private final TaskType taskType;
 
@@ -91,7 +88,7 @@ public class JobServiceImpl implements JobService<Message> {
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
-            q_load.send(new Message(("execute the task: "+jobType+", exception: "+e.getMessage()).getBytes(),getMessageProperties(messageProperties, 1)));
+            q_load.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, 1)));
         }
     }
 
@@ -115,6 +112,7 @@ public class JobServiceImpl implements JobService<Message> {
                 String jobName = hBaseJobs.getName();
                 // ioc
                 final JobEntity jobEntity = (JobEntity) Loader.applicationContext.getBean(jobName);
+//                logger.debug("ABC"+JsonParser.parseObjectToJson(Loader.applicationContext.getBean("xdr_data:ps_gn_http_event_job")));
                 jobEntity.setJobStartTime(System.currentTimeMillis());
                 jobEntity.setCreateTime(TimeTransform.getTimestamp(hBaseJobs.getTime()));
                 logger.info("the loading job name: {}.", jobName);
@@ -148,7 +146,7 @@ public class JobServiceImpl implements JobService<Message> {
         }
     }
 
-    public void doSparkLoadDataJob(Message message){
+    public void doSparkLoadDataJob(Message message) {
         final MessageProperties messageProperties = message.getMessageProperties();
         Map<String, Object> headMap = messageProperties.getHeaders();
         final String taskId = (String) headMap.get(MessageService.Header.taskId);
@@ -169,7 +167,7 @@ public class JobServiceImpl implements JobService<Message> {
                             messageProperties.setHeader(startTime, System.currentTimeMillis());
                             try {
                                 // submit code to cluster
-                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toStingArray(),sparkJobs.getParameters()));
+                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toStingArray(), sparkJobs.getParameters()));
                             } catch (Exception e) {
                                 logger.error("Failed to load table, Exception: {}.", e.getMessage());
                                 result = 1;
@@ -188,7 +186,6 @@ public class JobServiceImpl implements JobService<Message> {
             logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
         }
     }
-
 
 
     private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {

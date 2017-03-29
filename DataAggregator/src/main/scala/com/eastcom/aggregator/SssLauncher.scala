@@ -64,10 +64,10 @@ object SssLauncher {
 
     val sohJob = SssConfParser.parser(confFile, initCmdPath, tplPath, sessions.toInt, timeid)
     val mqConf = MqConfParser.parser(userName, password, host, port, exchange, routingKey)
-//    val headProperties = MqHeadParser.getHeadProperties(headParams)
+    //    val headProperties = MqHeadParser.getHeadProperties(headParams)
 
     val system = ActorSystem(s"spark-sql-job-${timeid}")
-    val masterRouter = system.actorOf(Props(new SssDriver(sohJob,mqConf,headParams)), "sssMasterRouter")
+    val masterRouter = system.actorOf(Props(new SssDriver(sohJob, mqConf, headParams)), "sssMasterRouter")
     masterRouter ! SssStartMessage
 
     val timeoutMS = timeout.toLong * 60 * 1000

@@ -1,7 +1,6 @@
 package com.eastcom.common.utils;
 
 
-
 import com.eastcom.common.utils.kerberos.HBaseKerberos;
 import com.eastcom.common.utils.time.TimeTransform;
 import org.apache.hadoop.conf.Configuration;

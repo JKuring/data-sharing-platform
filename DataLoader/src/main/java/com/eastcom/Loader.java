@@ -14,7 +14,6 @@ public class Loader {
 
     public static void main(String[] args) throws InterruptedException {
         applicationContext = new ClassPathXmlApplicationContext("classpath:beans.xml");
-        System.out.println("ok");
         Thread.currentThread().join();
     }
 }

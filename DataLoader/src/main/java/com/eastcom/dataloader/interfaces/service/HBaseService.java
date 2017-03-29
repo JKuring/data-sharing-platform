@@ -5,12 +5,12 @@ package com.eastcom.dataloader.interfaces.service;
  */
 public interface HBaseService<T> extends BaseService<String> {
 
-    public void createTable(T hBaseEntity);
+    void createTable(T hBaseEntity);
 
-    public void delete(T hBaseEntity);
+    void delete(T hBaseEntity);
 
-    public boolean createSchedulerJob(T jobEntity);
+    boolean createSchedulerJob(T jobEntity);
 
-    public boolean partition(T hBaseEntity);
+    boolean partition(T hBaseEntity);
 
 }

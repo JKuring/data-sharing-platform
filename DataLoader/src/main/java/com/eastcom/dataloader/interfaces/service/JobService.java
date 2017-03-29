@@ -6,7 +6,7 @@ package com.eastcom.dataloader.interfaces.service;
 public interface JobService<T> extends BaseService<String> {
 
 
-    public void excute(T message);
+    void excute(T message);
 
     /**
      * T
@@ -14,24 +14,23 @@ public interface JobService<T> extends BaseService<String> {
      *
      * @param message
      */
-    public void doHBaseCreateTableJob(T message);
+    void doHBaseCreateTableJob(T message);
 
     /**
      * delete HBase table
      *
      * @param message
      */
-    public void doHBaseDeleteTableJob(T message);
+    void doHBaseDeleteTableJob(T message);
 
     /**
      * @param message
      */
-    public void doHBaseLoadDataJob(T message);
+    void doHBaseLoadDataJob(T message);
 
     /**
-     *
      * @param message
      */
-    public void doSparkLoadDataJob(T message);
+    void doSparkLoadDataJob(T message);
 
 }

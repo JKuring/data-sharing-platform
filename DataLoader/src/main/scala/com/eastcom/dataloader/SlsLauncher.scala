@@ -13,8 +13,8 @@ import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
- * Created by slp on 2016/2/17.
- */
+  * Created by slp on 2016/2/17.
+  */
 object SlsLauncher {
   private final val logging = Logger.getLogger(getClass)
 
@@ -37,11 +37,11 @@ object SlsLauncher {
 
     // 配置spark configuration
     val sparkConf = new SparkConf()
-//    sparkConf.setMaster(confProperties.getMaster)
-//    val properties = confProperties.getParopertiesMap
-//    for (key <- properties){
-//      sparkConf.set(key,properties.get(key))
-//    }
+    //    sparkConf.setMaster(confProperties.getMaster)
+    //    val properties = confProperties.getParopertiesMap
+    //    for (key <- properties){
+    //      sparkConf.set(key,properties.get(key))
+    //    }
     // 创建SparkContext
     val sc = new SparkContext(sparkConf.setAppName(s"spark load job at time=${timeid}"))
 
@@ -66,7 +66,7 @@ object SlsLauncher {
 
     // 记录application id 使用yarn 日志来查找
     //    {
-//    val appIdRdd = sc.parallelize(List(sc.applicationId), 1)
+    //    val appIdRdd = sc.parallelize(List(sc.applicationId), 1)
     //      appIdRdd.saveAsTextFile(appIdDir)
     //    }
 

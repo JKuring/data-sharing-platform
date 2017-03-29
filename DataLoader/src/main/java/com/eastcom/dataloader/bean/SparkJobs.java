@@ -82,6 +82,6 @@ public class SparkJobs {
     }
 
     public String[] getParameters() {
-        return new String[]{name,confFile,initCmdPath,tplPath,zookeeper_hosts,zookeeper_port,appIdDir,timeid};
+        return new String[]{name, confFile, initCmdPath, tplPath, zookeeper_hosts, zookeeper_port, appIdDir, timeid};
     }
 }

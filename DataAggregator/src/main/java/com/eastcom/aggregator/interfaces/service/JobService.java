@@ -8,16 +8,17 @@ public interface JobService<T> extends BaseService<String> {
 
     /**
      * executor
+     *
      * @param message
      */
-    public void excute(T message);
+    void excute(T message);
 
     /**
      * aggregate hive data to hive by spark sql
      *
      * @param message
      */
-    public void doSparkAggregationJob(T message);
+    void doSparkAggregationJob(T message);
 
 
 }

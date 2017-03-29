@@ -9,8 +9,8 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.hive.HiveContext
 
 /**
- * Created by slp on 2016/2/17.
- */
+  * Created by slp on 2016/2/17.
+  */
 class SlsHbaseExecutor(tplPath: String) extends SlsExecutor(tplPath) {
   val sqlContext = Context.getContext(Context.hiveContext).asInstanceOf[HiveContext]
   val hbaseContext = Context.getContext(Context.hbaseContext).asInstanceOf[HBaseContext]

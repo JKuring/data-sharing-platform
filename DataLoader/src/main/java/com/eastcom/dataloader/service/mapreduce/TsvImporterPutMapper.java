@@ -208,7 +208,7 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
                 }
             }
 
-            if (part == null ||  part.length() == 0 )
+            if (part == null || part.length() == 0)
                 return null;
 
             part = keyStrategyChange(part, i);

@@ -11,8 +11,8 @@ import org.apache.log4j.Logger
 import org.apache.spark.SparkContext
 
 /**
- * Created by slp on 2016/2/18.
- */
+  * Created by slp on 2016/2/18.
+  */
 class SlsManager(tplPath: String) extends Actor {
   val logging = Logger.getLogger(getClass)
   val hiveExecutor = new SlsHiveExecutor(tplPath)

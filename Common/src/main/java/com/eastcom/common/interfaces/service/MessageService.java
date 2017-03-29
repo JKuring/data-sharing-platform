@@ -1,4 +1,4 @@
-package com.eastcom.aggregator.interfaces.service;
+package com.eastcom.common.interfaces.service;
 
 /**
  * Created by linghang.kong on 2017/3/9.

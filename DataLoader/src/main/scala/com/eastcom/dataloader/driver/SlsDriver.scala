@@ -19,9 +19,9 @@ import scala.collection.mutable.ListBuffer
 
 
 /**
- * Created by slp on 2016/2/18.
+  * Created by slp on 2016/2/18.
   * job 的驱动器
- */
+  */
 class SlsDriver(val job: SlsJob) extends Thread with Actor {
   val logging = Logger.getLogger(getClass)
   val sqlContext = Context.getContext(Context.hiveContext).asInstanceOf[HiveContext]
@@ -42,7 +42,7 @@ class SlsDriver(val job: SlsJob) extends Thread with Actor {
 
         val n = x._2;
         try {
-//          timeOld = 0
+          //          timeOld = 0
           val fileStatuss = if (n.getTimeOld <= 0) {
             FileHelper.listStatus(fs, new Path(n.getXdrDir), new NonTmpFileFilter())
           } else {

@@ -9,61 +9,61 @@ import java.util.Map;
  */
 public interface JobEntity<T> extends BaseEntity {
 
-    public String getId();
+    String getId();
 
-    public void setId(String id);
+    void setId(String id);
 
-    public String getJobName();
+    String getJobName();
 
-    public void setJobName(String jobName);
+    void setJobName(String jobName);
 
-    public long getCreateTime();
+    long getCreateTime();
 
-    public void setCreateTime(long createTime);
+    void setCreateTime(long createTime);
 
-    public long getStartTime();
+    long getStartTime();
 
-    public void setStartTime(long startTime);
+    void setStartTime(long startTime);
 
-    public boolean isStatus();
+    boolean isStatus();
 
-    public void setStatus(boolean status);
+    void setStatus(boolean status);
 
-    public T getTableEntity();
+    T getTableEntity();
 
-    public void setTableEntity(T tableEntity);
+    void setTableEntity(T tableEntity);
 
-    public long getStopTime();
+    long getStopTime();
 
-    public void setStopTime(long stopTime);
+    void setStopTime(long stopTime);
 
-    public long getJobStartTime();
+    long getJobStartTime();
 
-    public void setJobStartTime(long jobStartTime);
+    void setJobStartTime(long jobStartTime);
 
-    public long getJobEndTime();
+    long getJobEndTime();
 
-    public void setJobEndTime(long jobEndTime);
+    void setJobEndTime(long jobEndTime);
 
-    public int getPreDays();
+    int getPreDays();
 
-    public void setPreDays(int preDays);
+    void setPreDays(int preDays);
 
-    public String getDataPath();
+    String getDataPath();
 
-    public void setDataPath(String dataPath);
+    void setDataPath(String dataPath);
 
-    public String getGranularity();
+    String getGranularity();
 
-    public void setGranularity(String granularity);
+    void setGranularity(String granularity);
 
-    public int getDelay();
+    int getDelay();
 
-    public void setDelay(int delay);
+    void setDelay(int delay);
 
-    public Map<String, String> getPropertiesMap();
+    Map<String, String> getPropertiesMap();
 
-    public void setPropertiesMap(Map<String, String> propertiesMap);
+    void setPropertiesMap(Map<String, String> propertiesMap);
 
-    public void addSystemProperties(Configuration configuration);
+    void addSystemProperties(Configuration configuration);
 }

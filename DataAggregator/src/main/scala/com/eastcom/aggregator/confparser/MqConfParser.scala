@@ -7,7 +7,7 @@ import com.eastcom.aggregator.bean.MQConf
   */
 object MqConfParser {
 
-  def parser(userName:String, password:String, host:String, port:String, exchange:String, routingKey:String):MQConf ={
+  def parser(userName: String, password: String, host: String, port: String, exchange: String, routingKey: String): MQConf = {
     val mqconf = new MQConf()
     mqconf.setUserName(userName)
     mqconf.setPassword(password)

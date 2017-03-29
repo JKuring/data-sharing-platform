@@ -4,13 +4,13 @@ import com.eastcom.dataloader.context.Context
 
 
 /**
- * Created by slp on 2016/2/18.
+  * Created by slp on 2016/2/18.
   * 实例化任务模板
- */
+  */
 class SlsNode(config: String) {
   //    hive | spark_odc_data | d_enl_radius | p_hour| /jc_xngl/rawdata/cdr/radius/#{time yyyyMMdd}/#{time HH} | /jc_xngl/spark_odc_data/ext_d_enl_radius | | 1 | | 0
   private val Array(type_, schema, table, partitions, xdrDir, loadingDir, loadedDir, loadFileOnce, tplname_, timeold_) = config.split("\\s*\\|\\s*", -1)
-//hivespark_odc_datad_enl_radiusp_hour/jc_xngl/rawdata/cdr/radius/#{time yyyyMMdd}/#{time HH}/jc_xngl/spark_odc_data/ext_d_enl_radius10
+  //hivespark_odc_datad_enl_radiusp_hour/jc_xngl/rawdata/cdr/radius/#{time yyyyMMdd}/#{time HH}/jc_xngl/spark_odc_data/ext_d_enl_radius10
   private val tplname = (if (tplname_ != "") tplname_ else table).replaceAll(":", "_")
   private val timeold = try {
     timeold_.toInt

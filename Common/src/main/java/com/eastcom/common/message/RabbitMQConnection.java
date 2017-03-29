@@ -40,7 +40,7 @@ public class RabbitMQConnection {
         factory.setPort(this.port);
     }
 
-    public Connection createConnection(){
+    public Connection createConnection() {
         try {
             return factory.newConnection();
         } catch (IOException e) {
@@ -51,11 +51,11 @@ public class RabbitMQConnection {
         return null;
     }
 
-    public void deleteConnection(Connection connection){
+    public void deleteConnection(Connection connection) {
         try {
             connection.close();
         } catch (IOException e) {
-            logger.error("can not close the connection, exception: {}.",e.getMessage());
+            logger.error("can not close the connection, exception: {}.", e.getMessage());
         }
     }
 
@@ -67,7 +67,7 @@ public class RabbitMQConnection {
 
     public static void main(String[] args) throws IOException, TimeoutException {
 
-        RabbitMQConnection rabbitMQConnection = new RabbitMQConnection("admin","admin","10.221.247.50",20100);
+        RabbitMQConnection rabbitMQConnection = new RabbitMQConnection("admin", "admin", "10.221.247.50", 20100);
         Connection connection = rabbitMQConnection.createConnection();
         Channel channel = connection.createChannel();
         String exchangeName = "KONG_TEST";

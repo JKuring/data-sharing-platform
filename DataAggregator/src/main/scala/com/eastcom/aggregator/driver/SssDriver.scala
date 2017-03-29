@@ -13,11 +13,11 @@ import org.apache.spark.sql.hive.HiveContext
 import scala.collection.mutable.ListBuffer
 
 /**
- * Created by slp on 2016/2/18.
- */
+  * Created by slp on 2016/2/18.
+  */
 class SssDriver(val job: SssJob, val mqConf: MQConf, val headProperties: Array[String]) extends Thread with Actor {
   val sqlContext = Context.getContext(Context.hiveContext).asInstanceOf[HiveContext]
-  val workerRouter = context.actorOf(Props(new SssManager(job.tplPath, job.timeid,mqConf,headProperties)).withRouter(RoundRobinRouter(job.sessions)), "sssWorkerRouter")
+  val workerRouter = context.actorOf(Props(new SssManager(job.tplPath, job.timeid, mqConf, headProperties)).withRouter(RoundRobinRouter(job.sessions)), "sssWorkerRouter")
 
   val finishNodes = ListBuffer[String]()
   var tplNodes = Map[String, SssNode]()

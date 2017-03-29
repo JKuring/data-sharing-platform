@@ -9,7 +9,7 @@ import org.apache.hadoop.fs.FileStatus
   */
 sealed trait SlsMessage
 
-case class SlsJobMessage(node: SlsNode,fileStatus: Array[FileStatus]) extends SlsMessage
+case class SlsJobMessage(node: SlsNode, fileStatus: Array[FileStatus]) extends SlsMessage
 
 case class SlsStartMessage() extends SlsMessage
 

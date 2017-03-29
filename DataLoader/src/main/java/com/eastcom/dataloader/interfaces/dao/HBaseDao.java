@@ -14,14 +14,14 @@ import java.io.IOException;
  */
 public interface HBaseDao<T> extends BaseDao<T>, Closeable {
 
-    public void createTable(TableName tableName, String[] columns, int version, int ttl, String compressionType,
-                            String coprocessor, String splitPolicy, File spiltKeysFile) throws IOException;
+    void createTable(TableName tableName, String[] columns, int version, int ttl, String compressionType,
+                     String coprocessor, String splitPolicy, File spiltKeysFile) throws IOException;
 
-    public Configuration getConfiguration();
+    Configuration getConfiguration();
 
-    public void setConfiguration(Configuration configuration);
+    void setConfiguration(Configuration configuration);
 
-    public Connection getConnection();
+    Connection getConnection();
 
-    public void setConnection(Connection connection);
+    void setConnection(Connection connection);
 }

@@ -8,36 +8,36 @@ import java.io.File;
 public interface HBaseEntity extends BaseEntity {
 
 
-    public String[] getColumns();
+    String[] getColumns();
 
-    public void setColumns(String[] columns);
+    void setColumns(String[] columns);
 
-    public int getVersion();
+    int getVersion();
 
-    public void setVersion(int version);
+    void setVersion(int version);
 
-    public String getCompressionType();
+    String getCompressionType();
 
-    public void setCompressionType(String compressionType);
+    void setCompressionType(String compressionType);
 
-    public int getTtl();
+    int getTtl();
 
-    public void setTtl(int ttl);
+    void setTtl(int ttl);
 
-    public String getSplitPolicy();
+    String getSplitPolicy();
 
-    public void setSplitPolicy(String splitPolicy);
+    void setSplitPolicy(String splitPolicy);
 
-    public File getSpiltKeysFile();
+    File getSpiltKeysFile();
 
-    public void setSpiltKeysFile(File spiltKeysFile);
+    void setSpiltKeysFile(File spiltKeysFile);
 
-    public String getCoprocessor();
+    String getCoprocessor();
 
-    public void setCoprocessor(String coprocessor);
+    void setCoprocessor(String coprocessor);
 
-    public boolean isCurrentIsCreated();
+    boolean isCurrentIsCreated();
 
-    public void setCurrentIsCreated(boolean currentIsCreated);
+    void setCurrentIsCreated(boolean currentIsCreated);
 
 }

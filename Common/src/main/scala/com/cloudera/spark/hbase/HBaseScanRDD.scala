@@ -20,8 +20,8 @@ class HBaseScanRDD(sc: SparkContext,
                    @transient scan: Scan,
                    configBroadcast: Broadcast[SerializableWritable[Configuration]])
   extends RDD[(Array[Byte], java.util.List[(Array[Byte], Array[Byte], Array[Byte])])](sc, Nil)
-  with SparkHadoopMapReduceUtilExtended
-  with Logging {
+    with SparkHadoopMapReduceUtilExtended
+    with Logging {
 
   ///
   @transient val jobTransient = new Job(configBroadcast.value.value, "ExampleRead");
@@ -143,4 +143,5 @@ class HBaseScanRDD(sc: SparkContext,
 
     override def hashCode(): Int = 41 * (41 + rddId) + index
   }
+
 }

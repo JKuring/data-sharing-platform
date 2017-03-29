@@ -58,29 +58,29 @@ public class HBaseServiceImpl implements HBaseService<JobEntity> {
     public boolean partition(JobEntity jobEntity) {
         boolean result = false;
         String tableName = (String) jobEntity.getTableEntity();
-            Map tableParametters = jobEntity.getPropertiesMap();
-            String currentTimeTableName = HBaseUtils.getCurrentTimeTableName(tableName, jobEntity.getCreateTime(), jobEntity.getDelay(), jobEntity.getGranularity());
-            String[] tmpTableName = tableName.split(":");
-            String tmpPath = HBaseUtils.getCurrentTimePath(jobEntity.getCreateTime(), jobEntity.getDelay());
-            String dataPath = HADOOP_USER_ROOT + jobEntity.getDataPath() + tmpPath;
-            String outputPath = tableParametters.get("importtsv.bulk.output1") + "/" + tmpTableName[0] + "_" + tmpTableName[1];
-            tableParametters.put("importtsv.bulk.output", outputPath + tmpPath);
+        Map tableParametters = jobEntity.getPropertiesMap();
+        String currentTimeTableName = HBaseUtils.getCurrentTimeTableName(tableName, jobEntity.getCreateTime(), jobEntity.getDelay(), jobEntity.getGranularity());
+        String[] tmpTableName = tableName.split(":");
+        String tmpPath = HBaseUtils.getCurrentTimePath(jobEntity.getCreateTime(), jobEntity.getDelay());
+        String dataPath = HADOOP_USER_ROOT + jobEntity.getDataPath() + tmpPath;
+        String outputPath = tableParametters.get("importtsv.bulk.output1") + "/" + tmpTableName[0] + "_" + tmpTableName[1];
+        tableParametters.put("importtsv.bulk.output", outputPath + tmpPath);
 
-            //加载为系统参数
-            jobEntity.addSystemProperties(hBaseDao.getConfiguration());
-            try {
-                if (!HBaseUtils.createHFile(hBaseDao.getConfiguration(), currentTimeTableName, dataPath)) {
-                    logger.error("Upload data failing! Please clean dirty data, and try again later.");
-                } else {
-                    Path hdfsPath = new Path(outputPath + tmpPath);
-                    if (HBaseUtils.upLoadHFile(hBaseDao.getConfiguration(),
-                            (HTable) hBaseDao.getConnection().getTable(TableName.valueOf(currentTimeTableName)), hdfsPath)) {
-                        result = true;
-                    }
+        //加载为系统参数
+        jobEntity.addSystemProperties(hBaseDao.getConfiguration());
+        try {
+            if (!HBaseUtils.createHFile(hBaseDao.getConfiguration(), currentTimeTableName, dataPath)) {
+                logger.error("Upload data failing! Please clean dirty data, and try again later.");
+            } else {
+                Path hdfsPath = new Path(outputPath + tmpPath);
+                if (HBaseUtils.upLoadHFile(hBaseDao.getConfiguration(),
+                        (HTable) hBaseDao.getConnection().getTable(TableName.valueOf(currentTimeTableName)), hdfsPath)) {
+                    result = true;
                 }
-            } catch (Exception e) {
-                logger.error("Upload data failing! Upload data to {}, the load path is {}.", currentTimeTableName, dataPath);
             }
+        } catch (Exception e) {
+            logger.error("Upload data failing! Upload data to {}, the load path is {}.", currentTimeTableName, dataPath);
+        }
         return result;
     }
 

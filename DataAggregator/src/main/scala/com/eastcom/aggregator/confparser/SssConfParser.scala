@@ -5,8 +5,8 @@ import com.eastcom.aggregator.context.Context
 import org.apache.spark.SparkContext
 
 /**
- * Created by slp on 2016/2/18.
- */
+  * Created by slp on 2016/2/18.
+  */
 object SssConfParser {
   //hive|spark_odc_data|a_dm_re_ba_sbc_d||p_day|
   //hive|spark_odc_data|a_dm_re_ba_ippbx_d||p_day|

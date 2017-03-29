@@ -1,6 +1,8 @@
 package com.eastcom.datacontroller.service;
 
 
+import com.eastcom.common.bean.TaskType;
+import com.eastcom.common.interfaces.service.MessageService;
 import com.eastcom.common.utils.parser.JsonParser;
 import com.eastcom.common.utils.time.TimeTransform;
 import com.eastcom.datacontroller.bean.HBaseEntityImpl;
@@ -10,7 +12,6 @@ import com.eastcom.datacontroller.interfaces.dto.HBaseEntity;
 import com.eastcom.datacontroller.interfaces.dto.JobEntity;
 import com.eastcom.datacontroller.interfaces.service.HBaseService;
 import com.eastcom.datacontroller.interfaces.service.JobService;
-import com.eastcom.datacontroller.interfaces.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -32,6 +33,9 @@ public class JobServiceImpl implements JobService<Message> {
     private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
 
     @Autowired
+    private TaskType taskType;
+
+    @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Autowired
@@ -39,6 +43,9 @@ public class JobServiceImpl implements JobService<Message> {
 
     @Autowired
     private RabbitTemplate q_maint;
+
+    private static final String CREATE_TABLE_HBASE = "CREATE_TABLE_HBASE";
+    private static final String DELETE_TABLE_HBASE = "DELETE_TABLE_HBASE";
 
 
     // back head
@@ -53,20 +60,24 @@ public class JobServiceImpl implements JobService<Message> {
         Map<String, Object> header = messageProperties.getHeaders();
         try {
             jobType = (Integer) header.get(MessageService.Header.jobType);
-            switch (jobType) {
-                case MessageService.TaskType.CREATE_TABLE_HBASE:
-                    doHBaseCreateTableJob(message);
-                    break;
-                case MessageService.TaskType.DELETE_TABLE_HBASE:
-                    doHBaseDeleteTableJob(message);
-                    break;
-                default:
-                    throw new Exception("invalid task type!");
+            Map<Integer, String> taskTypesMap = taskType.getTaskTypesMap();
+            if (taskTypesMap.containsKey(jobType)) {
+                String taskType = taskTypesMap.get(jobType);
+                switch (taskType) {
+                    case CREATE_TABLE_HBASE:
+                        doHBaseCreateTableJob(message);
+                        break;
+                    case DELETE_TABLE_HBASE:
+                        doHBaseDeleteTableJob(message);
+                        break;
+                    default:
+                        throw new Exception("invalid task type!");
+                }
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
             messageProperties.setHeader(status, 1);
-            q_maint.send(new Message(("execute the task: "+jobType+", exception: "+e.getMessage()).getBytes(),message.getMessageProperties()));
+            q_maint.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), message.getMessageProperties()));
         }
     }
 

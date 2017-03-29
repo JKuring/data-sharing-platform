@@ -37,7 +37,7 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
         try {
           exec(node)
           channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, 2), "".getBytes)
-        }catch {
+        } catch {
           case e: Exception => {
             Thread.sleep(30000l)
             exec(node)

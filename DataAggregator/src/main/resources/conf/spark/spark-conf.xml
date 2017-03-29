@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <spark:beans xmlns:spark="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <spark:bean id="sparkConf" class="com.eastcom.common.bean.SparkProperties">
         <spark:property name="master" value="yarn-cluster"/>
+        <spark:property name="driver_memory" value="2G"/>
+        <spark:property name="num_executors" value="30"/>
+        <spark:property name="executor_memory" value="2G"/>
+        <spark:property name="executor_cores" value="1"/>
+        <spark:property name="clazz" value="com.eastcom.aggregator.SssLauncher"/>
         <spark:property name="paropertiesMap">
             <spark:map key-type="java.lang.String" value-type="java.lang.String">
-                <spark:entry key="spark.executor.cores" value="1"/>
-                <spark:entry key="spark.executor.memory" value="10G"/>
-                <spark:entry key="spark.dynamicAllocation.maxExecutors" value="30"/>
-                <spark:entry key="spark.driver.memory" value="8G"/>
                 <spark:entry key="spark.task.maxFailures" value="10"/>
                 <spark:entry key="spark.storage.memoryFraction" value="0.3"/>
                 <spark:entry key="spark.shuffle.memoryFraction" value="0.2"/>

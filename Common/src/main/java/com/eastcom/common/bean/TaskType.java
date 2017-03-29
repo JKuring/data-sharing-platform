@@ -7,7 +7,7 @@ import java.util.Map;
  */
 public class TaskType {
     private int TaskNum;
-    private Map<Integer,String> TaskTypesMap;
+    private Map<Integer, String> TaskTypesMap;
 
     public int getTaskNum() {
         return TaskNum;

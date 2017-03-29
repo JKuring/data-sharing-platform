@@ -3,9 +3,9 @@ package com.eastcom.aggregator.service;
 import com.eastcom.aggregator.bean.MQConf;
 import com.eastcom.aggregator.bean.SparkJobs;
 import com.eastcom.aggregator.interfaces.service.JobService;
-import com.eastcom.aggregator.interfaces.service.MessageService;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.bean.TaskType;
+import com.eastcom.common.interfaces.service.MessageService;
 import com.eastcom.common.message.CommonMeaageProducer;
 import com.eastcom.common.utils.MergeArrays;
 import com.eastcom.common.utils.parser.JsonParser;
@@ -81,7 +81,7 @@ public class JobServiceImpl implements JobService<Message> {
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
-            q_aggr_spark.send(new Message(("execute the task: "+jobType+", exception: "+e.getMessage()).getBytes(),getMessageProperties(messageProperties, 1)));
+            q_aggr_spark.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, 1)));
         }
     }
 
@@ -105,7 +105,7 @@ public class JobServiceImpl implements JobService<Message> {
                             String appId = null;
                             messageProperties.setHeader(startTime, System.currentTimeMillis());
                             try {
-                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toStingArray(),sparkJobs.getParameters(),mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap)));
+                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toStingArray(), sparkJobs.getParameters(), mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap)));
                             } catch (Exception e) {
                                 logger.error("Failed to aggregate table, Exception: {}.", e.getMessage());
                                 result = 1;

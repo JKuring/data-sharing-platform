@@ -1,12 +1,12 @@
 {
   "name": "spark_aggr_test",
-  "confFile":"work/conf/agg_hour.conf",
-  "initCmdPath":"",
-  "tplPath":"",
-  "zookeeper_hosts":"127.0.0.1",
-  "zookeeper_port":"12345",
-  "sessions":"",
-  "timeid":"#minuteminus(15)#",
-  "appIdDir":"tmp/test",
-  "timeout":"0"
+  "confFile": "work/conf/agg_hour.conf",
+  "initCmdPath": "",
+  "tplPath": "",
+  "zookeeper_hosts": "127.0.0.1",
+  "zookeeper_port": "12345",
+  "sessions": "",
+  "timeid": "#minuteminus(15)#",
+  "appIdDir": "tmp/test",
+  "timeout": "0"
 }

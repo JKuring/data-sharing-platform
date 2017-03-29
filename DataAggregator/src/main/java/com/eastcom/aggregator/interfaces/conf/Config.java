@@ -9,5 +9,5 @@ public interface Config<T> {
      *
      * @return
      */
-    public T getConfiguration(T t);
+    T getConfiguration(T t);
 }

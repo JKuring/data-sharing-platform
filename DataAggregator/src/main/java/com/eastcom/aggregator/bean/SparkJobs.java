@@ -100,6 +100,6 @@ public class SparkJobs {
     }
 
     public String[] getParameters() {
-        return new String[]{confFile,initCmdPath,tplPath,zookeeper_hosts,zookeeper_port,sessions,timeid,appIdDir,timeout};
+        return new String[]{confFile, initCmdPath, tplPath, zookeeper_hosts, zookeeper_port, sessions, timeid, appIdDir, timeout};
     }
 }

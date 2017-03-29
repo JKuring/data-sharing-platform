@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <hbase:beans xmlns:hbase="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-    
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
 
     <!--gn-->
     <hbase:bean id="xdr_data:ps_gn_pdp_event_job" class="com.eastcom.dataloader.bean.JobEntityImpl">

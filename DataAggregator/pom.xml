@@ -19,10 +19,10 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.scala-lang</groupId>-->
-            <!--<artifactId>scala-library</artifactId>-->
-            <!--<version>${scala.version}</version>-->
-            <!--&lt;!&ndash;<scope>provided</scope>&ndash;&gt;-->
+        <!--<groupId>org.scala-lang</groupId>-->
+        <!--<artifactId>scala-library</artifactId>-->
+        <!--<version>${scala.version}</version>-->
+        <!--&lt;!&ndash;<scope>provided</scope>&ndash;&gt;-->
         <!--</dependency>-->
     </dependencies>
 
@@ -151,5 +151,5 @@
         </resources>
 
     </build>
-    
+
 </project>

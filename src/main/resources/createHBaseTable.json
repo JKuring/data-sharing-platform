@@ -1,14 +1,16 @@
 {
   "name": "xdr_data:ps_gn_http_event",
-  "time":"#minuteminus(0)#",
-  "columns": ["cf"],
+  "time": "#minuteminus(0)#",
+  "columns": [
+    "cf"
+  ],
   "version": "1",
   "compressionType": "snappy",
   "ttl": "5184000",
   "splitPolicy": "org.apache.hadoop.hbase.regionserver.ConstantSizeRegionSplitPolicy",
   "spiltKeysFile": "classpath:hbase/table/splits.txt",
   "coprocessor": "org.apache.hadoop.hbase.coprocessor.AggregateImplementation",
-  "preDays":"3",
-  "granularity":"D"
+  "preDays": "3",
+  "granularity": "D"
 }
 

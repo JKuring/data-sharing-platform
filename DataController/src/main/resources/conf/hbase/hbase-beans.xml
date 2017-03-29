@@ -12,7 +12,8 @@
 
 
     <!--配置必须为classpath的根目录下，否则配置加载会出现异常问题-->
-    <hdp:configuration resources="classpath:core-site.xml,classpath:hbase-site.xml,classpath:hdfs-site.xml,classpath:ssl-client.xml"/>
+    <hdp:configuration
+            resources="classpath:core-site.xml,classpath:hbase-site.xml,classpath:hdfs-site.xml,classpath:ssl-client.xml"/>
 
     <hdp:hbase-configuration configuration-ref="hadoopConfiguration"/>
 
@@ -33,8 +34,8 @@
     </hbase:bean>
 
     <!--<hbase:bean id="taskExecutor" class="java.util.concurrent.ThreadPoolExecutor">-->
-        <!--<hbase:constructor-arg name=""-->
-        <!---->
+    <!--<hbase:constructor-arg name=""-->
+    <!---->
     <!--</hbase:bean>-->
 
 </hbase:beans>

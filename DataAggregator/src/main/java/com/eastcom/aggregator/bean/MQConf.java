@@ -60,6 +60,6 @@ public class MQConf {
     }
 
     public String[] getParameters() {
-        return new String[]{userName,password,host,port,exchange,routingKey};
+        return new String[]{userName, password, host, port, exchange, routingKey};
     }
 }

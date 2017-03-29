@@ -2,5 +2,5 @@
 {
   "name": "xdr_data:ps_gn_http_event",
   "ttl": "5184000",
-  "granularity":"D"
+  "granularity": "D"
 }

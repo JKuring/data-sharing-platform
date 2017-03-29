@@ -8,11 +8,8 @@ import org.apache.hadoop.fs.PathFilter;
  */
 public class NonTmpFileFilter implements PathFilter {
 
-	@Override
-	public boolean accept(Path path) {
-		if (path.getName().endsWith(".tmp")) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean accept(Path path) {
+        return !path.getName().endsWith(".tmp");
+    }
 }

@@ -8,8 +8,8 @@ import org.apache.log4j.Logger
 import org.apache.spark.sql.hive.HiveContext
 
 /**
- * Created by slp on 2016/2/17.
- */
+  * Created by slp on 2016/2/17.
+  */
 class SssHiveExecutor(tplPath: String, timeid: String) extends SssExecutor(tplPath, timeid) {
 
   val logging = Logger.getLogger(getClass)

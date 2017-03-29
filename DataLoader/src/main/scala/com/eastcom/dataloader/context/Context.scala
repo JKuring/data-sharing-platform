@@ -13,8 +13,8 @@ import org.joda.time.format.DateTimeFormat._
 import scala.collection.mutable.Map
 
 /**
- * Created by slp on 2016/2/18.
- */
+  * Created by slp on 2016/2/18.
+  */
 object Context {
   val hiveContext = "hiveContext"
   val hbaseContext = "hbaseContext"
@@ -38,6 +38,7 @@ object Context {
 
   /**
     * 获取sql模板，然后替换模板中所有时间有关的参数
+    *
     * @param tplPath
     * @param tplname
     * @param node
@@ -75,17 +76,17 @@ object Context {
   }
 
   /**
-   * 支持对模板中时间参数做替换,格式如下:
-   *
-   * #{time [加减操作(+/-) 数字+时间单位] [时间格式]}
-   *
-   * 其中[]为可选,时间格式默认为yyyy-MM-dd HH:mm:ss
-   *
-   * #{time}
-   * #{time+15m}
-   * #{time-15m}
-   * #{time+1d yyyyMMdd}
-   */
+    * 支持对模板中时间参数做替换,格式如下:
+    *
+    * #{time [加减操作(+/-) 数字+时间单位] [时间格式]}
+    *
+    * 其中[]为可选,时间格式默认为yyyy-MM-dd HH:mm:ss
+    *
+    * #{time}
+    * #{time+15m}
+    * #{time-15m}
+    * #{time+1d yyyyMMdd}
+    */
   def replaceTimePlaceHolder(template: String): String = {
     try {
       var tpl = template
@@ -117,7 +118,7 @@ object Context {
               case "d" => dateTime = dateTime.plusDays(amount)
               case "M" => dateTime = dateTime.plusMonths(amount)
               case "y" => dateTime = dateTime.plusYears(amount)
-              case _   => dateTime = dateTime.plusMinutes(amount)
+              case _ => dateTime = dateTime.plusMinutes(amount)
             }
           } else if ("-".equals(operator)) {
             unit match {
@@ -126,7 +127,7 @@ object Context {
               case "d" => dateTime = dateTime.minusDays(amount)
               case "M" => dateTime = dateTime.minusMonths(amount)
               case "y" => dateTime = dateTime.minusYears(amount)
-              case _   => dateTime = dateTime.minusMinutes(amount)
+              case _ => dateTime = dateTime.minusMinutes(amount)
             }
           }
         }
