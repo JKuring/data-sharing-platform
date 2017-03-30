@@ -28,4 +28,8 @@
         <loader:property name="queueCapacity" value="100"/>
     </loader:bean>
 
+    <loader:bean id="confService" class="java.lang.String" scope="singleton">
+        <loader:constructor-arg name="original" value="http://192.168.1.27:8081/config/getByCiCode?ciCode="/>
+    </loader:bean>
+
 </loader:beans>

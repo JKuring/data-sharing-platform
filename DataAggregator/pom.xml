@@ -102,7 +102,7 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib</classpathPrefix>
                             <!--主类-->
-                            <mainClass>com.eastcom.Loader</mainClass>
+                            <mainClass>com.eastcom.Aggregator</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

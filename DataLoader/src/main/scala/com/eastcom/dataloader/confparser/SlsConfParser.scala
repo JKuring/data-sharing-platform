@@ -8,7 +8,6 @@ import org.apache.spark.SparkContext
   */
 object SlsConfParser {
   def parser(confFile: String, initCmdPath: String, tplPath: String): SlsJob = {
-    // 传入这俩参数貌似没什么用
     val job = new SlsJob(initCmdPath, tplPath)
     // 获取 spark context
     val sc = Context.getContext(Context.sparkContext).asInstanceOf[SparkContext]

@@ -1,14 +1,15 @@
 package com.eastcom.dataloader.service;
 
-import com.eastcom.Loader;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.interfaces.service.MessageService;
 import com.eastcom.common.message.CommonMeaageProducer;
+import com.eastcom.common.service.HttpRequestUtils;
 import com.eastcom.common.utils.MergeArrays;
 import com.eastcom.common.utils.parser.JsonParser;
 import com.eastcom.common.utils.time.TimeTransform;
 import com.eastcom.dataloader.bean.HBaseJobs;
+import com.eastcom.dataloader.bean.JobEntityImpl;
 import com.eastcom.dataloader.bean.SparkJobs;
 import com.eastcom.dataloader.interfaces.dto.JobEntity;
 import com.eastcom.dataloader.interfaces.service.HBaseService;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 
@@ -47,6 +49,10 @@ public class JobServiceImpl implements JobService<Message> {
 
     @Autowired
     private RabbitTemplate q_load;
+
+    @Resource(name = "confService")
+    private
+    String confService;
 
     // back head
     private String startTime = "startTime";
@@ -109,34 +115,39 @@ public class JobServiceImpl implements JobService<Message> {
             if (taskId != null) {
                 logger.info("start the task: {}.", taskId);
                 HBaseJobs hBaseJobs = JsonParser.parseJsonToObject(context.getBytes(), HBaseJobs.class);
+                assert hBaseJobs != null: "Can't find the job!";
                 String jobName = hBaseJobs.getName();
-                // ioc
-                final JobEntity jobEntity = (JobEntity) Loader.applicationContext.getBean(jobName);
-//                logger.debug("ABC"+JsonParser.parseObjectToJson(Loader.applicationContext.getBean("xdr_data:ps_gn_http_event_job")));
-                jobEntity.setJobStartTime(System.currentTimeMillis());
-                jobEntity.setCreateTime(TimeTransform.getTimestamp(hBaseJobs.getTime()));
-                logger.info("the loading job name: {}.", jobName);
-                try {
-                    threadPoolTaskExecutor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            logger.debug("start the thread: {}.", Thread.currentThread().getName());
-                            int result = 2;
-                            messageProperties.setHeader(startTime, System.currentTimeMillis());
-                            try {
-                                hbaseService.partition(jobEntity);
-                                //关闭任务
-                                jobEntity.setJobEndTime(System.currentTimeMillis());
-                            } catch (Exception e) {
-                                logger.error("Failed to load table, Exception: {}.", e.getMessage());
-                                result = 1;
-                            } finally {
-                                q_load.send(new Message(("Finish loading task: " + jobEntity.getId()).getBytes(), getMessageProperties(messageProperties, result)));
+                for (String name : jobName.split("\\|")
+                        ) {
+                    // http
+                    final JobEntity jobEntity = HttpRequestUtils.httpGet(confService+name, JobEntityImpl.class);
+                    // ioc
+//                    final JobEntity jobEntity = (JobEntity) Loader.applicationContext.getBean(jobName);
+                    jobEntity.setJobStartTime(System.currentTimeMillis());
+                    jobEntity.setCreateTime(TimeTransform.getTimestamp(hBaseJobs.getTime()));
+                    logger.info("the loading job name: {}.", jobName);
+                    try {
+                        threadPoolTaskExecutor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                logger.debug("start the thread: {}.", Thread.currentThread().getName());
+                                int result = 2;
+                                messageProperties.setHeader(startTime, System.currentTimeMillis());
+                                try {
+                                    hbaseService.partition(jobEntity);
+                                    //关闭任务
+                                    jobEntity.setJobEndTime(System.currentTimeMillis());
+                                } catch (Exception e) {
+                                    logger.error("Failed to load table, Exception: {}.", e.getMessage());
+                                    result = 1;
+                                } finally {
+                                    q_load.send(new Message(("Finish loading task: " + jobEntity.getId()).getBytes(), getMessageProperties(messageProperties, result)));
+                                }
                             }
-                        }
-                    });
-                } catch (Exception e) {
-                    logger.debug("Thread pool: {}.", e.getMessage());
+                        });
+                    } catch (Exception e) {
+                        logger.debug("Thread pool: {}.", e.getMessage());
+                    }
                 }
             } else {
                 throw new Exception("Unable task!");

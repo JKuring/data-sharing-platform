@@ -17,6 +17,5 @@
     "importtsv.separator": "\\|",
     "create.table": "no"
   },
-  "tableEntity": "xdr_data:ps_gn_http_event",
-  "name": "xdr_data:ps_gn_http_event_job"
+  "tableEntity": "xdr_data:ps_gn_http_event"
 }

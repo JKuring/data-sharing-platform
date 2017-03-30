@@ -37,6 +37,10 @@ public class JobEntityImpl implements JobEntity<String> {
 
     private String tableEntity;
 
+    private JobEntityImpl(){
+
+    }
+
     public JobEntityImpl(String jobName, String tableEntity) {
         this.jobName = jobName;
         this.tableEntity = tableEntity;

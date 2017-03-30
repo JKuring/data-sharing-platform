@@ -1,4 +1,4 @@
-package com.eastcom.common.serviec;
+package com.eastcom.common.service;
 
 
 import com.eastcom.common.utils.parser.JsonParser;
@@ -53,7 +53,11 @@ public class HttpRequestUtils {
                     /**读取服务器返回过来的json字符串数据**/
                     str = EntityUtils.toString(result.getEntity());
                     /**把json字符串转换成json对象**/
-                    object = JsonParser.parseJsonToObject(str.getBytes(), clazz);
+                    if (!clazz.isInstance("")) {
+                        object = JsonParser.parseJsonToObject(str.getBytes(), clazz);
+                    }else {
+                        return (T) str;
+                    }
                 } catch (Exception e) {
                     logger.error("post请求提交失败:" + url, e);
                 }
@@ -75,10 +79,18 @@ public class HttpRequestUtils {
         T object = null;
         //get请求返回结果
         try {
+//            HttpPost method = new HttpPost(url);
             DefaultHttpClient client = new DefaultHttpClient();
             //发送get请求
             HttpGet request = new HttpGet(url);
             HttpResponse response = client.execute(request);
+
+//            request.setHeader("content-type","application/json;charset=UTF-8");
+
+//            StringEntity entity = new StringEntity("", "utf-8");
+//            entity.setContentEncoding("UTF-8");
+//            entity.setContentType("application/json");
+//            method.setEntity(entity);
 
             /**请求发送成功，并得到响应**/
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
