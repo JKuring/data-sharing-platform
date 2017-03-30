@@ -20,16 +20,16 @@ object SssLauncher {
   val logging = Logger.getLogger(getClass)
 
   def main(args: Array[String]): Unit = {
-    val sparkJobsParams = (for (i <- 0 until 9) yield args(i)).toArray
-    val mqConfParams = (for (i <- 9 until 15) yield args(i)).toArray
-    val headParams = (for (i <- 15 until args.length) yield args(i)).toArray
+    val sparkJobsParams = (for (i <- 0 until 8) yield args(i)).toArray
+    val mqConfParams = (for (i <- 8 until 14) yield args(i)).toArray
+    val headParams = (for (i <- 14 until args.length) yield args(i)).toArray
 
     // Read args from command line
 
     if (args == null || args.isEmpty) {
       throw new SssException("parameter list ( confFile , udfPath , tplPath , zookeeper_hosts , zookeeper_port , sessions , timeid , timeout(min))")
     }
-    val Array(confFile, initCmdPath, tplPath, zookeeper_hosts, zookeeper_port, sessions, timeid, appIdDir, timeout) = sparkJobsParams
+    val Array(confFile, initCmdPath, tplPath, zookeeper_hosts, zookeeper_port, sessions, timeid, timeout) = sparkJobsParams
     val Array(userName, password, host, port, exchange, routingKey) = mqConfParams
 
     // 配置spark configuration
@@ -57,10 +57,12 @@ object SssLauncher {
       Context.+(Context.hbaseContext, hbaseContext)
     }
 
-    {
-      val appIdRdd = sc.parallelize(List(sc.applicationId), 1)
-      appIdRdd.saveAsTextFile(appIdDir)
-    }
+
+    // 去掉 脚本所用的日志方式
+//    {
+//      val appIdRdd = sc.parallelize(List(sc.applicationId), 1)
+//      appIdRdd.saveAsTextFile(appIdDir)
+//    }
 
     val sohJob = SssConfParser.parser(confFile, initCmdPath, tplPath, sessions.toInt, timeid)
     val mqConf = MqConfParser.parser(userName, password, host, port, exchange, routingKey)

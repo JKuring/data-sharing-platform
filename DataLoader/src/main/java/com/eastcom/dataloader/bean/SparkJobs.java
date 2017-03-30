@@ -11,7 +11,6 @@ public class SparkJobs {
     private String tplPath;
     private String zookeeper_hosts;
     private String zookeeper_port;
-    private String appIdDir;
     private String timeid;
 
     public SparkJobs() {
@@ -65,14 +64,6 @@ public class SparkJobs {
         this.zookeeper_port = zookeeper_port;
     }
 
-    public String getAppIdDir() {
-        return appIdDir;
-    }
-
-    public void setAppIdDir(String appIdDir) {
-        this.appIdDir = appIdDir;
-    }
-
     public String getTimeid() {
         return timeid;
     }
@@ -82,6 +73,6 @@ public class SparkJobs {
     }
 
     public String[] getParameters() {
-        return new String[]{name, confFile, initCmdPath, tplPath, zookeeper_hosts, zookeeper_port, appIdDir, timeid};
+        return new String[]{name, confFile, initCmdPath, tplPath, zookeeper_hosts, zookeeper_port, timeid};
     }
 }

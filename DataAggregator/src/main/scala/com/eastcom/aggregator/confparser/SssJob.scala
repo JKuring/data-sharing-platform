@@ -8,6 +8,7 @@ import scala.collection.mutable.Map
   * Created by slp on 2016/2/18.
   */
 class SssJob(val initCmdPath: String, val tplPath: String, val sessions: Int, val timeid: String) {
+
   val nodesMap = Map[String, SssNodeList]()
 
   def +(node: SssNode): Unit = {

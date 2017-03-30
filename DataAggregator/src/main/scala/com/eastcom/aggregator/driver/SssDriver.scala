@@ -7,6 +7,7 @@ import com.eastcom.aggregator.confparser.{SssJob, SssNode}
 import com.eastcom.aggregator.context.Context
 import com.eastcom.aggregator.exception.SssException
 import com.eastcom.aggregator.message.{SssJobMessage, SssResultMessage, SssStartMessage}
+import com.eastcom.common.service.HttpRequestUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.hive.HiveContext
 
@@ -71,6 +72,14 @@ class SssDriver(val job: SssJob, val mqConf: MQConf, val headProperties: Array[S
     //        sqlContext.sql(udf)
     //      }
     //    })
+
+    // http
+    HttpRequestUtils.httpGet(job.initCmdPath, "".getClass).split("\\n").foreach(udf => {
+      if (udf != null && udf.trim != "" && !udf.startsWith("#")) {
+        sqlContext.sql(udf)
+      }
+    })
+
   }
 
   override def receive: Actor.Receive = {

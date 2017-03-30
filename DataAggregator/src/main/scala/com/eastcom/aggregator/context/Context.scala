@@ -5,8 +5,8 @@ import java.util.regex.Pattern
 import java.util.regex.Pattern._
 
 import com.eastcom.aggregator.confparser.SssNode
+import com.eastcom.common.service.HttpRequestUtils
 import org.apache.log4j.Logger
-import org.apache.spark.SparkContext
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat._
 
@@ -34,8 +34,11 @@ object Context {
   }
 
   def getSql(tplPath: String, tplname: String, stat_month: String, stat_date: String, stat_hour: String, stat_minute: String, timeid: String, node: SssNode): String = {
-    val sc = Context.getContext(Context.sparkContext).asInstanceOf[SparkContext]
-    var tpl: String = sc.textFile(s"${tplPath}/${tplname}.tpl").collect().mkString(" \n")
+//    val sc = Context.getContext(Context.sparkContext).asInstanceOf[SparkContext]
+//    var tpl: String = sc.textFile(s"${tplPath}/${tplname}.tpl").collect().mkString(" \n")
+
+    var tpl: String = HttpRequestUtils.httpGet(tplPath, "".getClass).split("\\n").mkString(" \n")
+
     tpl = tpl.replaceAll("#\\{stat_month\\}", stat_month)
       .replaceAll("#\\{stat_day\\}", stat_date)
       .replaceAll("#\\{stat_hour\\}", stat_hour)

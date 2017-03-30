@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 
@@ -49,10 +48,10 @@ public class JobServiceImpl implements JobService<Message> {
 
     @Autowired
     private RabbitTemplate q_load;
-
-    @Resource(name = "confService")
-    private
-    String confService;
+//
+//    @Resource(name = "confService")
+//    private
+//    String confService;
 
     // back head
     private String startTime = "startTime";
@@ -120,7 +119,7 @@ public class JobServiceImpl implements JobService<Message> {
                 for (String name : jobName.split("\\|")
                         ) {
                     // http
-                    final JobEntity jobEntity = HttpRequestUtils.httpGet(confService+name, JobEntityImpl.class);
+                    final JobEntity jobEntity = HttpRequestUtils.httpGet(name, JobEntityImpl.class);
                     // ioc
 //                    final JobEntity jobEntity = (JobEntity) Loader.applicationContext.getBean(jobName);
                     jobEntity.setJobStartTime(System.currentTimeMillis());
