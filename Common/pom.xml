@@ -20,6 +20,7 @@
         <!--</dependency>-->
     </dependencies>
 
+    <!--common 作为依赖包 也需该插件先编译成包 后被当作lib依赖-->
     <build>
         <plugins>
             <plugin>

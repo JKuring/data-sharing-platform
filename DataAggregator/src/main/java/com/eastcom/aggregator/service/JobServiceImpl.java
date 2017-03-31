@@ -6,7 +6,6 @@ import com.eastcom.aggregator.interfaces.service.JobService;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.interfaces.service.MessageService;
-import com.eastcom.common.message.CommonMeaageProducer;
 import com.eastcom.common.utils.MergeArrays;
 import com.eastcom.common.utils.parser.JsonParser;
 import com.eastcom.common.utils.parser.MqHeadParser;
@@ -39,7 +38,6 @@ public class JobServiceImpl implements JobService<Message> {
 
     private final MQConf mqConf;
 
-    private Map<String, RabbitTemplate> mqProducer = CommonMeaageProducer.producerCollection;
 
     @Autowired
     private RabbitTemplate q_aggr_spark;
@@ -105,7 +103,7 @@ public class JobServiceImpl implements JobService<Message> {
                             String appId = null;
                             messageProperties.setHeader(startTime, System.currentTimeMillis());
                             try {
-                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toStingArray(), sparkJobs.getParameters(), mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap)));
+                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters(), mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap)));
                             } catch (Exception e) {
                                 logger.error("Failed to aggregate table, Exception: {}.", e.getMessage());
                                 result = 1;

@@ -67,9 +67,9 @@
                     <target>1.7</target>
                     <encoding>UTF-8</encoding>
                     <!--外部依赖-->
-                    <!--<compilerArguments>-->
-                    <!--<extdirs>${project.basedir}/../suyan-lib</extdirs>&lt;!&ndash;编译依赖指定外部lib&ndash;&gt;-->
-                    <!--</compilerArguments>-->
+                    <compilerArguments>
+                        <extdirs>${project.basedir}/../suyan-lib</extdirs><!--编译依赖指定外部lib-->
+                    </compilerArguments>
                 </configuration>
             </plugin>
 

@@ -78,7 +78,7 @@ public class SparkProperties {
         this.paropertiesMap = paropertiesMap;
     }
 
-    public String[] toStingArray() {
+    public String[] toParametersArray() {
         List<String> parameters = new ArrayList<>();
         parameters.add("--master");
         parameters.add(master);

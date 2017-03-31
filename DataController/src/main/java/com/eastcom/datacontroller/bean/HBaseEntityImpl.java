@@ -8,18 +8,10 @@ import java.util.Arrays;
 
 /**
  * Created by linghang.kong on 2016/12/21.
+ * the class implement {@link HBaseEntity},
+ * it is some information of hbase table that describe the table construct.
  */
 public class HBaseEntityImpl implements HBaseEntity {
-
-
-//    private String importtsv_columns;
-//    private String importtsv_bulk_output;
-//    private String importtsv_mapper_class;
-//    private String mapreduce_map_memory_mb;
-//    private String hbase_client_retries_number;
-//    private String importtsv_rowkey_indexs; // row key 的位置
-//    private String importtsv_rowkey_strategies; // 操作
-//    private String importtsv_rowkey_encrypts; // 加密
 
     private String name;
     private String[] columns;

@@ -4,6 +4,7 @@ import java.io.File;
 
 /**
  * Created by linghang.kong on 2017/3/9.
+ * Described the hbase job by parse a message from MQ Service.
  */
 public class HBaseJobs {
 

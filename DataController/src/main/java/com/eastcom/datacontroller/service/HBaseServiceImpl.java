@@ -23,15 +23,9 @@ public class HBaseServiceImpl implements HBaseService<JobEntity> {
 
     private static final Logger logger = LoggerFactory.getLogger(HBaseServiceImpl.class);
 
-    private static final String HADOOP_USER_ROOT_PATH = "hadoop.user.root.path";
     private final long addition = 24 * 60 * 60 * 1000;
-    private String HADOOP_USER_ROOT;
     @Autowired
     private HBaseDaoImpl hBaseDao;
-
-    public HBaseServiceImpl() {
-        this.HADOOP_USER_ROOT = System.getProperty(HADOOP_USER_ROOT_PATH, "/");
-    }
 
     @Override
     public String getName() {

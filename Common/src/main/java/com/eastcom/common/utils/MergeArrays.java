@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Created by linghang.kong on 2017/3/23.
+ * Merge some arrays to one
  */
 public class MergeArrays {
 

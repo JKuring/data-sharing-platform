@@ -2,3 +2,26 @@
   "name": "xdr_data:ps_gn_http_event_job",
   "time": "#minuteminus(0)#"
 }
+//
+//{
+//  "id": null,
+//  "jobName": "xdr_data:ps_gn_http_event_job",
+//  "status": false,
+//  "dataPath": "/rawdata/xdr/gn/gn_http",
+//  "granularity": "D",
+//  "delay": 900,
+//  "propertiesMap": {
+//    "importtsv.class.name": "org.apache.hadoop.hbase.mapreduce.ImportTsv",
+//    "importtsv.columns": "HBASE_ROW_KEY,cf",
+//    "importtsv.bulk.output1": "/tmp/hbload",
+//    "importtsv.mapper.class": "com.example.service.mapreduce.TsvImporterPutMapper",
+//    "mapreduce.map.memory.mb": "2048",
+//    "hbase.client.retries.number": "10",
+//    "importtsv.rowkey.indexs": "3,16",
+//    "importtsv.rowkey.strategies": "r,ls|yyyyMMddHHmm",
+//    "importtsv.rowkey.encrypts": ",",
+//    "importtsv.separator": "\\|",
+//    "create.table": "no"
+//  },
+//  "tableEntity": "xdr_data:ps_gn_http_event"
+//}

@@ -4,6 +4,7 @@ import java.io.File;
 
 /**
  * Created by linghang.kong on 2016/12/22.
+ * hbase table construct
  */
 public interface HBaseEntity extends BaseEntity {
 

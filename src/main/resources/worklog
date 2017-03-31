@@ -36,3 +36,9 @@
 2017年3月28日
 
 1、测试 aggregate的spark 测试完成
+
+2017年3月31日
+
+1、添加 hbase 加载的动态指定ImportTsv类，实现动态加载，但是不支持热加载
+ 并且使用spring的ToolRunner，初步好处是可以ioc，但是为了动态没有用到 已测试
+2、编写自己的MyImport类，实现MR的过滤

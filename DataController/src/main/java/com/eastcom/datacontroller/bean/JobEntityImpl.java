@@ -14,6 +14,7 @@ import java.util.Map;
 
 /**
  * Created by linghang.kong on 2016/12/27.
+ * It can be done that the constructed job implement {@link JobEntity}.
  */
 @Component
 @Scope("prototype")

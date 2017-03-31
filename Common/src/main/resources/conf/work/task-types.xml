@@ -26,23 +26,6 @@
                 <tasks:entry value="PUBLISH_HIVE_FTP" key="401"/>
                 <tasks:entry value="PUBLISH_HIVE_ESB" key="402"/>
                 <tasks:entry value="PUBLISH_HIVE_HBASE" key="403"/>
-
-                <!--<tasks:entry value="CREATE_DIR_HDFS" key="100"/>-->
-                <!--<tasks:entry value="CREATE_TABLE_HBASE" key="101"/>-->
-                <!--<tasks:entry value="DELETE_DIR_HDFS" key="110"/>-->
-                <!--<tasks:entry value="DELETE_TABLE_HBASE" key="111"/>-->
-                <!--<tasks:entry value="DELETE_TABLE_HIVE" key="112"/>-->
-                <!--<tasks:entry value="LOAD_TABLE_IMPALA" key="200"/>-->
-                <!--<tasks:entry value="LOAD_TABLE_SPARK" key="201"/>-->
-                <!--<tasks:entry value="LOAD_TABLE_HBASE" key="203"/>-->
-                <!--<tasks:entry value="RDBMS_TABLE_HIVE" key="220"/>-->
-                <!--<tasks:entry value="RDBMS_TABLE_HDFS" key="221"/>-->
-                <!--<tasks:entry value="AGGREGATE_IMPALA" key="301"/>-->
-                <!--<tasks:entry value="AGGREGATE_HIVE" key="302"/>-->
-                <!--<tasks:entry value="AGGREGATE_SPARK" key="303"/>-->
-                <!--<tasks:entry value="PUBLISH_HIVE_FTP" key="401"/>-->
-                <!--<tasks:entry value="PUBLISH_HIVE_ESB" key="402"/>-->
-                <!--<tasks:entry value="PUBLISH_HIVE_HBASE" key="403"/>-->
             </tasks:map>
         </tasks:property>
     </tasks:bean>

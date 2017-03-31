@@ -4,6 +4,7 @@ import java.util.Map;
 
 /**
  * Created by linghang.kong on 2017/3/23.
+ * The parser of task type
  */
 public class TaskType {
     private int TaskNum;

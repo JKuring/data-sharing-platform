@@ -180,7 +180,7 @@ public class JobServiceImpl implements JobService<Message> {
         hbaseEntity.setSplitPolicy(hbaseJobs.getSplitPolicy());
         hbaseEntity.setSpiltKeysFile(hbaseJobs.getSpiltKeysFile());
         hbaseEntity.setCoprocessor(hbaseJobs.getCoprocessor());
-        logger.debug("HBaseEntity: {}.", hbaseEntity.toString());
+        logger.debug(hbaseEntity.toString());
         return hbaseEntity;
     }
 

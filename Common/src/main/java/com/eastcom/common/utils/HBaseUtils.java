@@ -9,12 +9,11 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.client.HConnection;
 import org.apache.hadoop.hbase.client.HConnectionManager;
 import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.mapreduce.ImportTsv;
 import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.mapreduce.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.hadoop.mapreduce.ToolRunner;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,86 +31,20 @@ public class HBaseUtils {
 
     public static boolean createHFile(Configuration configuration, String tableName, String loadingPath) throws Exception {
         logger.info("Upload data to {}, the load path is {}.", tableName, loadingPath);
-        logger.info("importtsv.columns: {}.", configuration.get("importtsv.columns"));
-        logger.info("importtsv.bulk.output: {}.", configuration.get("importtsv.bulk.output"));
-        Job job = ImportTsv.createSubmittableJob(configuration, new String[]{tableName, loadingPath});
-        return job.waitForCompletion(true);
-        // 对输出参数的校验
-//        ImportTsv importTsv = new ImportTsv();
-//        importTsv.setConf(configuration);
-//        String[] otherArgs = (new GenericOptionsParser(importTsv.getConf(), new String[]{tableName, loadingPath})).getRemainingArgs();
-//        if(otherArgs.length < 2) {
-//            logger.error("Wrong number of arguments: " + otherArgs.length);
-//            return result;
-//        } else {
-//            if (null == importTsv.getConf().get("importtsv.mapper.class")) {
-//                String[] timstamp = importTsv.getConf().getStrings("importtsv.columns");
-//                if (timstamp == null) {
-//                    logger.error("No columns specified. Please specify with -Dimporttsv.columns=...");
-//                    return result;
-//                }
-//
-//                int rowkeysFound = 0;
-//                String[] job = timstamp;
-//                int attrKeysFound = timstamp.length;
-//
-//                int arr$;
-//                for (arr$ = 0; arr$ < attrKeysFound; ++arr$) {
-//                    String len$ = job[arr$];
-//                    if (len$.equals("HBASE_ROW_KEY")) {
-//                        ++rowkeysFound;
-//                    }
-//                }
-//
-//                if (rowkeysFound != 1) {
-//                    logger.error("Must specify exactly one column as HBASE_ROW_KEY");
-//                    return result;
-//                }
-//
-//                int var12 = 0;
-//                String[] var14 = timstamp;
-//                arr$ = timstamp.length;
-//
-//                int var16;
-//                for (var16 = 0; var16 < arr$; ++var16) {
-//                    String i$ = var14[var16];
-//                    if (i$.equals("HBASE_TS_KEY")) {
-//                        ++var12;
-//                    }
-//                }
-//
-//                if (var12 > 1) {
-//                    logger.error("Must specify at most one column as HBASE_TS_KEY");
-//                    return result;
-//                }
-//
-//                attrKeysFound = 0;
-//                String[] var15 = timstamp;
-//                var16 = timstamp.length;
-//
-//                for (int var17 = 0; var17 < var16; ++var17) {
-//                    String col = var15[var17];
-//                    if (col.equals("HBASE_ATTRIBUTES_KEY")) {
-//                        ++attrKeysFound;
-//                    }
-//                }
-//
-//                if (attrKeysFound > 1) {
-//                    logger.error("Must specify at most one column as HBASE_ATTRIBUTES_KEY");
-//                    return result;
-//                }
-//
-//                if (timstamp.length - (rowkeysFound + var12 + attrKeysFound) < 1) {
-//                    logger.error("One or more columns in addition to the row key and timestamp(optional) are required");
-//                    return result;
-//                }
-//            }
-//
-//            long var11 = importTsv.getConf().getLong("importtsv.timestamp", System.currentTimeMillis());
-//            importTsv.getConf().setLong("importtsv.timestamp", var11);
-//            Job var13 = ImportTsv.createSubmittableJob(importTsv.getConf(), otherArgs);
-//            return var13.waitForCompletion(true) ? true : false;
-//        }
+        logger.info("class.name: {}.", configuration.get("importtsv.class.name"));
+        logger.info("columns: {}.", configuration.get("importtsv.columns"));
+        logger.info("bulk.output: {}.", configuration.get("importtsv.bulk.output"));
+        // original class in the hbase server package
+//        Job job = ImportTsv.createSubmittableJob(configuration, new String[]{tableName, loadingPath});
+//        return job.waitForCompletion(true);
+
+        // spring tool runner
+        ToolRunner toolRunner = new ToolRunner();
+        toolRunner.setConfiguration(configuration);
+        toolRunner.setToolClass(configuration.get("importtsv.class.name"));
+        toolRunner.setArguments(new String[]{tableName, loadingPath});
+        toolRunner.setCloseFs(true);
+        return toolRunner.call() <= 0;
     }
 
     public static boolean upLoadHFile(Configuration configuration, HTable table, Path dataPath) {

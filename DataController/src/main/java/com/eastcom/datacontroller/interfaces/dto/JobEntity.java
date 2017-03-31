@@ -65,5 +65,10 @@ public interface JobEntity<T> extends BaseEntity {
 
     void setPropertiesMap(Map<String, String> propertiesMap);
 
+    /**
+     * add system parameter to the {@link Configuration}
+     *
+     * @param configuration
+     */
     void addSystemProperties(Configuration configuration);
 }
