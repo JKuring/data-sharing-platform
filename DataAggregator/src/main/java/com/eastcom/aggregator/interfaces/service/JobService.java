@@ -13,12 +13,5 @@ public interface JobService<T> extends BaseService<String> {
      */
     void excute(T message);
 
-    /**
-     * aggregate hive data to hive by spark sql
-     *
-     * @param message
-     */
-    void doSparkAggregationJob(T message);
-
 
 }

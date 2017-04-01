@@ -27,7 +27,7 @@ object SlsLauncher {
     //      $ZOOKEEPER_PORT \
     //      $APP_ID_DIR \ app id 存放hdfs上的位置，应用于yarn logs 用
     //      $TIME 一个推后15分钟的格式化时间 20170317100027
-    val Array(confFile, initCmdPath, tplPath, zookeeper_hosts, zookeeper_port, appIdDir, timeid) =
+    val Array(confFile, initCmdPath, tplPath, zookeeper_hosts, zookeeper_port, timeid) =
     if (args == null || args.isEmpty) {
       //        Array("D:\\ideaProjects\\soh\\src\\main\\config\\load.conf","D:\\ideaProjects\\soh\\src\\main\\config\\init.conf", "D:\\ideaProjects\\soh\\src\\main\\config\\tpl", "hadoop01,hadoop03,hadoop04", "2181", "10", "201602221500")
       throw new SlsException("parameter list ( confFile , udfPath , tplPath , zookeeper_hosts , zookeeper_port)")

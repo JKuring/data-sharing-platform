@@ -4,6 +4,7 @@ import java.util.Date
 
 import akka.actor.{Actor, Props}
 import akka.routing.RoundRobinRouter
+import com.eastcom.common.service.HttpRequestUtils
 import com.eastcom.dataloader.confparser.{SlsJob, SlsNode}
 import com.eastcom.dataloader.context.Context
 import com.eastcom.dataloader.exception.SlsException
@@ -78,8 +79,15 @@ class SlsDriver(val job: SlsJob) extends Thread with Actor {
     if (sqlContext == null) {
       throw new SlsException("HiveContext is not initialization!!!")
     }
-    val sc = Context.getContext(Context.sparkContext).asInstanceOf[SparkContext]
-    sc.textFile(job.initCmdPath).collect().foreach(udf => {
+    //    val sc = Context.getContext(Context.sparkContext).asInstanceOf[SparkContext]
+    //    sc.textFile(job.initCmdPath).collect().foreach(udf => {
+    //      if (udf != null && udf.trim != "" && !udf.startsWith("#")) {
+    //        sqlContext.sql(udf)
+    //      }
+    //    })
+
+    // http
+    HttpRequestUtils.httpGet(job.initCmdPath, "".getClass).split("\\n").foreach(udf => {
       if (udf != null && udf.trim != "" && !udf.startsWith("#")) {
         sqlContext.sql(udf)
       }

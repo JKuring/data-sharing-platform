@@ -3,7 +3,6 @@ package com.eastcom.dataloader.service;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.interfaces.service.MessageService;
-import com.eastcom.common.message.CommonMeaageProducer;
 import com.eastcom.common.service.HttpRequestUtils;
 import com.eastcom.common.utils.MergeArrays;
 import com.eastcom.common.utils.parser.JsonParser;
@@ -43,8 +42,6 @@ public class JobServiceImpl implements JobService<Message> {
     private final HBaseService<JobEntity> hbaseService;
 
     private final SparkProperties sparkProperties;
-
-    private Map<String, RabbitTemplate> mqProducer = CommonMeaageProducer.producerCollection;
 
     @Autowired
     private RabbitTemplate q_load;
@@ -116,7 +113,7 @@ public class JobServiceImpl implements JobService<Message> {
                 HBaseJobs hBaseJobs = JsonParser.parseJsonToObject(context.getBytes(), HBaseJobs.class);
                 assert hBaseJobs != null: "Can't find the job!";
                 String jobName = hBaseJobs.getName();
-                for (String name : jobName.split("\\|")
+                for (String name : jobName.split("\\n")
                         ) {
                     // http
                     final JobEntity jobEntity = HttpRequestUtils.httpGet(name, JobEntityImpl.class);
@@ -177,7 +174,7 @@ public class JobServiceImpl implements JobService<Message> {
                             messageProperties.setHeader(startTime, System.currentTimeMillis());
                             try {
                                 // submit code to cluster
-                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toStingArray(), sparkJobs.getParameters()));
+                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters()));
                             } catch (Exception e) {
                                 logger.error("Failed to load table, Exception: {}.", e.getMessage());
                                 result = 1;

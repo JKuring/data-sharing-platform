@@ -32,7 +32,8 @@ public class HBaseServiceImpl implements HBaseService<JobEntity> {
     private HBaseDaoImpl hBaseDao;
 
     public HBaseServiceImpl() {
-        this.HADOOP_USER_ROOT = System.getProperty(HADOOP_USER_ROOT_PATH, "/");
+        String tmp = System.getProperty(HADOOP_USER_ROOT_PATH);
+        this.HADOOP_USER_ROOT = tmp == null ? "" : tmp;
     }
 
     @Override

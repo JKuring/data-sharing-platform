@@ -4,6 +4,7 @@ import java.util.regex.Matcher._
 import java.util.regex.Pattern
 import java.util.regex.Pattern._
 
+import com.eastcom.common.service.HttpRequestUtils
 import com.eastcom.dataloader.confparser.SlsNode
 import org.apache.log4j.Logger
 import org.apache.spark.SparkContext
@@ -45,8 +46,11 @@ object Context {
     * @return
     */
   def getSql(tplPath: String, tplname: String, node: SlsNode): String = {
-    val sc = Context.getContext(Context.sparkContext).asInstanceOf[SparkContext]
-    var tpl: String = sc.textFile(s"${tplPath}/${tplname}.tpl").collect().mkString(" \n")
+    //    val sc = Context.getContext(Context.sparkContext).asInstanceOf[SparkContext]
+    //    var tpl: String = sc.textFile(s"${tplPath}/${tplname}.tpl").collect().mkString(" \n")
+
+    // http
+    var tpl: String = HttpRequestUtils.httpGet(tplPath, "".getClass).split("\\n").mkString(" \n")
 
     val stat_month = if (timeid.length >= 6) timeid.substring(0, 6) else timeid
     val stat_date = if (timeid.length >= 8) timeid.substring(0, 8) else timeid

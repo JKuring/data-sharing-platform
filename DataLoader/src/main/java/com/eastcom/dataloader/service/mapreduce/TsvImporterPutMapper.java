@@ -460,4 +460,12 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
         return bs;
     }
 
+    //
+    public boolean filter() {
+        boolean result = false;
+
+
+        return result;
+    }
+
 }
