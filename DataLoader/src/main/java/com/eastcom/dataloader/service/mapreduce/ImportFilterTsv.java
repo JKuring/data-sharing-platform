@@ -1,20 +1,4 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package com.eastcom.dataloader.service.mapreduce;
 
 
 import com.google.common.base.Preconditions;
@@ -43,7 +27,6 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.security.Credentials;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,21 +37,11 @@ import java.util.Set;
 import static java.lang.String.format;
 
 /**
- * Tool to import data from a TSV file.
- * <p>
- * This tool is rather simplistic - it doesn't do any quoting or
- * escaping, but is useful for many data loads.
- *
- * @see ImportTsv#usage(String)
+ * Created by linghang.kong on 2017/4/5.
  */
-
-/**
- * Created by linghang.kong on 2017/3/30.
- */
-
 @InterfaceAudience.Public
 @InterfaceStability.Stable
-public class ImportTsv extends Configured implements Tool {
+public class ImportFilterTsv extends Configured implements Tool {
 
     protected static final Log LOG = LogFactory.getLog(ImportTsv.class);
 
@@ -140,7 +113,7 @@ public class ImportTsv extends Configured implements Tool {
 
         /**
          * @param columnsSpecification the list of columns to parser out, comma separated.
-         * The row key should be the special token TsvParser.ROWKEY_COLUMN_SPEC
+         *                             The row key should be the special token TsvParser.ROWKEY_COLUMN_SPEC
          * @param separatorStr
          */
         public TsvParser(String columnsSpecification, String separatorStr) {
@@ -415,6 +388,7 @@ public class ImportTsv extends Configured implements Tool {
 
         /**
          * Return starting position and length of row key from the specified line bytes.
+         *
          * @param lineBytes
          * @param length
          * @return Pair of row key offset and length.
@@ -449,8 +423,8 @@ public class ImportTsv extends Configured implements Tool {
     /**
      * Sets up the actual job.
      *
-     * @param conf  The current configuration.
-     * @param args  The command line parameters.
+     * @param conf The current configuration.
+     * @param args The command line parameters.
      * @return The newly created job.
      * @throws IOException When setting up the job fails.
      */
@@ -726,10 +700,5 @@ public class ImportTsv extends Configured implements Tool {
 
         Job job = createSubmittableJob(getConf(), otherArgs);
         return job.waitForCompletion(true) ? 0 : 1;
-    }
-
-    public static void main(String[] args) throws Exception {
-        int status = ToolRunner.run(new ImportTsv(), args);
-        System.exit(status);
     }
 }

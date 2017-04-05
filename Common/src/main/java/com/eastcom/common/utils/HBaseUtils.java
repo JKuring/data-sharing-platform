@@ -41,7 +41,7 @@ public class HBaseUtils {
         // spring tool runner
         ToolRunner toolRunner = new ToolRunner();
         toolRunner.setConfiguration(configuration);
-        toolRunner.setToolClass(configuration.get("importtsv.class.name"));
+        toolRunner.setToolClass(configuration.get("importtsv.class.name", "org.apache.hadoop.hbase.mapreduce.ImportTsv"));
         toolRunner.setArguments(new String[]{tableName, loadingPath});
         toolRunner.setCloseFs(true);
         return toolRunner.call() <= 0;

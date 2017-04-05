@@ -1,5 +1,6 @@
 package com.eastcom.dataloader.service.mapreduce;
 
+import com.eastcom.common.utils.filter.FilterImpl;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.classification.InterfaceAudience;
 import org.apache.hadoop.hbase.classification.InterfaceStability;
@@ -42,6 +43,27 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
     private boolean skipBadLines;
     private Counter badLineCount;
 
+    // filter
+    public final static String EASTCOM_FILTER_PARAMS = "importtsv.filter.params";
+    public final static String EASTCOM_FILTER_DEFINE = "importtsv.filter.define.class";
+    private FilterImpl<String> filter;
+    private String filterColumnNum;
+
+    private void initFilter(Mapper<LongWritable, Text, ImmutableBytesWritable, Put>.Context context) {
+        Configuration conf = context.getConfiguration();
+
+        String filterContext = conf.get(EASTCOM_FILTER_PARAMS);
+        if (filterContext.length() != 0) {
+            String defineFilterClass = conf.get(EASTCOM_FILTER_DEFINE);
+            String[] tmp = filterContext.split("\\|");
+            this.filterColumnNum = tmp[0];
+            this.filter = new FilterImpl<String>(tmp[1], tmp[2]);
+            if (defineFilterClass.length() > 0) {
+                this.filter.setDefine_filter_class(defineFilterClass);
+            }
+        }
+    }
+
     public boolean getSkipBadLines() {
         return this.skipBadLines;
     }
@@ -56,6 +78,7 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
 
     protected void setup(Mapper<LongWritable, Text, ImmutableBytesWritable, Put>.Context context) {
         doSetup(context);
+        initFilter(context);
     }
 
     protected void doSetup(Mapper<LongWritable, Text, ImmutableBytesWritable, Put>.Context context) {

@@ -11,7 +11,7 @@
 //  "granularity": "D",
 //  "delay": 900,
 //  "propertiesMap": {
-//    "importtsv.class.name": "org.apache.hadoop.hbase.mapreduce.ImportTsv",
+//    "importtsv.class.name": "org.apache.hadoop  .hbase.mapreduce.ImportTsv",
 //    "importtsv.columns": "HBASE_ROW_KEY,cf",
 //    "importtsv.bulk.output1": "/tmp/hbload",
 //    "importtsv.mapper.class": "com.example.service.mapreduce.TsvImporterPutMapper",
