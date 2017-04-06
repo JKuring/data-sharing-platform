@@ -20,6 +20,8 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
@@ -46,21 +48,42 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
     // filter
     public final static String EASTCOM_FILTER_PARAMS = "importtsv.filter.params";
     public final static String EASTCOM_FILTER_DEFINE = "importtsv.filter.define.class";
-    private FilterImpl<String> filter;
+    private final static String EASTCOM_FILTER_SEPARATOR = "\\n";
+    private final static String EASTCOM_FILTER_SEPARATOR_PARAMS = "\\|";
+    private Map<Integer, FilterImpl<String>> filters = null;
     private String filterColumnNum;
 
+    /**
+     * 如果不添加参数不会实例化该过滤器，可以对多个列进行过滤，如果有自定义函数，请按照行对应过滤函数类，
+     * 过滤函数需要实现{@link com.eastcom.common.utils.filter.Filter}接口的 doFilter function.
+     *
+     * @param context
+     */
     private void initFilter(Mapper<LongWritable, Text, ImmutableBytesWritable, Put>.Context context) {
-        Configuration conf = context.getConfiguration();
+        try {
+            Configuration conf = context.getConfiguration();
 
-        String filterContext = conf.get(EASTCOM_FILTER_PARAMS);
-        if (filterContext.length() != 0) {
-            String defineFilterClass = conf.get(EASTCOM_FILTER_DEFINE);
-            String[] tmp = filterContext.split("\\|");
-            this.filterColumnNum = tmp[0];
-            this.filter = new FilterImpl<String>(tmp[1], tmp[2]);
-            if (defineFilterClass.length() > 0) {
-                this.filter.setDefine_filter_class(defineFilterClass);
+            String filterContext = conf.get(EASTCOM_FILTER_PARAMS);
+            if (filterContext.length() != 0) {
+                filters = new HashMap<>();
+                String defineFilterClass = conf.get(EASTCOM_FILTER_DEFINE);
+                String[] tmpContext = filterContext.split(EASTCOM_FILTER_SEPARATOR);
+                String[] tmpClass = defineFilterClass.split(EASTCOM_FILTER_SEPARATOR);
+                int nClass = tmpClass.length;
+                int n = 0;
+                for (String string : tmpContext
+                        ) {
+                    String[] filterParams = string.split(EASTCOM_FILTER_SEPARATOR_PARAMS);
+                    FilterImpl filter = new FilterImpl<String>(filterParams[1], filterParams[2]);
+                    if (n < nClass && tmpClass[n].length() > 0) {
+                        filter.setDefine_filter_class(tmpClass[n]);
+                        n++;
+                    }
+                    this.filters.put(Integer.valueOf(filterParams[0]), filter);
+                }
             }
+        } catch (Exception e) {
+
         }
     }
 
@@ -150,19 +173,34 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
                     Mapper<LongWritable, Text, ImmutableBytesWritable, Put>.Context context) throws IOException {
         try {
             String val = value + "";
-            String row = buildRowkey(val);
-            if (row == null)
-                throw new IllegalArgumentException("rowkey不能为空.");
 
-            String nval = buildVal(val);
+            // execute filter
+            boolean filterStatus = false;
+            if (this.filters != null && this.filters.size() > 0) {
+                String[] tmp = val.split(separator);
 
-            ImmutableBytesWritable rowKey = new ImmutableBytesWritable(Bytes.toBytes(row));
+                for (Integer column : this.filters.keySet()
+                        ) {
+                    filterStatus |= this.filters.get(column).filter(tmp[column]);
+                }
 
-            Put p = new Put(rowKey.copyBytes());
-            //p.setWriteToWAL(isWriteToWAL);
-            p.add(Bytes.toBytes(columnFamily), null, nval.getBytes());
+            }
+            if (!filterStatus) {
 
-            context.write(rowKey, p);
+                String row = buildRowkey(val);
+                if (row == null)
+                    throw new IllegalArgumentException("rowkey不能为空.");
+
+                String nval = buildVal(val);
+
+                ImmutableBytesWritable rowKey = new ImmutableBytesWritable(Bytes.toBytes(row));
+
+                Put p = new Put(rowKey.copyBytes());
+                //p.setWriteToWAL(isWriteToWAL);
+                p.add(Bytes.toBytes(columnFamily), null, nval.getBytes());
+
+                context.write(rowKey, p);
+            }
 
         } catch (IllegalArgumentException e) {
             if (this.skipBadLines) {
