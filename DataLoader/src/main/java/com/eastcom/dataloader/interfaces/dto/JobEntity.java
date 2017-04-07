@@ -57,5 +57,5 @@ public interface JobEntity<T> extends BaseEntity {
 
     void setPropertiesMap(Map<String, String> propertiesMap);
 
-    void addSystemProperties(Configuration configuration);
+    Configuration addSystemProperties(Configuration configuration);
 }

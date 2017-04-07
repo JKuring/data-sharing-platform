@@ -15,10 +15,43 @@ public class StringFilter implements Filter<String> {
     }
 
     public boolean doFilter(String content) {
+        switch (filterType) {
+            case "gt":
+                return gt(content);
+            case "lt":
+                return lt(content);
+            case "eq":
+                return eq(content);
+            case "rg":
+                return rg(content);
+            default:
+                return false;
+        }
+    }
 
-        if (content.length() == 0) {
+    private boolean gt(String content) {
+        if (content.length() > Integer.valueOf(parameter)) {
             return true;
         }
         return false;
+    }
+
+    private boolean lt(String content) {
+        if (content.length() < Integer.valueOf(parameter)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean eq(String content) {
+        if (content.length() == Integer.valueOf(parameter)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean rg(String content) {
+
+        return true;
     }
 }

@@ -48,7 +48,7 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
     // filter
     public final static String EASTCOM_FILTER_PARAMS = "importtsv.filter.params";
     public final static String EASTCOM_FILTER_DEFINE = "importtsv.filter.define.class";
-    private final static String EASTCOM_FILTER_SEPARATOR = "\\n";
+    private final static String EASTCOM_FILTER_SEPARATOR = ",";
     private final static String EASTCOM_FILTER_SEPARATOR_PARAMS = "\\|";
     private Map<Integer, FilterImpl<String>> filters = null;
     private String filterColumnNum;

@@ -9,6 +9,7 @@ import org.apache.hadoop.hbase.TableName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.util.List;
  * Created by linghang.kong on 2016/12/23.
  */
 @Service
+@Lazy
 public class HBaseServiceImpl implements HBaseService<JobEntity> {
 
     private static final Logger logger = LoggerFactory.getLogger(HBaseServiceImpl.class);

@@ -8,18 +8,18 @@ public interface JobService<T> extends BaseService<String> {
 
     void excute(T message);
 
-    /**
-     * create HBase table
-     *
-     * @param message
-     */
-    void doHBaseCreateTableJob(T message);
-
-    /**
-     * delete HBase table
-     *
-     * @param message
-     */
-    void doHBaseDeleteTableJob(T message);
+//    /**
+//     * create HBase table
+//     *
+//     * @param message
+//     */
+//    void doHBaseCreateTableJob(T message);
+//
+//    /**
+//     * delete HBase table
+//     *
+//     * @param message
+//     */
+//    void doHBaseDeleteTableJob(T message);
 
 }

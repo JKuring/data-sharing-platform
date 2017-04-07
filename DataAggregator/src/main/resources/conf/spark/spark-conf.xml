@@ -24,4 +24,7 @@
         </spark:property>
     </spark:bean>
 
+    <!--Aggregator-->
+    <spark:bean id="sparkAggregator" name="AGGREGATE_SPARK" class="com.eastcom.aggregator.service.SparkAggregator"/>
+
 </spark:beans>

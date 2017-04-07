@@ -24,4 +24,6 @@
         </spark:property>
     </spark:bean>
 
+    <spark:bean id="sparkDataLoader" name="LOAD_TABLE_SPARK" class="com.eastcom.dataloader.service.SparkDataLoader"/>
+
 </spark:beans>

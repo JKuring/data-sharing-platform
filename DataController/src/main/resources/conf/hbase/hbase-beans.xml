@@ -18,7 +18,7 @@
     <hdp:hbase-configuration configuration-ref="hadoopConfiguration"/>
 
     <!--dao-->
-    <hbase:bean id="hbaseDaoImpl" class="com.eastcom.datacontroller.dao.HBaseDaoImpl">
+    <hbase:bean id="hbaseDaoImpl" class="com.eastcom.datacontroller.dao.HBaseDaoImpl" lazy-init="true">
         <hbase:constructor-arg ref="hbaseConfiguration"/>
     </hbase:bean>
     <!--自定义-->
@@ -33,9 +33,10 @@
         <hbase:property name="queueCapacity" value="100"/>
     </hbase:bean>
 
-    <!--<hbase:bean id="taskExecutor" class="java.util.concurrent.ThreadPoolExecutor">-->
-    <!--<hbase:constructor-arg name=""-->
-    <!---->
-    <!--</hbase:bean>-->
+    <!--Controller-->
+    <hbase:bean id="createTableController" name="CREATE_TABLE_HBASE"
+                class="com.eastcom.datacontroller.service.HBaseCreateTableController"/>
+    <hbase:bean id="deleteTableController" name="DELETE_TABLE_HBASE"
+                class="com.eastcom.datacontroller.service.HBaseDeleteTableController"/>
 
 </hbase:beans>

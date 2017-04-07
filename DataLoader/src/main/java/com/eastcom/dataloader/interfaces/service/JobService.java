@@ -8,29 +8,4 @@ public interface JobService<T> extends BaseService<String> {
 
     void excute(T message);
 
-    /**
-     * T
-     * create HBase table
-     *
-     * @param message
-     */
-    void doHBaseCreateTableJob(T message);
-
-    /**
-     * delete HBase table
-     *
-     * @param message
-     */
-    void doHBaseDeleteTableJob(T message);
-
-    /**
-     * @param message
-     */
-    void doHBaseLoadDataJob(T message);
-
-    /**
-     * @param message
-     */
-    void doSparkLoadDataJob(T message);
-
 }

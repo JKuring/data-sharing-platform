@@ -29,8 +29,15 @@ public class HBaseUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(HBaseUtils.class);
 
-    public static boolean createHFile(Configuration configuration, String tableName, String loadingPath) throws Exception {
-        logger.info("Upload data to {}, the load path is {}.", tableName, loadingPath);
+    /**
+     * @param configuration
+     * @param params        String tableName, String loadingPath and String filter params,
+     *                      eg, tableName, loadingPath, 3|>|10,...; column is 3 , the condition is "gt" than 10.
+     * @return
+     * @throws Exception
+     */
+    public static boolean createHFile(Configuration configuration, String... params) throws Exception {
+        logger.info("Upload data to {}, the load path is {}.", params[0], params[1]);
         logger.info("class.name: {}.", configuration.get("importtsv.class.name"));
         logger.info("columns: {}.", configuration.get("importtsv.columns"));
         logger.info("bulk.output: {}.", configuration.get("importtsv.bulk.output"));
@@ -42,7 +49,7 @@ public class HBaseUtils {
         ToolRunner toolRunner = new ToolRunner();
         toolRunner.setConfiguration(configuration);
         toolRunner.setToolClass(configuration.get("importtsv.class.name", "org.apache.hadoop.hbase.mapreduce.ImportTsv"));
-        toolRunner.setArguments(new String[]{tableName, loadingPath});
+        toolRunner.setArguments(params);
         toolRunner.setCloseFs(true);
         return toolRunner.call() <= 0;
     }

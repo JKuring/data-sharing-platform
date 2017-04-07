@@ -4,12 +4,14 @@ import com.eastcom.common.utils.HBaseUtils;
 import com.eastcom.dataloader.dao.HBaseDaoImpl;
 import com.eastcom.dataloader.interfaces.dto.JobEntity;
 import com.eastcom.dataloader.interfaces.service.HBaseService;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.HTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,6 +23,7 @@ import java.util.Map;
  * Created by linghang.kong on 2016/12/23.
  */
 @Service
+@Lazy
 public class HBaseServiceImpl implements HBaseService<JobEntity> {
 
     private static final Logger logger = LoggerFactory.getLogger(HBaseServiceImpl.class);
@@ -68,13 +71,13 @@ public class HBaseServiceImpl implements HBaseService<JobEntity> {
         tableParametters.put("importtsv.bulk.output", outputPath + tmpPath);
 
         //加载为系统参数
-        jobEntity.addSystemProperties(hBaseDao.getConfiguration());
+        Configuration configuration = jobEntity.addSystemProperties(hBaseDao.getConfiguration());
         try {
-            if (!HBaseUtils.createHFile(hBaseDao.getConfiguration(), currentTimeTableName, dataPath)) {
+            if (!HBaseUtils.createHFile(configuration, currentTimeTableName, dataPath)) {
                 logger.error("Upload data failing! Please clean dirty data, and try again later.");
             } else {
                 Path hdfsPath = new Path(outputPath + tmpPath);
-                if (HBaseUtils.upLoadHFile(hBaseDao.getConfiguration(),
+                if (HBaseUtils.upLoadHFile(configuration,
                         (HTable) hBaseDao.getConnection().getTable(TableName.valueOf(currentTimeTableName)), hdfsPath)) {
                     result = true;
                 }

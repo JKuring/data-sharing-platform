@@ -22,6 +22,7 @@ public class FilterImpl<T> {
         if (this.filterParameter instanceof Integer) {
             this.filter = new IntegerFilter(this.filterType, (Integer) this.filterParameter);
         } else {
+            // default
             this.filter = new StringFilter(this.filterType, (String) this.filterParameter);
         }
     }

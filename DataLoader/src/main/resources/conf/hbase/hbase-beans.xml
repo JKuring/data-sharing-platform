@@ -24,5 +24,7 @@
         <hbase:constructor-arg ref="hbaseConfiguration"/>
     </hbase:bean>
 
+    <hbase:bean id="hBaseDataLoader" name="LOAD_TABLE_HBASE" class="com.eastcom.dataloader.service.HBaseDataLoader"/>
+
 
 </hbase:beans>

@@ -1,10 +1,10 @@
 package com.eastcom.aggregator.service;
 
 import com.eastcom.aggregator.bean.MQConf;
-import com.eastcom.aggregator.interfaces.service.Executor;
 import com.eastcom.aggregator.interfaces.service.JobService;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.bean.TaskType;
+import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

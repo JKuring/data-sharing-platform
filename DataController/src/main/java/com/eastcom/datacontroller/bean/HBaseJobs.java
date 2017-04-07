@@ -21,13 +21,14 @@ public class HBaseJobs {
     private String granularity;
 
     private boolean currentIsCreated = false;
+    private final String EASTCOM_SEPARATOR = ",";
 
 
     public HBaseJobs() {
     }
 
     public String[] getName() {
-        return this.name.split(",");
+        return this.name.split(EASTCOM_SEPARATOR);
     }
 
     public void setName(String name) {

@@ -176,10 +176,12 @@ public class JobEntityImpl implements JobEntity<String> {
     }
 
 
-    public void addSystemProperties(Configuration configuration) {
+    public Configuration addSystemProperties(Configuration configuration) {
+        Configuration configuration1 = new Configuration(configuration);
         for (String key : propertiesMap.keySet()
                 ) {
-            configuration.set(key, propertiesMap.get(key));
+            configuration1.set(key, propertiesMap.get(key));
         }
+        return configuration1;
     }
 }
