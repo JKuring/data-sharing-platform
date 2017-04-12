@@ -73,13 +73,14 @@
         </plugins>
 
         <resources>
-            <resource>
-                <targetPath>../lib/</targetPath>
-                <directory>lib/</directory>
-                <includes>
-                    <include>*</include>
-                </includes>
-            </resource>
+            <!--外部依赖-->
+            <!--<resource>-->
+            <!--<targetPath>../lib/</targetPath>-->
+            <!--<directory>lib/</directory>-->
+            <!--<includes>-->
+            <!--<include>*</include>-->
+            <!--</includes>-->
+            <!--</resource>-->
             <!--spring内部依赖-->
             <!--<resource>-->
             <!--<targetPath>.</targetPath>-->

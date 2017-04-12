@@ -19,7 +19,7 @@ PROC_DESC="EASTCOM Software PM_TASK_TRANS_HW 1.0"
 
 # Flags for java Virtal Machine
 #VM_FLAG="-d64 -Xrs -Xms16G -Xmx32G -Duser.name=mqm -Djava.security.auth.login.config=/opt/hadoopclient/HDFS/hadoop/etc/hadoop/jaas.conf -Djava.security.krb5.conf=/opt/hadoopclient/KrbClient/kerberos/var/krb5kdc/krb5.conf"
-VM_FLAG="-Dauth.config.path=conf/hbase/auth/ -Dzookeeper.sasl.clientconfig=client -Dzookeeper.server.principal=zookeeper/hadoop.hadoop_b.com -Dhadoop.user.root.path=/"
+VM_FLAG="-Dauth.config.path=conf/hbase/auth/ -Dzookeeper.sasl.clientconfig=client -Dzookeeper.server.principal=zookeeper/hadoop.hadoop_b.com -Dhadoop.user.root.path=/user/east_wys"
 
 
 # List of blank-separated paths defining the contents of the classes and resources
@@ -30,7 +30,7 @@ LOADER_PATH="../lib/*.jar ../conf"
 java_home=$JAVA_HOME
 
 # Process JAR
-PACKAGE=HBasePartitionDemo-1.0-SNAPSHOT.jar
+PACKAGE=data-loader-1.0-SNAPSHOT.jar
 
 # Process Entrance class
 MAIN_CLASS=com.eastcom.Loader
@@ -87,8 +87,8 @@ start_proc(){
                 echo "${INFO_TAG} Starting ${PROC_NAME} ..."
 		set_classpath
                 echo "CLASSPATH ${CLASSPATH}"
-#                nohup ${java_home}/bin/java -Diname=${PROC_TAG} ${VM_FLAG} -cp ${CLASSPATH} ${MAIN_CLASS} ${PROC_ARGS} >> ${LOG_FILE} 2>&1 &
-                nohup ${java_home}/bin/java -Diname=${PROC_TAG} ${VM_FLAG} -cp ${CLASSPATH} ${MAIN_CLASS} ${PROC_ARGS} &
+                nohup ${java_home}/bin/java -Diname=${PROC_TAG} ${VM_FLAG} -cp ${CLASSPATH} ${MAIN_CLASS} ${PROC_ARGS} >> ${LOG_FILE} 2>&1 &
+#                nohup ${java_home}/bin/java -Diname=${PROC_TAG} ${VM_FLAG} -cp ${CLASSPATH} ${MAIN_CLASS} ${PROC_ARGS} &
 		sleep 1
 		is_proc_run
 		if [ $? -eq 0 ]; then

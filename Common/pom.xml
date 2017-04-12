@@ -23,10 +23,27 @@
     <!--common 作为依赖包 也需该插件先编译成包 后被当作lib依赖-->
     <build>
         <plugins>
+            <!--<plugin>-->
+            <!--<artifactId>maven-compiler-plugin</artifactId>-->
+            <!--<version>2.3.2</version>-->
+            <!--<configuration>-->
+            <!--<source>1.7</source>-->
+            <!--<target>1.7</target>-->
+            <!--<encoding>UTF-8</encoding>-->
+            <!--&lt;!&ndash;外部依赖&ndash;&gt;-->
+            <!--&lt;!&ndash;<compilerArguments>&ndash;&gt;-->
+            <!--&lt;!&ndash;<extdirs>${project.basedir}/../suyan-lib/hadoop/lib</extdirs>&lt;!&ndash;编译依赖指定外部lib&ndash;&gt;&ndash;&gt;-->
+            <!--&lt;!&ndash;<extdirs>${project.basedir}/../suyan-lib/hbase/lib</extdirs>&lt;!&ndash;编译依赖指定外部lib&ndash;&gt;&ndash;&gt;-->
+            <!--&lt;!&ndash;<extdirs>${project.basedir}/../suyan-lib/spark/lib</extdirs>&lt;!&ndash;编译依赖指定外部lib&ndash;&gt;&ndash;&gt;-->
+            <!--&lt;!&ndash;</compilerArguments>&ndash;&gt;-->
+            <!--</configuration>-->
+            <!--</plugin>-->
+
+
             <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <version>2.15.2</version>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -35,20 +52,33 @@
                         </goals>
                         <phase>compile</phase>
                     </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <phase>test-compile</phase>
-                    </execution>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
+                    <!--<execution>-->
+                    <!--<id>test-compile</id>-->
+                    <!--<goals>-->
+                    <!--<goal>testCompile</goal>-->
+                    <!--</goals>-->
+                    <!--<phase>test-compile</phase>-->
+                    <!--</execution>-->
+                    <!--<execution>-->
+                    <!--<phase>process-resources</phase>-->
+                    <!--<goals>-->
+                    <!--<goal>compile</goal>-->
+                    <!--</goals>-->
+                    <!--</execution>-->
                 </executions>
+                <!--<configuration>-->
+                <!--<recompileMode>incremental</recompileMode>-->
+                <!--&lt;!&ndash;<sendJavaToScalac>true</sendJavaToScalac>&ndash;&gt;-->
+                <!--&lt;!&ndash;<javacArgs>java.ext.dirs=lib</javacArgs>&ndash;&gt;-->
+                <!--<javacArgs>-->
+                <!--<javacArg>-Djava.ext.dirs</javacArg>-->
+                <!--<javacArg>lib</javacArg>-->
+                <!--&lt;!&ndash;<javacArg>-target</javacArg>&ndash;&gt;-->
+                <!--&lt;!&ndash;<javacArg>1.7</javacArg>&ndash;&gt;-->
+                <!--</javacArgs>-->
+                <!--&lt;!&ndash;<jvmArgs>-cp lib/hadoop-common-2.6.0-bc1.3.4.jar</jvmArgs>&ndash;&gt;-->
+
+                <!--</configuration>-->
             </plugin>
         </plugins>
     </build>

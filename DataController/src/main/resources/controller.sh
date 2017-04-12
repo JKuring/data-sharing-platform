@@ -19,7 +19,7 @@ PROC_DESC="EASTCOM Software PM_TASK_TRANS_HW 1.0"
 
 # Flags for java Virtal Machine
 #VM_FLAG="-d64 -Xrs -Xms16G -Xmx32G -Duser.name=mqm -Djava.security.auth.login.config=/opt/hadoopclient/HDFS/hadoop/etc/hadoop/jaas.conf -Djava.security.krb5.conf=/opt/hadoopclient/KrbClient/kerberos/var/krb5kdc/krb5.conf"
-VM_FLAG="-Dauth.config.path=conf/hbase/auth/ -Dzookeeper.sasl.clientconfig=client -Dzookeeper.server.principal=zookeeper/hadoop.hadoop_b.com -Dhadoop.user.root.path=/"
+VM_FLAG="-Dauth.config.path=conf/hbase/auth/ -Dzookeeper.sasl.clientconfig=client -Dzookeeper.server.principal=zookeeper/hadoop.hadoop_b.com -Dhadoop.user.root.path=/user/east_wys"
 
 
 # List of blank-separated paths defining the contents of the classes and resources
