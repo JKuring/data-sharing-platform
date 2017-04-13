@@ -6,6 +6,10 @@ package com.eastcom.common.interfaces.service;
  */
 public interface Executor<T> {
 
+
+    public static final int SUCESSED = 1;
+    public static final int FAILED = 2;
+
     /**
      * execute job
      *

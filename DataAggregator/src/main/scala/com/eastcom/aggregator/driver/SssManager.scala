@@ -7,6 +7,7 @@ import com.eastcom.aggregator.bean.MQConf
 import com.eastcom.aggregator.confparser.SssNode
 import com.eastcom.aggregator.context.Context
 import com.eastcom.aggregator.message.{SssJobMessage, SssResultMessage}
+import com.eastcom.common.interfaces.service.Executor
 import com.eastcom.common.message.RabbitMQConnection
 import com.eastcom.common.utils.parser.MqHeadParser
 import com.eastcom.common.utils.time.TimeTransform
@@ -36,19 +37,19 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
         logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Start exec job with table [ ${node.getTplName} ] at time [ $timeid ] ...")
         try {
           exec(node)
-          channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, 2), "".getBytes)
+          channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, Executor.SUCESSED), "".getBytes)
         } catch {
           case e: Exception => {
             Thread.sleep(30000l)
             exec(node)
-            channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, 2), "".getBytes)
+            channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, Executor.SUCESSED), "".getBytes)
           }
         }
         val eastime = (new Date().getTime - startTime) / 1000
         logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Finish exec job with table [ ${node.getTplName} ] at time [ $timeid ] eastime [ $eastime ] s !")
       } catch {
         case e: Exception => logging.error(s" [ SSS_JOB ] [ ${node.getType} ] Exec job with table [ ${node.getTplName} ] at time [ $timeid ] fail !!!", e)
-          channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, 2), "".getBytes)
+          channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, Executor.FAILED), "".getBytes)
       }
       context.sender() ! SssResultMessage(node)
     }

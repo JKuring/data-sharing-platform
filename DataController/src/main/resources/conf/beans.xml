@@ -16,9 +16,4 @@
     <!-- load mq factory-->
     <controller:import resource="classpath:work/rabbitmq.xml"/>
 
-    <context-param>
-        <param-name>log4jConfigLocation</param-name>
-        <param-value>WEB-INF/log4j.properties</param-value>
-    </context-param>
-
 </controller:beans>

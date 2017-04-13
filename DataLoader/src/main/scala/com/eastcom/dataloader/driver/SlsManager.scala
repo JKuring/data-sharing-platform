@@ -23,6 +23,7 @@ class SlsManager(tplPath: String) extends Actor {
   override def receive: Receive = {
     case SlsJobMessage(node: SlsNode, fileStatuses: Array[FileStatus]) => {
       try {
+
         // 移动xdr文件到一个加载目录下
         FileHelp.moveFiles(fs, node.getLoadingDir, fileStatuses)
         val startTime = new Date().getTime

@@ -61,14 +61,14 @@ public class SparkAggregator implements Executor<Message> {
                         @Override
                         public void run() {
                             logger.debug("start the thread: {}.", Thread.currentThread().getName());
-                            int result = 2;
+                            int result = Executor.SUCESSED;
                             String appId = null;
                             messageProperties.setHeader(startTime, System.currentTimeMillis());
                             try {
                                 SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters(), mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap)));
                             } catch (Exception e) {
                                 logger.error("Failed to aggregate table, Exception: {}.", e.getMessage());
-                                result = 1;
+                                result = Executor.FAILED;
                             } finally {
                                 q_aggr_spark.send(new Message(("Finish aggregating task: " + taskId + ", application id: " + appId).getBytes(), getMessageProperties(messageProperties, result)));
                             }

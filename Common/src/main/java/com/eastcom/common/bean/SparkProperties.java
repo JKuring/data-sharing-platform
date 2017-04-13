@@ -22,6 +22,8 @@ public class SparkProperties {
 
     private Map<String, String> paropertiesMap;
 
+    private String jarName;
+
     public String getMaster() {
         return master;
     }
@@ -78,6 +80,14 @@ public class SparkProperties {
         this.paropertiesMap = paropertiesMap;
     }
 
+    public String getJarName() {
+        return jarName;
+    }
+
+    public void setJarName(String jarName) {
+        this.jarName = jarName;
+    }
+
     public String[] toParametersArray() {
         List<String> parameters = new ArrayList<>();
         parameters.add("--master");
@@ -99,10 +109,7 @@ public class SparkProperties {
             parameters.add(key + "=" + paropertiesMap.get(key));
         }
 
-//        for (String param: jobParameters
-//             ) {
-//            parameters.add(param);
-//        }
+        parameters.add(jarName);
 
         return parameters.toArray(new String[parameters.size()]);
     }

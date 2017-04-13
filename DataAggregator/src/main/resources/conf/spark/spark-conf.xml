@@ -22,6 +22,7 @@
                 <spark:entry key="spark.sql.broadcastTimeout" value="3600"/>
             </spark:map>
         </spark:property>
+        <spark:property name="jarName" value="../data-aggregator-1.0-SNAPSHOT.jar"/>
     </spark:bean>
 
     <!--Aggregator-->

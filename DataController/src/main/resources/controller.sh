@@ -88,7 +88,7 @@ start_proc(){
 		set_classpath
                 echo "CLASSPATH ${CLASSPATH}"
 #                nohup ${java_home}/bin/java -Diname=${PROC_TAG} ${VM_FLAG} -cp ${CLASSPATH} ${MAIN_CLASS} ${PROC_ARGS} >> ${LOG_FILE} 2>&1 &
-                nohup ${java_home}/bin/java -Diname=${PROC_TAG} ${VM_FLAG} -cp ${CLASSPATH} ${MAIN_CLASS} ${PROC_ARGS} &
+                setsid ${java_home}/bin/java -Diname=${PROC_TAG} ${VM_FLAG} -cp ${CLASSPATH} ${MAIN_CLASS} ${PROC_ARGS} &
 		sleep 1
 		is_proc_run
 		if [ $? -eq 0 ]; then

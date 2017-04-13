@@ -30,10 +30,10 @@ LOADER_PATH="../lib/*.jar ../conf"
 java_home=$JAVA_HOME
 
 # Process JAR
-PACKAGE=data-loader-1.0-SNAPSHOT.jar
+PACKAGE=data-aggregator-1.0-SNAPSHOT.jar
 
 # Process Entrance class
-MAIN_CLASS=com.eastcom.Loader
+MAIN_CLASS=com.eastcom.Aggregator
 
 
 # Process Arguments

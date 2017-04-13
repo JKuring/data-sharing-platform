@@ -1,10 +1,20 @@
 {
   "name": "spark_load_test",
-  "confFile": "work/conf/load_control_hour.conf",
-  "initCmdPath": "",
-  "tplPath": "",
+  "confFile": "http://10.222.20.134:8084/config/getByCiCode?ciCode=load_spark_table_name_conf",
+  "initCmdPath": "http://10.222.20.134:8084/config/getByCiCode?ciCode=load_spark_table_name_init",
+  "tplPath": "http://10.222.20.134:8084/config/getByCiCode?ciCode=load_spark_table_name_tpl",
   "zookeeper_hosts": "127.0.0.1",
   "zookeeper_port": "12345",
-  "appIdDir": "tmp/test",
   "timeid": "#minuteminus(15)#"
 }
+
+
+//{
+//  "name": "spark_load_test",
+//  "confFile":"/work/my.txt",
+//  "initCmdPath":"http://10.222.20.134:8084/config/getByCiCode?ciCode=load_spark_table_name_init",
+//  "tplPath":"http://10.222.20.134:8084/config/getByCiCode?ciCode=load_spark_table_name_tpl",
+//  "zookeeper_hosts":"127.0.0.1",
+//  "zookeeper_port":"12345",
+//  "timeid":"#minuteminus(15)#"
+//}

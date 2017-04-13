@@ -59,19 +59,19 @@
             </plugin>
 
             <!--编译插件，可依赖外包-->
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <encoding>UTF-8</encoding>
-                    <!--外部依赖-->
-                    <compilerArguments>
-                        <extdirs>${project.basedir}/../suyan-lib</extdirs><!--编译依赖指定外部lib-->
-                    </compilerArguments>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+            <!--<artifactId>maven-compiler-plugin</artifactId>-->
+            <!--<version>2.3.2</version>-->
+            <!--<configuration>-->
+            <!--<source>1.7</source>-->
+            <!--<target>1.7</target>-->
+            <!--<encoding>UTF-8</encoding>-->
+            <!--&lt;!&ndash;外部依赖&ndash;&gt;-->
+            <!--<compilerArguments>-->
+            <!--<extdirs>${project.basedir}/../suyan-lib</extdirs>&lt;!&ndash;编译依赖指定外部lib&ndash;&gt;-->
+            <!--</compilerArguments>-->
+            <!--</configuration>-->
+            <!--</plugin>-->
 
             <!--pom依赖打包-->
             <plugin>

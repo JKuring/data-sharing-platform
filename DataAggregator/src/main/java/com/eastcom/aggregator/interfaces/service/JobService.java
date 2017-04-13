@@ -5,7 +5,6 @@ package com.eastcom.aggregator.interfaces.service;
  */
 public interface JobService<T> extends BaseService<String> {
 
-
     /**
      * executor
      *

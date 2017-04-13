@@ -15,6 +15,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -55,17 +56,18 @@ public class SparkDataLoader implements Executor<Message> {
                         @Override
                         public void run() {
                             logger.debug("start the thread: {}.", Thread.currentThread().getName());
-                            int result = 2;
-                            String appId = null;
+                            int result = Executor.SUCESSED;
                             messageProperties.setHeader(startTime, System.currentTimeMillis());
+                            String[] params = null;
                             try {
                                 // submit code to cluster
-                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters()));
+                                params = MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters());
+                                SparkSubmit$.MODULE$.main(params);
                             } catch (Exception e) {
-                                logger.error("Failed to load table, Exception: {}.", e.getMessage());
-                                result = 1;
+                                logger.error("Failed to load table, params: {}, Exception: {}.", Arrays.toString(params), e.getMessage());
+                                result = Executor.FAILED;
                             } finally {
-                                q_load.send(new Message(("Finish loading task: " + taskId + ", application id: " + appId).getBytes(), getMessageProperties(messageProperties, result)));
+                                q_load.send(new Message(("Finish loading task: " + taskId + ", jobs parameter: " + sparkJobs.getParameters()).getBytes(), getMessageProperties(messageProperties, result)));
                             }
                         }
                     });
