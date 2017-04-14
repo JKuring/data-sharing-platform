@@ -16,7 +16,7 @@ public class MqHeadParser {
         for (String key : headMap.keySet()
                 ) {
             tmp.add(key);
-            tmp.add((String) headMap.get(key));
+            tmp.add(String.valueOf(headMap.get(key)));
         }
         return tmp.toArray(new String[tmp.size()]);
     }

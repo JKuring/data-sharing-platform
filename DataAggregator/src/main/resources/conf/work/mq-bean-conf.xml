@@ -7,7 +7,7 @@
         <mq:property name="userName" value="admin"/>
         <mq:property name="password" value="admin"/>
         <mq:property name="host" value="10.221.247.50"/>
-        <mq:property name="port" value="20100"/>
+        <mq:property name="port" value="5672"/>
         <mq:property name="exchange" value="E_SUYAN_SCHEDULE"/>
         <mq:property name="routingKey" value="R_REPLY_DRIVE"/>
     </mq:bean>

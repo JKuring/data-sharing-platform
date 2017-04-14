@@ -84,7 +84,6 @@ object SlsLauncher {
     while (!Context.isFinish) {
       Thread.sleep(1000l)
     }
-    sc.applicationId
   }
 }
 

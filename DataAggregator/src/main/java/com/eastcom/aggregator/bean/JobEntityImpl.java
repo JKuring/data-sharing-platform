@@ -168,14 +168,13 @@ public class JobEntityImpl implements JobEntity<SparkJobs> {
 
     @Override
     public SparkJobs getTableEntity() {
-        return null;
+        return tableEntity;
     }
 
     @Override
     public void setTableEntity(SparkJobs tableEntity) {
-
+        this.tableEntity = tableEntity;
     }
-
 
     public void addSystemProperties(Configuration configuration) {
         for (String key : propertiesMap.keySet()

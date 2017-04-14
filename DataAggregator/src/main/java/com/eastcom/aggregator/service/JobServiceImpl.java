@@ -80,51 +80,10 @@ public class JobServiceImpl implements JobService<Message> {
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
-            q_aggr_spark.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, 1)));
+            q_aggr_spark.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, Executor.FAILED)));
         }
     }
 
-    //    @Override
-//    public void doSparkAggregationJob(Message message) {
-//        final MessageProperties messageProperties = message.getMessageProperties();
-//        final Map<String, Object> headMap = messageProperties.getHeaders();
-//        final String taskId = (String) headMap.get(MessageService.Header.taskId);
-//        String context = new String(message.getBody());
-//        try {
-//            if (taskId != null) {
-//                logger.info("start the task: {}.", taskId);
-//                final SparkJobs sparkJobs = JsonParser.parseJsonToObject(context.getBytes(), SparkJobs.class);
-//                logger.info("the name of aggregated job: {}.", sparkJobs.getTplPath());
-//                try {
-//                    threadPoolTaskExecutor.execute(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            logger.debug("start the thread: {}.", Thread.currentThread().getName());
-//                            int result = 2;
-//                            String appId = null;
-//                            messageProperties.setHeader(startTime, System.currentTimeMillis());
-//                            try {
-//                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters(), mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap)));
-//                            } catch (Exception e) {
-//                                logger.error("Failed to aggregate table, Exception: {}.", e.getMessage());
-//                                result = 1;
-//                            } finally {
-//                                q_aggr_spark.send(new Message(("Finish aggregating task: " + taskId + ", application id: " + appId).getBytes(), getMessageProperties(messageProperties, result)));
-//                            }
-//                        }
-//                    });
-//                } catch (Exception e) {
-//                    logger.debug("Thread pool: {}.", e.getMessage());
-//                }
-//            } else {
-//                throw new Exception("Unable task!");
-//            }
-//        } catch (Exception e) {
-//            logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
-//        }
-//    }
-//
-//
     private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {
         messageProperties.setHeader(endTime, System.currentTimeMillis());
         messageProperties.setHeader(status, result);

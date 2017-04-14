@@ -248,7 +248,7 @@
     </property>
 
     <property>
-        <name>ipc.client.connect.timeout</name>
+        <name>ipc.client.connect.timeoutMin</name>
         <value>10000</value>
     </property>
 
@@ -268,7 +268,7 @@
     </property>
 
     <property>
-        <name>ipc.client.rpc.timeout</name>
+        <name>ipc.client.rpc.timeoutMin</name>
         <value>180000</value>
     </property>
 

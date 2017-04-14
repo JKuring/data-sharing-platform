@@ -17,6 +17,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -62,15 +63,20 @@ public class SparkAggregator implements Executor<Message> {
                         public void run() {
                             logger.debug("start the thread: {}.", Thread.currentThread().getName());
                             int result = Executor.SUCESSED;
-                            String appId = null;
+                            String[] params = null;
                             messageProperties.setHeader(startTime, System.currentTimeMillis());
                             try {
-                                SparkSubmit$.MODULE$.main(MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters(), mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap)));
+                                try {
+                                    params = MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters(), mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap));
+                                } catch (Exception e) {
+                                    throw new Exception("Parameters false!!!!!!!");
+                                }
+                                SparkSubmit$.MODULE$.main(params);
                             } catch (Exception e) {
-                                logger.error("Failed to aggregate table, Exception: {}.", e.getMessage());
+                                logger.error("Failed to aggregate table, parMBD_PUBLISH_CONFams: {}, Exception: {}.", Arrays.toString(params), e.getMessage());
                                 result = Executor.FAILED;
                             } finally {
-                                q_aggr_spark.send(new Message(("Finish aggregating task: " + taskId + ", application id: " + appId).getBytes(), getMessageProperties(messageProperties, result)));
+                                q_aggr_spark.send(new Message(("Finish aggregating task: " + taskId + ", jobs parameter: " + Arrays.toString(params)).getBytes(), getMessageProperties(messageProperties, result)));
                             }
                         }
                     });

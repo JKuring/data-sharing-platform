@@ -7,6 +7,5 @@
   "zookeeper_port": "12345",
   "sessions": "",
   "timeid": "#minuteminus(15)#",
-  "appIdDir": "tmp/test",
-  "timeout": "0"
+  "timeoutMin": "0"
 }

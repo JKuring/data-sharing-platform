@@ -61,13 +61,17 @@ public class SparkDataLoader implements Executor<Message> {
                             String[] params = null;
                             try {
                                 // submit code to cluster
-                                params = MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters());
+                                try {
+                                    params = MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters());
+                                } catch (Exception e) {
+                                    throw new Exception("Parameters false!!!!!!!");
+                                }
                                 SparkSubmit$.MODULE$.main(params);
                             } catch (Exception e) {
                                 logger.error("Failed to load table, params: {}, Exception: {}.", Arrays.toString(params), e.getMessage());
                                 result = Executor.FAILED;
                             } finally {
-                                q_load.send(new Message(("Finish loading task: " + taskId + ", jobs parameter: " + sparkJobs.getParameters()).getBytes(), getMessageProperties(messageProperties, result)));
+                                q_load.send(new Message(("Finish loading task: " + taskId + ", jobs parameter: " + Arrays.toString(params)).getBytes(), getMessageProperties(messageProperties, result)));
                             }
                         }
                     });

@@ -145,7 +145,7 @@
                 <targetPath>../bin</targetPath>
                 <directory>src/main/resources/</directory>
                 <includes>
-                    <include>loader.sh</include>
+                    <include>aggregator.sh</include>
                 </includes>
             </resource>
         </resources>
