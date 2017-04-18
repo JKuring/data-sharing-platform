@@ -1,0 +1,84 @@
+<!--Sat Apr  1 16:19:05 2017-->
+<configuration>
+
+    <property>
+        <name>xasecure.audit.credential.provider.file</name>
+        <value>jceks://file/home/ipms/hadoopclient/ranger/YP_BD_hive/cred.jceks</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.db</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.db.batch.filespool.dir</name>
+        <value>/var/log/hive/audit/db/spool</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.db.jdbc.driver</name>
+        <value>com.mysql.jdbc.Driver</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.db.jdbc.url</name>
+        <value>jdbc:mysql://yp-hdp-apollo4200-6020/ranger_audit</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.db.password</name>
+        <value>crypted</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.db.user</name>
+        <value>root</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.hdfs</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.hdfs.batch.filespool.dir</name>
+        <value>/var/log/cmss/hive/audit/hdfs/spool</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.hdfs.dir</name>
+        <value>hdfs://hdp/ranger/audit</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.solr</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.solr.batch.filespool.dir</name>
+        <value>/var/log/cmss/hive/audit/solr/spool</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.solr.urls</name>
+        <value>http://localhost:6083/solr/ranger_audit</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.destination.solr.zookeepers</name>
+        <value>NONE</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.is.enabled</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>xasecure.audit.provider.summary.enabled</name>
+        <value>false</value>
+    </property>
+
+</configuration>

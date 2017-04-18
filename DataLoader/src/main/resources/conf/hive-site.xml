@@ -1,4 +1,4 @@
-<!--Sat Apr  1 16:18:20 2017-->
+<!--Thu Mar 16 16:42:44 2017-->
 <configuration>
 
     <property>
@@ -97,7 +97,7 @@
     </property>
 
     <property>
-        <name>hive.compactor.worker.timeoutMin</name>
+        <name>hive.compactor.worker.timeout</name>
         <value>86400L</value>
     </property>
 
@@ -367,7 +367,7 @@
     </property>
 
     <property>
-        <name>hive.metastore.client.socket.timeoutMin</name>
+        <name>hive.metastore.client.socket.timeout</name>
         <value>1800s</value>
     </property>
 
@@ -493,7 +493,7 @@
 
     <property>
         <name>hive.security.authenticator.manager</name>
-        <value>org.apache.hadoop.hive.ql.security.HadoopDefaultAuthenticator</value>
+        <value>org.apache.hadoop.hive.ql.security.ProxyUserAuthenticator</value>
     </property>
 
     <property>
@@ -744,7 +744,7 @@
     </property>
 
     <property>
-        <name>hive.txn.timeoutMin</name>
+        <name>hive.txn.timeout</name>
         <value>300</value>
     </property>
 

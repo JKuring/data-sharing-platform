@@ -121,22 +121,12 @@
 
     <property>
         <name>hadoop.security.authentication</name>
-        <value>compatible</value>
+        <value>kerberos</value>
     </property>
 
     <property>
         <name>hadoop.security.authorization</name>
         <value>true</value>
-    </property>
-
-    <property>
-        <name>hadoop.security.bdoc.access.id</name>
-        <value>admin</value>
-    </property>
-
-    <property>
-        <name>hadoop.security.bdoc.access.key</name>
-        <value>admin</value>
     </property>
 
     <property>
@@ -248,7 +238,7 @@
     </property>
 
     <property>
-        <name>ipc.client.connect.timeoutMin</name>
+        <name>ipc.client.connect.timeout</name>
         <value>10000</value>
     </property>
 
@@ -268,7 +258,7 @@
     </property>
 
     <property>
-        <name>ipc.client.rpc.timeoutMin</name>
+        <name>ipc.client.rpc.timeout</name>
         <value>180000</value>
     </property>
 
@@ -282,10 +272,6 @@
         <value>false</value>
     </property>
 
-    <property>
-        <name>net.topology.script.file.name</name>
-        <value>/cmss/bch/bc1.3.4/hadoop/etc/hadoop/topology_script.py</value>
-    </property>
 
     <property>
         <name>proxyuser_group</name>

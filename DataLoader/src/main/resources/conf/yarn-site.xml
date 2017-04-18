@@ -150,7 +150,7 @@
     </property>
 
     <property>
-        <name>yarn.nodemanager.health-checker.script.timeoutMin-ms</name>
+        <name>yarn.nodemanager.health-checker.script.timeout-ms</name>
         <value>60000</value>
     </property>
 
@@ -534,7 +534,7 @@
     </property>
 
     <property>
-        <name>yarn.resourcemanager.zk-timeoutMin-ms</name>
+        <name>yarn.resourcemanager.zk-timeout-ms</name>
         <value>10000</value>
     </property>
 

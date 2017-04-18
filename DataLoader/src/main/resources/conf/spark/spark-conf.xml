@@ -9,6 +9,10 @@
         <spark:property name="num_executors" value="30"/>
         <spark:property name="executor_memory" value="2G"/>
         <spark:property name="executor_cores" value="1"/>
+        <!--jars-->
+        <!--SlsLauncher 中用到了com.eastcom.common.service.HttpRequestUtils类-->
+        <spark:property name="jars"
+                        value="../lib/common-1.0-SNAPSHOT.jar,../lib/datanucleus-api-jdo-3.2.6.jar,../lib/datanucleus-core-3.2.10.jar,../lib/datanucleus-rdbms-3.2.9.jar"/>
         <spark:property name="clazz" value="com.eastcom.dataloader.SlsLauncher"/>
         <spark:property name="paropertiesMap">
             <spark:map key-type="java.lang.String" value-type="java.lang.String">
@@ -25,6 +29,7 @@
         <spark:property name="jarName" value="../data-loader-1.0-SNAPSHOT.jar"/>
     </spark:bean>
 
+    <!--Executor Interface-->
     <spark:bean id="sparkDataLoader" name="LOAD_TABLE_SPARK" class="com.eastcom.dataloader.service.SparkDataLoader"/>
 
 </spark:beans>

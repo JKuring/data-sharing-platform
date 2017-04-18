@@ -1,4 +1,4 @@
-package com.eastcom.dataloader.utils.hdfs.util;
+package com.eastcom.common.utils.hdfs.util;
 
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;

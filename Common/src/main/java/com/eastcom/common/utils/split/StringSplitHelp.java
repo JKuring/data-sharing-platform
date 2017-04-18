@@ -1,4 +1,4 @@
-package com.eastcom.dataloader.utils.split;
+package com.eastcom.common.utils.split;
 
 import java.util.Arrays;
 

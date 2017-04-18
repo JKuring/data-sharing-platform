@@ -1,0 +1,34 @@
+<!--Sat Apr  1 16:19:05 2017-->
+<configuration>
+
+    <property>
+        <name>xasecure.policymgr.clientssl.keystore</name>
+        <value>/cmss/bch/bc1.3.4/hive/conf/ranger-plugin-keystore.jks</value>
+    </property>
+
+    <property>
+        <name>xasecure.policymgr.clientssl.keystore.credential.file</name>
+        <value>jceks://file/cmss/bch/bc1.3.4/ranger/YP_BD_hive/cred.jceks</value>
+    </property>
+
+    <property>
+        <name>xasecure.policymgr.clientssl.keystore.password</name>
+        <value>myKeyFilePassword</value>
+    </property>
+
+    <property>
+        <name>xasecure.policymgr.clientssl.truststore</name>
+        <value>/cmss/bch/bc1.3.4/hive/conf/ranger-plugin-truststore.jks</value>
+    </property>
+
+    <property>
+        <name>xasecure.policymgr.clientssl.truststore.credential.file</name>
+        <value>jceks://file/cmss/bch/bc1.3.4/ranger/YP_BD_hive/cred.jceks</value>
+    </property>
+
+    <property>
+        <name>xasecure.policymgr.clientssl.truststore.password</name>
+        <value>changeit</value>
+    </property>
+
+</configuration>

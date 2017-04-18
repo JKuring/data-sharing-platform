@@ -210,7 +210,7 @@
     </property>
 
     <property>
-        <name>mapreduce.reduce.shuffle.fetch.retry.timeoutMin-ms</name>
+        <name>mapreduce.reduce.shuffle.fetch.retry.timeout-ms</name>
         <value>30000</value>
     </property>
 
@@ -250,7 +250,7 @@
     </property>
 
     <property>
-        <name>mapreduce.task.timeoutMin</name>
+        <name>mapreduce.task.timeout</name>
         <value>300000</value>
     </property>
 

@@ -1,0 +1,16 @@
+<configuration>
+
+    <property>
+        <name>xasecure.audit.jpa.javax.persistence.jdbc.url</name>
+        <value>jdbc:mysql://localhost/ranger</value>
+    </property>
+    <property>
+        <name>xasecure.audit.jpa.javax.persistence.jdbc.user</name>
+        <value>rangerlogger</value>
+    </property>
+    <property>
+        <name>xasecure.audit.jpa.javax.persistence.jdbc.password</name>
+        <value>rangerlogger</value>
+    </property>
+
+</configuration>

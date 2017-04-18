@@ -1,4 +1,4 @@
-package com.eastcom.dataloader.utils.hdfs.filefilter;
+package com.eastcom.common.utils.hdfs.filefilter;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;

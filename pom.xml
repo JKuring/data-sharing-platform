@@ -12,6 +12,7 @@
         <module>DataLoader</module>
         <module>DataAggregator</module>
         <module>Common</module>
+        <!--<module>Loader</module>-->
     </modules>
 
     <packaging>pom</packaging>
@@ -548,6 +549,26 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_2.10</artifactId>
             <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.datanucleus</groupId>
+            <artifactId>datanucleus-api-jdo</artifactId>
+            <version>3.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.datanucleus</groupId>
+            <artifactId>datanucleus-core</artifactId>
+            <version>3.2.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.datanucleus</groupId>
+            <artifactId>datanucleus-rdbms</artifactId>
+            <version>3.2.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-network-yarn_2.10</artifactId>
+            <version>1.6.2-bc1.3.4</version>
         </dependency>
 
     </dependencies>

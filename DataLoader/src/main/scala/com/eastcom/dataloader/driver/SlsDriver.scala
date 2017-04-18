@@ -5,12 +5,12 @@ import java.util.Date
 import akka.actor.{Actor, Props}
 import akka.routing.RoundRobinRouter
 import com.eastcom.common.service.HttpRequestUtils
+import com.eastcom.common.utils.hdfs.filefilter.{NonTmpFileFilter, NonTmpOldFileFilter}
+import com.eastcom.common.utils.hdfs.util.FileHelper
 import com.eastcom.dataloader.confparser.{SlsJob, SlsNode}
 import com.eastcom.dataloader.context.Context
 import com.eastcom.dataloader.exception.SlsException
 import com.eastcom.dataloader.message.{SlsJobMessage, SlsResultMessage, SlsStartMessage}
-import com.eastcom.dataloader.utils.hdfs.filefilter.{NonTmpFileFilter, NonTmpOldFileFilter}
-import com.eastcom.dataloader.utils.hdfs.util.FileHelper
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.log4j.Logger
 import org.apache.spark.SparkContext

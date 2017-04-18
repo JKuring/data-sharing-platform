@@ -1,7 +1,6 @@
 package com.eastcom.dataloader.driver
 
-
-import com.eastcom.dataloader.utils.hdfs.filefilter.NonTmpFileFilter
+import com.eastcom.common.utils.hdfs.filefilter.NonTmpFileFilter
 import org.apache.hadoop.fs.{FileStatus, FileSystem, Path}
 import org.apache.log4j.Logger
 

@@ -18,6 +18,8 @@ public class SparkProperties {
 
     private String executor_cores;
 
+    private String jars;
+
     private String clazz;
 
     private Map<String, String> paropertiesMap;
@@ -64,6 +66,14 @@ public class SparkProperties {
         this.executor_cores = executor_cores;
     }
 
+    public String getJars() {
+        return jars;
+    }
+
+    public void setJars(String jars) {
+        this.jars = jars;
+    }
+
     public String getClazz() {
         return clazz;
     }
@@ -100,6 +110,8 @@ public class SparkProperties {
         parameters.add(executor_memory);
         parameters.add("--executor-cores");
         parameters.add(executor_cores);
+        parameters.add("--jars");
+        parameters.add(jars);
         parameters.add("--class");
         parameters.add(clazz);
 
@@ -108,6 +120,11 @@ public class SparkProperties {
             parameters.add("--conf");
             parameters.add(key + "=" + paropertiesMap.get(key));
         }
+
+//        parameters.add("--conf");
+//        parameters.add("spark.driver.extraClassPath=/cmss/bch/bc1.3.4/hive/lib/ranger-hive-plugin-shim-0.5.3.jar:/cmss/bch/bc1.3.4/hive/lib/ranger-plugin-classloader-0.5.3.jar:/cmss/bch/bc1.3.4/hive/lib/ranger-hive-plugin-impl/*:/cmss/bch/bc1.3.4/hadoop/share/hadoop/common/lib/guava-11.0.2.jar:/home/ipms/hadoopclent/spark/lib/datanucleus*");
+//        parameters.add("--conf");
+//        parameters.add("spark.executor.extraClassPath=/cmss/bch/bc1.3.4/hive/lib/ranger-hive-plugin-shim-0.5.3.jar:/cmss/bch/bc1.3.4/hive/lib/ranger-plugin-classloader-0.5.3.jar:/cmss/bch/bc1.3.4/hive/lib/ranger-hive-plugin-impl/*:/cmss/bch/bc1.3.4/hadoop/share/hadoop/common/lib/guava-11.0.2.jar:/home/ipms/hadoopclent/spark/lib/datanucleus*");
 
         parameters.add(jarName);
 

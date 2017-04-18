@@ -22,7 +22,7 @@
     </property>
 
     <property>
-        <name>dfs.client.file-block-storage-locations.timeoutMin</name>
+        <name>dfs.client.file-block-storage-locations.timeout</name>
         <value>10000</value>
     </property>
 
