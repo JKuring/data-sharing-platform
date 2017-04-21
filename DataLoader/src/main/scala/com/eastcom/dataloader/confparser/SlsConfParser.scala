@@ -25,7 +25,7 @@ object SlsConfParser {
     try {
       HttpRequestUtils.httpGet(confFile, "".getClass).split("\\n").foreach(config => {
         if (config != null && config.trim != "" && !config.startsWith("#")) {
-          logging.debug("configuration content: " + config)
+          logging.info("configuration content: " + config)
           job + new SlsNode(config)
         }
       })

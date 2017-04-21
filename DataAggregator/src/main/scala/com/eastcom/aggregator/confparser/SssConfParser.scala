@@ -8,8 +8,6 @@ import com.eastcom.common.service.HttpRequestUtils
   */
 object SssConfParser {
   // conf
-  //hive|spark_odc_data|a_dm_re_ba_sbc_d||p_day|
-  //hive|spark_odc_data|a_dm_re_ba_ippbx_d||p_day|
   def parser(confFile: String, initCmdPath: String, tplPath: String, sessions: Int, timeid: String): SssJob = {
     val job = new SssJob(initCmdPath, tplPath, sessions, timeid)
 //    val sc = Context.getContext(Context.sparkContext).asInstanceOf[SparkContext]

@@ -9,6 +9,7 @@
         <spark:property name="num_executors" value="30"/>
         <spark:property name="executor_memory" value="2G"/>
         <spark:property name="executor_cores" value="1"/>
+        <spark:property name="queue" value="root.bdoc.renter_1.renter_5.dev_75"/>
         <!--jars-->
         <!--SlsLauncher 中用到了com.eastcom.common.service.HttpRequestUtils类-->
         <spark:property name="jars"

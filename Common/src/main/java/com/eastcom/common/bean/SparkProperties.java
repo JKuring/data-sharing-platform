@@ -18,6 +18,8 @@ public class SparkProperties {
 
     private String executor_cores;
 
+    private String queue;
+
     private String jars;
 
     private String clazz;
@@ -74,6 +76,14 @@ public class SparkProperties {
         this.jars = jars;
     }
 
+    public String getQueue() {
+        return queue;
+    }
+
+    public void setQueue(String queue) {
+        this.queue = queue;
+    }
+
     public String getClazz() {
         return clazz;
     }
@@ -110,6 +120,8 @@ public class SparkProperties {
         parameters.add(executor_memory);
         parameters.add("--executor-cores");
         parameters.add(executor_cores);
+        parameters.add("--queue");
+        parameters.add(queue);
         parameters.add("--jars");
         parameters.add(jars);
         parameters.add("--class");

@@ -75,6 +75,7 @@ object Context {
   def isFinish() = finished
 
   def shutdown() = {
+    logging.info("shutdown SparkContext!")
     Context.getContext(Context.sparkContext).asInstanceOf[SparkContext].stop()
     finished = true
   }

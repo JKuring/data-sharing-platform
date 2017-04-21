@@ -12,7 +12,7 @@ public class HttpRequestUtilsTest {
 //        Map<String,String> map = HttpRequestUtils.httpPost("http://10.221.247.7:8080/stream/tool/redis-memory",HashMap.class);
 //        String map = HttpRequestUtils.httpPost("http://10.221.247.7:8080/stream/tool/redis-memory",String.class);
 
-        String map = HttpRequestUtils.httpPost("work/conf/load_control_hour.conf", String.class);
+        String map = HttpRequestUtils.httpPost("http://10.222.20.134:6000/config/getByCiCode?ciCode=load_spark_table_name_conf", String.class);
 
 
 //        for (String key: map.split("\\n")

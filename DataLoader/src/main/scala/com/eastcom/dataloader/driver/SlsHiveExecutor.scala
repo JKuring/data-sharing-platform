@@ -21,15 +21,15 @@ class SlsHiveExecutor(tplPath: String) extends SlsExecutor(tplPath) {
       throw new SlsException("HiveContext is not initialization!!!")
     }
 
-    //    ？
+    // 切换DB
     sqlContext.sql(s"use ${node.getSchema}")
     // 解析sql语句，替换时间参数
     val sqlText = Context.getSql(tplPath, node.getTplName, node)
     // 对sql语句进行格式化，分行，添加“;”
     val sqls = SqlFileParser.parse(sqlText)
     for (sql: String <- sqls) {
-      sqlContext.sql(sql)
       logging.info(s"Execute Sql: $sql")
+      sqlContext.sql(sql)
     }
 
   }

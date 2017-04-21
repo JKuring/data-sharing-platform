@@ -19,9 +19,11 @@ import org.apache.log4j.Logger
   */
 class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headProperties: Array[String]) extends Actor {
   private val logging = Logger.getLogger(getClass)
+  // 同批任务 时间和配置路径相同，但tpl与业务有关，执行时为同批次任务，所以conf只能对一批同一类型的任务，即不能既加载hive又加载hbase
   private val hiveExecutor = new SssHiveExecutor(tplPath, timeid)
   private val hbaseExecutor = new SssHbaseExecutor(tplPath, timeid)
   private val hiveOldExecutor = new SssHiveOldExecutor(tplPath, timeid)
+
   private val mqConnection = new RabbitMQConnection(mqConf.getUserName, mqConf.getPassword, mqConf.getHost, Integer.parseInt(mqConf.getPort))
 
   private val startTime = "startTime"
@@ -30,26 +32,35 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
 
   override def receive: Receive = {
     case SssJobMessage(node: SssNode) => {
-      val connection = mqConnection.createConnection()
-      val channel = mqConnection.getChannel(connection, mqConf.getExchange, mqConf.getRoutingKey)
+      var result = Executor.FAILED
       try {
-        val startTime = new Date().getTime
-        logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Start exec job with table [ ${node.getTplName} ] at time [ $timeid ] ...")
+        val connection = mqConnection.createConnection()
+        val channel = mqConnection.getChannel(connection, mqConf.getExchange, mqConf.getRoutingKey)
         try {
-          exec(node)
-          channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, Executor.SUCESSED), "".getBytes)
-        } catch {
-          case e: Exception => {
-            Thread.sleep(30000l)
+          val startTime = new Date().getTime
+          logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Start exec job with table [ ${node.getTplName} ] at time [ $timeid ] ...")
+          try {
             exec(node)
-            channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, Executor.SUCESSED), "".getBytes)
+            result = Executor.SUCESSED
+          } catch {
+            case e: Exception => {
+              Thread.sleep(30000l)
+              exec(node)
+              result = Executor.SUCESSED
+            }
           }
+          val eastime = (new Date().getTime - startTime) / 1000
+          logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Finish exec job with table [ ${node.getTplName} ] at time [ $timeid ] eastime [ $eastime ] s !")
+        } catch {
+          case e: Throwable => logging.error(s" [ SSS_JOB ] [ ${node.getType} ] Exec job with table [ ${node.getTplName} ] at time [ $timeid ] fail !!!", e)
+            result = Executor.FAILED
+        } finally {
+          headProperties.+("tableName").+(node.getTable)
+          headProperties.+("partition").+(node.getPartitions)
+          channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, result), (s"Finish aggregating task: ${node.getType}, jobs parameter: ${node.getTplName}").getBytes)
         }
-        val eastime = (new Date().getTime - startTime) / 1000
-        logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Finish exec job with table [ ${node.getTplName} ] at time [ $timeid ] eastime [ $eastime ] s !")
       } catch {
-        case e: Exception => logging.error(s" [ SSS_JOB ] [ ${node.getType} ] Exec job with table [ ${node.getTplName} ] at time [ $timeid ] fail !!!", e)
-          channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, Executor.FAILED), "".getBytes)
+        case e: Throwable => logging.error(s"Failed to executed jos, tpl: ${node.getTplName}.")
       }
       context.sender() ! SssResultMessage(node)
     }

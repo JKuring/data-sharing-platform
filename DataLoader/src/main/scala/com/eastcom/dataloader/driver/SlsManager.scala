@@ -23,7 +23,6 @@ class SlsManager(tplPath: String) extends Actor {
   override def receive: Receive = {
     case SlsJobMessage(node: SlsNode, fileStatuses: Array[FileStatus]) => {
       try {
-
         // 移动xdr文件到一个加载目录下
         FileHelp.moveFiles(fs, node.getLoadingDir, fileStatuses)
         val startTime = new Date().getTime
@@ -41,10 +40,14 @@ class SlsManager(tplPath: String) extends Actor {
       } catch {
         case e: Exception => logging.error(s" [ SLS_JOB ] [ ${node.getType} ] Exec load job with table [ ${node.getTplName} ] fail !!!", e)
       } finally {
-        if (node.getLoadedDir != "") {
-          FileHelp.moveFiles(fs, node.getLoadingDir, node.getLoadedDir)
-        } else {
-          FileHelp.rmFiles(fs, node.getLoadingDir)
+        try {
+          if (node.getLoadedDir != "") {
+            FileHelp.moveFiles(fs, node.getLoadingDir, node.getLoadedDir)
+          } else {
+            FileHelp.rmFiles(fs, node.getLoadingDir)
+          }
+        } catch {
+          case e: Exception => logging.error(s"Operation files failed, exception: ${e.getMessage}.")
         }
       }
       context.sender ! SlsResultMessage(node)

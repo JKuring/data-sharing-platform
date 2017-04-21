@@ -15,11 +15,11 @@ public class JsonParser {
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    public static <T> T parseJsonToObject(byte[] message, Class<T> clasz) {
+    public static <T> T parseJsonToObject(byte[] message, Class<T> clazz) {
         try {
-            return objectMapper.readValue(message, clasz);
+            return objectMapper.readValue(message, clazz);
         } catch (IOException e) {
-            logger.error("Get error to parsed the json: {}, error: {}.", e.getMessage());
+            logger.error("Get error to parsed the json: {}, error: {}.", new String(message, 0, message.length), e.getMessage());
         }
         return null;
     }

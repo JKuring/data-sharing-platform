@@ -97,7 +97,11 @@ public class HttpRequestUtils {
                 /**读取服务器返回过来的json字符串数据**/
                 String strResult = EntityUtils.toString(response.getEntity());
                 /**把json字符串转换成json对象**/
-                object = JsonParser.parseJsonToObject(strResult.getBytes(), clazz);
+                if (!clazz.isInstance("")) {
+                    object = JsonParser.parseJsonToObject(strResult.getBytes(), clazz);
+                } else {
+                    return (T) strResult;
+                }
                 url = URLDecoder.decode(url, "UTF-8");
             } else {
                 logger.error("get请求提交失败:" + url);

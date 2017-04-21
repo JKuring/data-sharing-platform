@@ -1,11 +1,13 @@
 package com.eastcom.dataloader
 
 import akka.actor.{ActorSystem, Props}
+import com.cloudera.spark.hbase.HBaseContext
 import com.eastcom.dataloader.confparser.SlsConfParser
 import com.eastcom.dataloader.context.Context
 import com.eastcom.dataloader.driver.SlsDriver
 import com.eastcom.dataloader.exception.SlsException
 import com.eastcom.dataloader.message.SlsStartMessage
+import org.apache.hadoop.hbase.HBaseConfiguration
 import org.apache.log4j.Logger
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
@@ -54,14 +56,14 @@ object SlsLauncher {
     sqlContext.setConf("hive.exec.dynamic.partition.mode", "nonstrict")
 
     // add HBaseContext
-    //    if (zookeeper_hosts != "null") {
-    //      val conf = HBaseConfiguration.create()
-    //      conf.set("hbase.zookeeper.quorum", zookeeper_hosts)
-    //      conf.set("hbase.zookeeper.property.clientPort", if (zookeeper_port == "null") "2181" else zookeeper_port)
-    //      val hbaseContext = new HBaseContext(sc, conf)
-    //      logging.warn(s"hbase.zookeeper.quorum=${zookeeper_hosts};hbase.zookeeper.property.clientPort=${zookeeper_port}")
-    //      Context.+(Context.hbaseContext, hbaseContext)
-    //    }
+    if (zookeeper_hosts != "null") {
+      val conf = HBaseConfiguration.create()
+      conf.set("hbase.zookeeper.quorum", zookeeper_hosts)
+      conf.set("hbase.zookeeper.property.clientPort", if (zookeeper_port == "null") "2181" else zookeeper_port)
+      val hbaseContext = new HBaseContext(sc, conf)
+      logging.warn(s"hbase.zookeeper.quorum=${zookeeper_hosts};hbase.zookeeper.property.clientPort=${zookeeper_port}")
+      Context.+(Context.hbaseContext, hbaseContext)
+    }
 
     // 记录application id 使用yarn 日志来查找
     //    {
@@ -80,8 +82,9 @@ object SlsLauncher {
     // 发送message并马上返回
     masterRouter ! SlsStartMessage
 
-    while (!Context.isFinish) {
-      Thread.sleep(10000)
+
+    while (!Context.isFinish()) {
+      Thread.sleep(1000l)
     }
   }
 }

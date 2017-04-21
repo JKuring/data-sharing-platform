@@ -29,6 +29,14 @@ class SssJob(val initCmdPath: String, val tplPath: String, val sessions: Int, va
     this
   }
 
+  /**
+    * 编辑运行流程，根据多个conf行任务的oritables参数中值得顺序来编辑nodes运行顺序
+    *
+    * @param tableName
+    * @param nodes
+    * @param nodesStatus
+    * @return
+    */
   private def checkNode(tableName: String, nodes: SssNodeList, nodesStatus: Map[String, Int]): Boolean = {
     val k = nodesStatus.getOrElse(tableName, 0)
     if (k == 0) {
@@ -37,7 +45,7 @@ class SssJob(val initCmdPath: String, val tplPath: String, val sessions: Int, va
         node.getOriTables.foreach(x => {
           val oriNode = nodesMap.getOrElse(x, null)
           if (oriNode == null) {
-            throw new SssException(s"Config ERROR: The table [ ${node.getTable} ]'s original table [ $x ] is not find!!!")
+            throw new SssException(s"Config ERROR: The table [ ${node.getTable} ]'s original, table [ $x ] was not found!!!")
           }
           if (this.checkNode(x, oriNode, nodesStatus)) {
             //添加每个节点的子节点，方便运行流程

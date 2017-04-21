@@ -8,7 +8,6 @@ import com.eastcom.aggregator.context.Context
 import com.eastcom.aggregator.exception.SssException
 import com.eastcom.aggregator.message.{SssJobMessage, SssResultMessage, SssStartMessage}
 import com.eastcom.common.service.HttpRequestUtils
-import org.apache.spark.SparkContext
 import org.apache.spark.sql.hive.HiveContext
 
 import scala.collection.mutable.ListBuffer
@@ -61,12 +60,12 @@ class SssDriver(val job: SssJob, val mqConf: MQConf, val headProperties: Array[S
     if (sqlContext == null) {
       throw new SssException("HiveContext is not initialization!!!")
     }
-    val sc = Context.getContext(Context.sparkContext).asInstanceOf[SparkContext]
-    sc.textFile(job.initCmdPath).collect().foreach(udf => {
-      if (udf != null && udf.trim != "" && !udf.startsWith("#")) {
-        sqlContext.sql(udf)
-      }
-    })
+    //    val sc = Context.getContext(Context.sparkContext).asInstanceOf[SparkContext]
+    //    sc.textFile(job.initCmdPath).collect().foreach(udf => {
+    //      if (udf != null && udf.trim != "" && !udf.startsWith("#")) {
+    //        sqlContext.sql(udf)
+    //      }
+    //    })
     //    Source.fromFile(job.initCmdPath).getLines().foreach(udf => {
     //      if (udf != null && udf.trim != "" && !udf.startsWith("#")) {
     //        sqlContext.sql(udf)
