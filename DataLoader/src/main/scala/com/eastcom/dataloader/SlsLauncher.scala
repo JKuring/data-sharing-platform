@@ -45,6 +45,10 @@ object SlsLauncher {
     // 创建SparkContext
     val sc = new SparkContext(sparkConf.setAppName(s"spark load job at time=${timeid}"))
 
+    // test log
+    logging.info(s"Spark log dir: ${sparkConf.get("spark.eventLog.dir")}")
+
+
     // 添加SparkContext
     Context.+(Context.sparkContext, sc)
     // 创建HiveContext

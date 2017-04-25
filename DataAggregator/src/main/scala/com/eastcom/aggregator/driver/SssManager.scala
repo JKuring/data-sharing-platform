@@ -24,6 +24,8 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
   private val hbaseExecutor = new SssHbaseExecutor(tplPath, timeid)
   private val hiveOldExecutor = new SssHiveOldExecutor(tplPath, timeid)
 
+  logging.debug(s"MQ info: ${mqConf.getUserName}, ${mqConf.getHost}, ${mqConf.getExchange}, ${mqConf.getRoutingKey}")
+  logging.debug(s"${mqConf.getPassword}, ${mqConf.getPort}, parameters length: ${mqConf.getParameters.length}")
   private val mqConnection = new RabbitMQConnection(mqConf.getUserName, mqConf.getPassword, mqConf.getHost, Integer.parseInt(mqConf.getPort))
 
   private val startTime = "startTime"
@@ -32,10 +34,12 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
 
   override def receive: Receive = {
     case SssJobMessage(node: SssNode) => {
+      logging.info(s"start to connect MQ!")
       var result = Executor.FAILED
       try {
         val connection = mqConnection.createConnection()
         val channel = mqConnection.getChannel(connection, mqConf.getExchange, mqConf.getRoutingKey)
+        logging.info("inish connecting MQ!")
         try {
           val startTime = new Date().getTime
           logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Start exec job with table [ ${node.getTplName} ] at time [ $timeid ] ...")
@@ -52,15 +56,18 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
           val eastime = (new Date().getTime - startTime) / 1000
           logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Finish exec job with table [ ${node.getTplName} ] at time [ $timeid ] eastime [ $eastime ] s !")
         } catch {
-          case e: Throwable => logging.error(s" [ SSS_JOB ] [ ${node.getType} ] Exec job with table [ ${node.getTplName} ] at time [ $timeid ] fail !!!", e)
+          case e: Exception => logging.error(s" [ SSS_JOB ] [ ${node.getType} ] Exec job with table [ ${node.getTplName} ] at time [ $timeid ] fail !!!", e)
             result = Executor.FAILED
         } finally {
+          if (connection.isOpen) {
+            connection.close()
+          }
           headProperties.+("tableName").+(node.getTable)
           headProperties.+("partition").+(node.getPartitions)
           channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, result), (s"Finish aggregating task: ${node.getType}, jobs parameter: ${node.getTplName}").getBytes)
         }
       } catch {
-        case e: Throwable => logging.error(s"Failed to executed jos, tpl: ${node.getTplName}.")
+        case e: Exception => logging.error(s"Failed to executed jos, tpl: ${node.getTplName}.", e)
       }
       context.sender() ! SssResultMessage(node)
     }

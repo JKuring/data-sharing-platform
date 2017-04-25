@@ -68,6 +68,10 @@ class SlsDriver(val job: SlsJob) extends Thread with Actor {
         logging.error(s"load ${job.initCmdPath} false, shutdown the current service", e)
         shutdown()
       }
+      case e: Throwable => {
+        logging.error(s"load ${job.initCmdPath} false, shutdown the current service", e)
+        shutdown()
+      }
     } finally {
       shutdown()
     }

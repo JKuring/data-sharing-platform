@@ -60,6 +60,7 @@ object Context {
   val hbaseType = "hbase"
 
   def finish() = {
+    logging.info("the current task is finish!")
     flag = true
   }
 

@@ -13,7 +13,9 @@
         <!--jars-->
         <!--SlsLauncher 中用到了com.eastcom.common.service.HttpRequestUtils类-->
         <spark:property name="jars"
-                        value="../lib/common-1.0-SNAPSHOT.jar,../lib/datanucleus-api-jdo-3.2.6.jar,../lib/datanucleus-core-3.2.10.jar,../lib/datanucleus-rdbms-3.2.9.jar"/>
+                        value="../lib/common-1.0-SNAPSHOT.jar,../lib/amqp-client-3.6.5.jar"/>
+        <!--value="../lib/common-1.0-SNAPSHOT.jar,../lib/datanucleus-api-jdo-3.2.6.jar,../lib/datanucleus-core-3.2.10.jar,../lib/datanucleus-rdbms-3.2.9.jar"/>-->
+
         <spark:property name="clazz" value="com.eastcom.aggregator.SssLauncher"/>
         <spark:property name="paropertiesMap">
             <spark:map key-type="java.lang.String" value-type="java.lang.String">

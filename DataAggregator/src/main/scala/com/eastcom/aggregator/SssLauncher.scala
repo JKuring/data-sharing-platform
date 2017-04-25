@@ -74,9 +74,11 @@ object SssLauncher {
 
     val timeoutMS = timeout.toLong * 60 * 1000
     val startTime = System.currentTimeMillis()
-    while (!Context.isFinish && startTime - System.currentTimeMillis() <= timeoutMS) {
+    while (!(Context.isFinish || System.currentTimeMillis() - startTime >= timeoutMS)) {
       Thread.sleep(3000l)
     }
+
+    logging.info(s"Finish Job, Spark app name： ${sc.appName}, and job status is ${Context.isFinish}")
 
     system.shutdown()
     sc.stop()
