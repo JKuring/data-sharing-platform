@@ -12,6 +12,7 @@ public class SparkJobs {
     private String zookeeper_hosts;
     private String zookeeper_port;
     private String timeid;
+    private String sparkConf;
 
     public SparkJobs() {
     }
@@ -70,6 +71,14 @@ public class SparkJobs {
 
     public void setTimeid(String timeid) {
         this.timeid = timeid;
+    }
+
+    public String getSparkConf() {
+        return sparkConf;
+    }
+
+    public void setSparkConf(String sparkConf) {
+        this.sparkConf = sparkConf;
     }
 
     public String[] getParameters() {

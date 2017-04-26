@@ -1,11 +1,12 @@
 {
   "name": "spark_aggr_test",
-  "confFile": "work/conf/agg_hour.conf",
-  "initCmdPath": "",
-  "tplPath": "",
-  "zookeeper_hosts": "127.0.0.1",
+  "confFile": "http://10.222.20.134:6000/config/getByCiCode?ciCode=aggregate_spark_table_name_conf",
+  "initCmdPath": "http://10.222.20.134:6000/config/getByCiCode?ciCode=aggregate_spark_table_name_init",
+  "tplPath": "http://10.222.20.134:6000/config/getByCiCode?ciCode=aggregate_spark_table_name_tpl",
+  "zookeeper_hosts": "null",
   "zookeeper_port": "12345",
-  "sessions": "",
+  "sessions": 10,
   "timeid": "#minuteminus(15)#",
-  "timeoutMin": "0"
+  "timeoutMin": "5",
+  "sparkConf": "http://10.222.20.134:6000/config/getByCiCode?ciCode=spark_load_conf"
 }

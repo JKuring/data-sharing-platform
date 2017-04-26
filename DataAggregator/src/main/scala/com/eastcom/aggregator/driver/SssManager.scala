@@ -14,6 +14,8 @@ import com.eastcom.common.utils.time.TimeTransform
 import com.rabbitmq.client.AMQP.BasicProperties
 import org.apache.log4j.Logger
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
   * Created by slp on 2016/2/18.
   */
@@ -38,7 +40,7 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
       var result = Executor.FAILED
       try {
         val connection = mqConnection.createConnection()
-        val channel = mqConnection.getChannel(connection, mqConf.getExchange, mqConf.getRoutingKey)
+        val channel = connection.createChannel()
         logging.info("inish connecting MQ!")
         try {
           val startTime = new Date().getTime
@@ -59,16 +61,25 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
           case e: Exception => logging.error(s" [ SSS_JOB ] [ ${node.getType} ] Exec job with table [ ${node.getTplName} ] at time [ $timeid ] fail !!!", e)
             result = Executor.FAILED
         } finally {
-          if (connection.isOpen) {
+          try {
+            logging.info("Sending MQ message.")
+            val tmp = ArrayBuffer[String]()
+            tmp ++= headProperties
+            tmp += "tableName" += node.getTable
+            tmp += "partition" += node.getPartitions
+            tmp += "timeId" += timeid
+            channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, getMessageProperties(tmp.toArray, result), s"Finish aggregating task: ${node.getType}, jobs parameter: ${node.getTplName}".getBytes)
             connection.close()
+            logging.info("Finish sending.")
           }
-          headProperties.+("tableName").+(node.getTable)
-          headProperties.+("partition").+(node.getPartitions)
-          channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, false, getMessageProperties(headProperties, result), (s"Finish aggregating task: ${node.getType}, jobs parameter: ${node.getTplName}").getBytes)
+          catch {
+            case e: Exception => logging.error("Failed to return MQ message.")
+          }
         }
       } catch {
-        case e: Exception => logging.error(s"Failed to executed jos, tpl: ${node.getTplName}.", e)
+        case e: Exception => logging.error(s"Failed to execute jos, tpl: ${node.getTplName}.", e)
       }
+      logging.info("Finish SssManager.")
       context.sender() ! SssResultMessage(node)
     }
   }

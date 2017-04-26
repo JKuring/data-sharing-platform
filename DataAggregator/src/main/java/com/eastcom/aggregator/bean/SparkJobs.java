@@ -14,6 +14,7 @@ public class SparkJobs {
     private String sessions;
     private String timeid;
     private String timeoutMin;
+    private String sparkConf;
 
     public SparkJobs() {
     }
@@ -89,6 +90,14 @@ public class SparkJobs {
 
     public void setTimeoutMin(String timeoutMin) {
         this.timeoutMin = timeoutMin;
+    }
+
+    public String getSparkConf() {
+        return sparkConf;
+    }
+
+    public void setSparkConf(String sparkConf) {
+        this.sparkConf = sparkConf;
     }
 
     public String[] getParameters() {

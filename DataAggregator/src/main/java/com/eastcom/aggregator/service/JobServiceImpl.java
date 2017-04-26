@@ -1,8 +1,6 @@
 package com.eastcom.aggregator.service;
 
-import com.eastcom.aggregator.bean.MQConf;
 import com.eastcom.aggregator.interfaces.service.JobService;
-import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
@@ -12,7 +10,6 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,13 +25,6 @@ public class JobServiceImpl implements JobService<Message> {
     private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
 
     private final TaskType taskType;
-
-    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
-
-    private final SparkProperties sparkProperties;
-
-    private final MQConf mqConf;
-
 
     @Autowired
     private RabbitTemplate q_aggr_spark;
@@ -53,11 +43,8 @@ public class JobServiceImpl implements JobService<Message> {
     private static final String AGGREGATE_SPARK = "AGGREGATE_SPARK";
 
     @Autowired
-    public JobServiceImpl(TaskType taskType, ThreadPoolTaskExecutor threadPoolTaskExecutor, SparkProperties sparkProperties, MQConf mqConf) {
+    public JobServiceImpl(TaskType taskType) {
         this.taskType = taskType;
-        this.threadPoolTaskExecutor = threadPoolTaskExecutor;
-        this.sparkProperties = sparkProperties;
-        this.mqConf = mqConf;
     }
 
 

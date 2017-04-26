@@ -5,6 +5,7 @@ import com.eastcom.aggregator.bean.SparkJobs;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.common.service.HttpRequestUtils;
 import com.eastcom.common.utils.MergeArrays;
 import com.eastcom.common.utils.parser.JsonParser;
 import com.eastcom.common.utils.parser.MqHeadParser;
@@ -31,7 +32,6 @@ public class SparkAggregator implements Executor<Message> {
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-    @Autowired
     private SparkProperties sparkProperties;
 
     @Autowired
@@ -57,6 +57,7 @@ public class SparkAggregator implements Executor<Message> {
                 logger.info("start the task: {}.", taskId);
                 final SparkJobs sparkJobs = JsonParser.parseJsonToObject(context.getBytes(), SparkJobs.class);
                 logger.info("the name of aggregated job: {}.", sparkJobs.getTplPath());
+                sparkProperties = HttpRequestUtils.httpGet(sparkJobs.getSparkConf(), SparkProperties.class);
                 try {
                     threadPoolTaskExecutor.execute(new Runnable() {
                         @Override

@@ -24,7 +24,7 @@ public class MqHeadParser {
     public static HashMap<String, Object> getHeadProperties(String[] params) {
         if (params.length % 2 == 0) {
             HashMap<String, Object> head = new HashMap();
-            for (int i = 0; i < params.length; i = +2) {
+            for (int i = 0; i < params.length; i += 2) {
                 head.put(params[i], params[i + 1]);
             }
             return head;

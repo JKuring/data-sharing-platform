@@ -12,6 +12,7 @@
         <module>DataLoader</module>
         <module>DataAggregator</module>
         <module>Common</module>
+        <module>DataPublisher</module>
         <!--<module>Loader</module>-->
     </modules>
 

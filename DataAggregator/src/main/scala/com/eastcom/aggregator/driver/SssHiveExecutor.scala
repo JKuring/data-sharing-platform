@@ -23,8 +23,8 @@ class SssHiveExecutor(tplPath: String, timeid: String) extends SssExecutor(tplPa
     val sqlText = Context.getSql(tplPath, node.getTplName, stat_month, stat_date, stat_hour, stat_minute, timeid, node);
     val sqls = SqlFileParser.parse(sqlText)
     for (sql: String <- sqls) {
-      sqlContext.sql(sql)
       logging.info(s"Execute Sql: $sql")
+      sqlContext.sql(sql)
     }
   }
 }
