@@ -1,9 +1,9 @@
-package com.eastcom.aggregator.service;
+package com.eastcom.datapublisher.service;
 
-import com.eastcom.aggregator.interfaces.service.JobService;
 import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.datapublisher.interfaces.JobService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 
+
 /**
  * Created by linghang.kong on 2017/3/10.
  */
@@ -24,29 +25,22 @@ public class JobServiceImpl implements JobService<Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
 
-    private final TaskType taskType;
+    @Autowired
+    private TaskType taskType;
 
     @Autowired
-    private RabbitTemplate q_aggr_spark;
+    private RabbitTemplate q_load;
 
+    @Resource(name = "PUBLISH_HIVE_FTP")
+    private Executor publish_hive_ftp;
 
     // back head
     private String startTime = "startTime";
     private String endTime = "endTime";
     private String status = "status";
 
-    // executor
-    @Resource(name = "AGGREGATE_SPARK")
-    private Executor aggregator_spark;
-
-    // task types
-    private static final String AGGREGATE_SPARK = "AGGREGATE_SPARK";
-
-    @Autowired
-    public JobServiceImpl(TaskType taskType) {
-        this.taskType = taskType;
-    }
-
+    // service
+    private static final String PUBLISH_HIVE_FTP = "PUBLISH_HIVE_FTP";
 
     public void excute(Message message) {
         int jobType = 0;
@@ -58,8 +52,8 @@ public class JobServiceImpl implements JobService<Message> {
             if (taskTypesMap.containsKey(jobType)) {
                 String taskType = taskTypesMap.get(jobType);
                 switch (taskType) {
-                    case AGGREGATE_SPARK:
-                        aggregator_spark.doJob(message);
+                    case PUBLISH_HIVE_FTP:
+                        publish_hive_ftp.doJob(message);
                         break;
                     default:
                         throw new Exception("invalid task type!");
@@ -67,7 +61,7 @@ public class JobServiceImpl implements JobService<Message> {
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
-            q_aggr_spark.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, Executor.FAILED)));
+            q_load.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, Executor.FAILED)));
         }
     }
 
@@ -76,6 +70,7 @@ public class JobServiceImpl implements JobService<Message> {
         messageProperties.setHeader(status, result);
         return messageProperties;
     }
+
 
     @Override
     public String getName() {

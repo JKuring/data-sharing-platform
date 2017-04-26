@@ -12,6 +12,15 @@
     <artifactId>data-publisher</artifactId>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>com.eastcom</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+
     <build>
         <plugins>
             <!--编译插件，可依赖外包-->
@@ -64,6 +73,48 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <targetPath>../lib/</targetPath>
+                <directory>lib/</directory>
+                <includes>
+                    <include>*</include>
+                </includes>
+            </resource>
+            <!--spring内部依赖-->
+            <!--<resource>-->
+            <!--<targetPath>.</targetPath>-->
+            <!--<directory>src/main/resources/</directory>-->
+            <!--<includes>-->
+            <!--<include>conf/beans.xml</include>-->
+            <!--</includes>-->
+            <!--<excludes>-->
+            <!--<exclude>conf/hbase/auth/*</exclude>-->
+            <!--<exclude>conf/*.xml</exclude>-->
+            <!--<exclude>*.sh</exclude>-->
+            <!--<exclude>*log</exclude>-->
+            <!--</excludes>-->
+            <!--</resource>-->
+            <!--外部配置-->
+            <resource>
+                <targetPath>../</targetPath>
+                <directory>src/main/resources/</directory>
+                <excludes>
+                    <exclude>*.sh</exclude>
+                    <exclude>*log</exclude>
+                </excludes>
+            </resource>
+            <!--启动脚本-->
+            <resource>
+                <targetPath>../bin</targetPath>
+                <directory>src/main/resources/</directory>
+                <includes>
+                    <include>publisher.sh</include>
+                </includes>
+            </resource>
+        </resources>
+
     </build>
 
 </project>

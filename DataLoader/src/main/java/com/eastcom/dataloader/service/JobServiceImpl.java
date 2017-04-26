@@ -32,10 +32,10 @@ public class JobServiceImpl implements JobService<Message> {
     private RabbitTemplate q_load;
 
     @Resource(name = "LOAD_TABLE_HBASE")
-    Executor load_table_hbase;
+    private Executor load_table_hbase;
 
     @Resource(name = "LOAD_TABLE_SPARK")
-    Executor load_table_spark;
+    private Executor load_table_spark;
 
     // back head
     private String startTime = "startTime";
@@ -68,7 +68,7 @@ public class JobServiceImpl implements JobService<Message> {
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
-            q_load.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, 1)));
+            q_load.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, Executor.FAILED)));
         }
     }
 

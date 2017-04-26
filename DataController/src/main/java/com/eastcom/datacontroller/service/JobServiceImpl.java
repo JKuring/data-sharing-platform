@@ -32,10 +32,10 @@ public class JobServiceImpl implements JobService<Message> {
     private RabbitTemplate q_maint;
 
     @Resource(name = "CREATE_TABLE_HBASE")
-    Executor create_table_hbase;
+    private Executor create_table_hbase;
 
     @Resource(name = "DELETE_TABLE_HBASE")
-    Executor delete_table_hbase;
+    private Executor delete_table_hbase;
 
     private static final String CREATE_TABLE_HBASE = "CREATE_TABLE_HBASE";
     private static final String DELETE_TABLE_HBASE = "DELETE_TABLE_HBASE";
@@ -70,7 +70,7 @@ public class JobServiceImpl implements JobService<Message> {
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
             messageProperties.setHeader(status, 1);
-            q_maint.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, 1)));
+            q_maint.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, Executor.FAILED)));
         }
     }
 

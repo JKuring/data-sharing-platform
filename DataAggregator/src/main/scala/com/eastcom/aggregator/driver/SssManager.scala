@@ -33,6 +33,7 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
   private val startTime = "startTime"
   private val endTime = "endTime"
   private val status = "status"
+  private val jobType = "jobType"
 
   override def receive: Receive = {
     case SssJobMessage(node: SssNode) => {
@@ -97,6 +98,8 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
 
   private def getMessageProperties(messageProperties: Array[String], result: Int) = {
     val tmp = MqHeadParser.getHeadProperties(messageProperties)
+    // modify job type
+    tmp.put(jobType, "401")
     tmp.put(endTime, TimeTransform.getDate(System.currentTimeMillis))
     tmp.put(status, String.valueOf(result))
     new BasicProperties.Builder().headers(tmp).build
