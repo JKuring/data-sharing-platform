@@ -5,6 +5,7 @@ cd `dirname $0`
 CONTROLLER="Controller"
 LOADER="Loader"
 AGGREGATOR="Aggregator"
+PUBLISHER="Publisher"
 
 
 function start_all(){
@@ -18,6 +19,10 @@ function start_all(){
 
         cd ./DataAggregator/bin
         echo `./aggregator.sh start Aggregator`
+        cd ../../
+
+        cd ./DataPublisher/bin
+        echo `./publisher.sh start Publisher`
         cd ../../
 }
 
@@ -33,6 +38,10 @@ function stop_all(){
 
         cd ./DataAggregator/bin
         echo `./aggregator.sh stop Aggregator`
+        cd ../../
+
+        cd ./DataPublisher/bin
+        echo `./publisher.sh stop Publisher`
         cd ../../
 }
 

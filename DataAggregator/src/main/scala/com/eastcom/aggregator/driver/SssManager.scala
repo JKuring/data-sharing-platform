@@ -35,6 +35,12 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
   private val status = "status"
   private val jobType = "jobType"
 
+  private val tableName = "tableName"
+  private val schema = "schema"
+  private val partition = "partition"
+  private val timeId = "timeId"
+
+
   override def receive: Receive = {
     case SssJobMessage(node: SssNode) => {
       logging.info(s"start to connect MQ!")
@@ -66,9 +72,10 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
             logging.info("Sending MQ message.")
             val tmp = ArrayBuffer[String]()
             tmp ++= headProperties
-            tmp += "tableName" += node.getTable
-            tmp += "partition" += node.getPartitions
-            tmp += "timeId" += timeid
+            tmp += this.tableName += node.getTable
+            tmp += this.schema += node.getSchema
+            tmp += this.partition += node.getPartitions
+            tmp += this.timeId += timeid
             channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, getMessageProperties(tmp.toArray, result), s"Finish aggregating task: ${node.getType}, jobs parameter: ${node.getTplName}".getBytes)
             connection.close()
             logging.info("Finish sending.")
@@ -98,8 +105,6 @@ class SssManager(tplPath: String, timeid: String, val mqConf: MQConf, val headPr
 
   private def getMessageProperties(messageProperties: Array[String], result: Int) = {
     val tmp = MqHeadParser.getHeadProperties(messageProperties)
-    // modify job type
-    tmp.put(jobType, "401")
     tmp.put(endTime, TimeTransform.getDate(System.currentTimeMillis))
     tmp.put(status, String.valueOf(result))
     new BasicProperties.Builder().headers(tmp).build

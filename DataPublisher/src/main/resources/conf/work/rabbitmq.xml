@@ -13,15 +13,15 @@
     <!--hbase load-->
     <!--定义rabbit template用于数据的接收和发送 -->
     <!--logs-->
-    <!--<rabbit:template id="q_load" connection-factory="connectionFactory"-->
-    <!--exchange="E_SUYAN_SCHEDULE" routing-key="R_REPLY"/>-->
+    <rabbit:template id="q_log" connection-factory="connectionFactory" exchange="E_SUYAN_SCHEDULE"
+                     routing-key="R_REPLY"/>
     <!-- 消息接收者 -->
     <rabbitmq:bean id="messageReceiver" class="com.eastcom.datapublisher.service.MessageServiceImpl"/>
     <!--定义queue -->
-    <rabbit:queue name="Q_DRIVE" auto-delete="false"/>
+    <rabbit:queue name="Q_PUBLISH_FTP" auto-delete="false"/>
     <!-- queue litener 观察 监听模式 当有消息到达时会通知监听在对应的队列上的监听对象 -->
     <rabbit:listener-container
             connection-factory="connectionFactory"><!-- 可以指定接收的线程池 ，异步接收 -->
-        <rabbit:listener queues="Q_DRIVE" ref="messageReceiver"/>
+        <rabbit:listener queues="Q_PUBLISH_FTP" ref="messageReceiver"/>
     </rabbit:listener-container>
 </rabbitmq:beans>

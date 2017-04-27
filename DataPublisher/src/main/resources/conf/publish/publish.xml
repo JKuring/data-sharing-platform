@@ -4,4 +4,22 @@
                xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <publish:bean id="hivePublishFTP" name="PUBLISH_HIVE_FTP" class="com.eastcom.datapublisher.service.HivePublishFTP"/>
+
+    <publish:bean id="hiveWarehousePath" name="hiveWarehousePath" class="java.lang.String">
+        <publish:constructor-arg name="value" value="/apps/hive/warehouse/"/>
+    </publish:bean>
+
+    <!-- command parameters: [cmd] -->
+    <publish:bean id="cmd" name="cmd" class="java.lang.String">
+        <publish:constructor-arg name="value" value="/tmp/echo [cmd] > 123.txt"/>
+    </publish:bean>
+
+    <publish:bean id="FILE_PREFIX" name="FILE_PREFIX" class="java.lang.String">
+        <publish:constructor-arg name="value" value="FILE_PREFIX"/>
+    </publish:bean>
+
+    <publish:bean id="TIME_FORMAT" name="TIME_FORMAT" class="java.lang.String">
+        <publish:constructor-arg name="value" value="YYYYMMDD"/>
+    </publish:bean>
+
 </publish:beans>

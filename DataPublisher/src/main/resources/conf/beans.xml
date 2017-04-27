@@ -13,5 +13,17 @@
     <!-- publisher -->
     <publisher:import resource="classpath:publish/publish.xml"/>
 
+    <!-- tpye conf -->
+    <publisher:import resource="classpath:work/task-types.xml"/>
+
+    <!--ThreadPool-->
+    <publisher:bean id="taskExecutor"
+                    class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <publisher:property name="corePoolSize" value="10"/>
+        <publisher:property name="keepAliveSeconds" value="300"/>
+        <publisher:property name="maxPoolSize" value="50"/>
+        <publisher:property name="queueCapacity" value="100"/>
+    </publisher:bean>
+
 
 </publisher:beans>
