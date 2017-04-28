@@ -9,9 +9,6 @@ public class MBD_PUBLISH_CONF {
     //发布数据表源表 ( parquet  表)
     private String realTableName;
 
-    //数据导出外部表名称 (TEXT 表)
-    private String extTableName;
-
     //发布类型 :     1  -  FTP     2 -  HBase
     private Integer pubType;
 
@@ -39,6 +36,10 @@ public class MBD_PUBLISH_CONF {
     //导出表所在schema
     private String exportSchema;
 
+    private String exportTableName;
+
+
+
     public String getCatalogId() {
         return catalogId;
     }
@@ -53,14 +54,6 @@ public class MBD_PUBLISH_CONF {
 
     public void setRealTableName(String realTableName) {
         this.realTableName = realTableName;
-    }
-
-    public String getExtTableName() {
-        return extTableName;
-    }
-
-    public void setExtTableName(String extTableName) {
-        this.extTableName = extTableName;
     }
 
     public Integer getPubType() {
@@ -156,12 +149,18 @@ public class MBD_PUBLISH_CONF {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("PublishConf [catalogId=").append(catalogId).append(", realTableName=").append(realTableName)
-                .append(", extTableName=").append(extTableName).append(", pubType=").append(pubType)
+                .append(", pubType=").append(pubType)
                 .append(", ftpServer=").append(ftpServer).append(", ftpAccount=").append(ftpAccount).append(", ftpPsw=")
                 .append(ftpPsw).append(", ftpPathExpr=").append(ftpPathExpr).append(", notityEsb=").append(notityEsb)
                 .append(", esbCode=").append(esbCode).append(", hbaseTableName=").append(hbaseTableName).append("]");
         return builder.toString();
     }
 
+    public String getExportTableName() {
+        return exportTableName;
+    }
 
+    public void setExportTableName(String exportTableName) {
+        this.exportTableName = exportTableName;
+    }
 }

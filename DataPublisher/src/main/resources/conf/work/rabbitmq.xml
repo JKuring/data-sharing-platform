@@ -13,8 +13,8 @@
     <!--hbase load-->
     <!--定义rabbit template用于数据的接收和发送 -->
     <!--logs-->
-    <rabbit:template id="q_log" connection-factory="connectionFactory" exchange="E_SUYAN_SCHEDULE"
-                     routing-key="R_REPLY"/>
+    <rabbit:template id="q_publish" connection-factory="connectionFactory" exchange="E_SUYAN_SCHEDULE"
+                     routing-key="R_ESB_NOTIFY"/>
     <!-- 消息接收者 -->
     <rabbitmq:bean id="messageReceiver" class="com.eastcom.datapublisher.service.MessageServiceImpl"/>
     <!--定义queue -->

@@ -11,7 +11,8 @@
 
     <!-- command parameters: [cmd] -->
     <publish:bean id="cmd" name="cmd" class="java.lang.String">
-        <publish:constructor-arg name="value" value="/tmp/echo [cmd] > 123.txt"/>
+        <publish:constructor-arg name="value"
+                                 value="/home/ipms/eastcom/DataSharingPlatform/DataPublisher/bin/testScript.sh '[cmd]'"/>
     </publish:bean>
 
     <publish:bean id="FILE_PREFIX" name="FILE_PREFIX" class="java.lang.String">

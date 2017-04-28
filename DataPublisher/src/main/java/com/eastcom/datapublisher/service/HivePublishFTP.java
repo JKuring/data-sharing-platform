@@ -29,7 +29,8 @@ public class HivePublishFTP implements Executor<Message> {
 
     private String sepa = File.separator;
 
-    private Pattern pattern = Pattern.compile("\\[" + "cmd" + "]");
+    private Pattern cmdPattern = Pattern.compile("\\[" + "cmd" + "]");
+    private Pattern ftpPattern = Pattern.compile("ftp_url");
 
     // back head
     private String startTime = "startTime";
@@ -46,7 +47,7 @@ public class HivePublishFTP implements Executor<Message> {
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Autowired
-    private RabbitTemplate q_log;
+    private RabbitTemplate q_publish;
 
     @Resource(name = "hiveWarehousePath")
     private String hiveWarehousePath;
@@ -69,33 +70,44 @@ public class HivePublishFTP implements Executor<Message> {
         try {
             logger.info("start the task: {}.", taskId);
             final MBD_PUBLISH_CONF mbdPublishConf = JsonParser.parseJsonToObject(context.getBytes(), MBD_PUBLISH_CONF.class);
-            final Matcher matcher = pattern.matcher(cmd);
+            final Matcher matcher = cmdPattern.matcher(cmd);
             if (matcher.find()) {
                 threadPoolTaskExecutor.execute(new Runnable() {
-                    int rs = Executor.SUCESSED;
-
                     @Override
                     public void run() {
+                        int rs = Executor.SUCESSED;
+                        String command = null;
                         try {
                             logger.info("execute cmd.");
-                            Process process = Runtime.getRuntime().exec(matcher.replaceFirst(getParameters(mbdPublishConf, headMap)));
+                            command = matcher.replaceFirst(getParameters(mbdPublishConf, headMap));
+                            Process process = Runtime.getRuntime().exec(command);
+                            logger.info("executing......");
                             if (process.waitFor() != 0) {
                                 InputStreamReader inputStreamReader = new InputStreamReader(process.getErrorStream());
                                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                                 String result;
                                 StringBuffer tmp = new StringBuffer();
-                                if ((result = bufferedReader.readLine()).length() > 0) {
+                                while ((result = bufferedReader.readLine()) != null) {
                                     tmp.append(result);
                                 }
-                                rs = Executor.FAILED;
                                 throw new Exception(tmp.toString());
+                            } else {
+                                InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
+                                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                                String result;
+                                while ((result = bufferedReader.readLine()) != null) {
+                                    Matcher matcher1 = ftpPattern.matcher(result);
+                                    if (matcher1.find()) {
+                                        logger.info("publish MQ!");
+                                        q_publish.send(new Message(result.getBytes(), getMessageProperties(messageProperties, rs)));
+                                    }
+                                }
                             }
-                            logger.info("Finish!");
+                            logger.info("Finish! Command: {}.", command);
                         } catch (Exception e) {
-                            logger.error("Failed to execute cmd: {}, exception: {}.", cmd, e.getMessage());
-                        } finally {
-                            q_log.send(new Message(("Finish loading task: " + taskId).getBytes(), getMessageProperties(messageProperties, rs)));
-
+                            rs = Executor.FAILED;
+                            logger.error("Failed to execute cmd: {}, exception: {}.", command, e.getMessage());
+                            q_publish.send(new Message(("Finish publishing task: " + taskId + "exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, rs)));
                         }
                     }
                 });
@@ -108,7 +120,6 @@ public class HivePublishFTP implements Executor<Message> {
 
     private String getParameters(MBD_PUBLISH_CONF mbdPublishConf, Map<String, Object> headMap) {
         StringBuilder builder = new StringBuilder();
-        builder.append(" ");
         builder.append(mbdPublishConf.getCatalogId()).append(" ");
         builder.append(mbdPublishConf.getRealTableName()).append(" ");
         builder.append(mbdPublishConf.getPubType()).append(" ");
