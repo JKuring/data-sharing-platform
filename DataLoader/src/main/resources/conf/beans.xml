@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<loader:beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:context="http://www.springframework.org/schema/context"
+              xmlns:loader="http://www.springframework.org/schema/beans"
+              xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- load mq factory-->
+    <loader:import resource="classpath:work/rabbitmq.xml"/>
+
+    <!-- task types -->
+    <loader:import resource="classpath:work/task-types.xml"/>
+
+    <context:component-scan base-package="com.eastcom"/>
+
+    <loader:import resource="classpath:hbase/hbase-beans.xml"/>
+
+    <loader:import resource="classpath:spark/spark-conf.xml"/>
+
+    <!--ThreadPool-->
+    <loader:bean id="taskExecutor"
+                 class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <loader:property name="corePoolSize" value="10"/>
+        <loader:property name="keepAliveSeconds" value="300"/>
+        <loader:property name="maxPoolSize" value="50"/>
+        <loader:property name="queueCapacity" value="100"/>
+    </loader:bean>
+
+
+</loader:beans>

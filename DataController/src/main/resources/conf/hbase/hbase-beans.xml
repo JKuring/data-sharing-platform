@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hbase:beans
+        xmlns:hbase="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:hdp="http://www.springframework.org/schema/hadoop"
+
+
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/hadoop
+          http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+
+
+    <hbase:import resource="classpath:hadoop/hadoop-beans.xml"/>
+
+
+    <!--配置必须为classpath的根目录下，否则配置加载会出现异常问题-->
+    <!--<hdp:configuration-->
+    <!--resources="classpath:core-site.xml,classpath:hbase-site.xml,classpath:hdfs-site.xml,classpath:ssl-client.xml"/>-->
+    <!--<hdp:configuration-->
+            <!--resources="classpath:core-site.xml,classpath:hbase-site.xml,classpath:hbase-policy.xml,classpath:hdfs-site.xml,classpath:mapred-site.xml,classpath:yarn-site.xml"/>-->
+
+    <!--<hdp:hbase-configuration configuration-ref="hadoopConfiguration"/>-->
+
+    <!--dao-->
+    <hbase:bean id="hbaseDaoImpl" class="com.eastcom.datacontroller.dao.HBaseDaoImpl" lazy-init="true">
+        <hbase:constructor-arg ref="hbaseConfiguration"/>
+    </hbase:bean>
+    <!--自定义-->
+    <!--config-->
+
+    <!--ThreadPool-->
+    <hbase:bean id="taskExecutor"
+                class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <hbase:property name="corePoolSize" value="10"/>
+        <hbase:property name="keepAliveSeconds" value="300"/>
+        <hbase:property name="maxPoolSize" value="50"/>
+        <hbase:property name="queueCapacity" value="100"/>
+    </hbase:bean>
+
+    <!--Controller-->
+    <hbase:bean id="createTableController" name="CREATE_TABLE_HBASE"
+                class="com.eastcom.datacontroller.service.HBaseCreateTableController"/>
+    <hbase:bean id="deleteTableController" name="DELETE_TABLE_HBASE"
+                class="com.eastcom.datacontroller.service.HBaseDeleteTableController"/>
+
+</hbase:beans>

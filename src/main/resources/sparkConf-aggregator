@@ -1,0 +1,21 @@
+{
+  "master": "yarn-cluster",
+  "driver_memory": "2G",
+  "num_executors": "30",
+  "executor_memory": "2G",
+  "executor_cores": "1",
+  "queue": "root.bdoc.renter_1.renter_5.dev_75",
+  "jars": "../lib/common-1.0-SNAPSHOT.jar,../lib/amqp-client-3.6.5.jar",
+  "clazz": "com.eastcom.aggregator.SssLauncher",
+  "paropertiesMap": {
+    "spark.task.maxFailures": "10",
+    "spark.storage.memoryFraction": "0.3",
+    "spark.shuffle.memoryFraction": "0.2",
+    "spark.storage.unrollFraction": "0.6",
+    "spark.default.parallelism": "600",
+    "spark.sql.autoBroadcastJoinThreshold": "10485760",
+    "spark.sql.shuffle.partitions": "600",
+    "spark.sql.broadcastTimeout": "3600"
+  },
+  "jarName": "../data-aggregator-1.0-SNAPSHOT.jar"
+}

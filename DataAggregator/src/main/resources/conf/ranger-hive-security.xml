@@ -1,0 +1,39 @@
+<!--Sat Apr  1 16:19:05 2017-->
+<configuration>
+
+    <property>
+        <name>ranger.plugin.hive.policy.cache.dir</name>
+        <value>/home/ipms/hadoopclient/ranger/YP_BD_hive/policycache</value>
+    </property>
+
+    <property>
+        <name>ranger.plugin.hive.policy.pollIntervalMs</name>
+        <value>30000</value>
+    </property>
+
+    <property>
+        <name>ranger.plugin.hive.policy.rest.ssl.config.file</name>
+        <value>/home/ipms/hadoopclient/hive/conf/conf.server/ranger-policymgr-ssl.xml</value>
+    </property>
+
+    <property>
+        <name>ranger.plugin.hive.policy.rest.url</name>
+        <value>http://yp-hdp-apollo4200-6020:6080</value>
+    </property>
+
+    <property>
+        <name>ranger.plugin.hive.policy.source.impl</name>
+        <value>org.apache.ranger.admin.client.RangerAdminRESTClient</value>
+    </property>
+
+    <property>
+        <name>ranger.plugin.hive.service.name</name>
+        <value>YP_BD_hive</value>
+    </property>
+
+    <property>
+        <name>xasecure.hive.update.xapolicies.on.grant.revoke</name>
+        <value>true</value>
+    </property>
+
+</configuration>
