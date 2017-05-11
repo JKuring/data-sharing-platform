@@ -1,5 +1,6 @@
 package com.eastcom.datacontroller.interfaces.dao;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface BaseDao<T> {
     void update(T entity);
 
     // 删除实体
-    void delete(T entity);
+    void delete(T entity) throws IOException;
 
     // 根据ID删除实体
     void delete(Class<T> entityClazz, Serializable id);

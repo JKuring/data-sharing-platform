@@ -55,7 +55,7 @@ public class HttpRequestUtils {
                     /**把json字符串转换成json对象**/
                     if (!clazz.isInstance("")) {
                         object = JsonParser.parseJsonToObject(str.getBytes(), clazz);
-                    }else {
+                    } else {
                         return (T) str;
                     }
                 } catch (Exception e) {

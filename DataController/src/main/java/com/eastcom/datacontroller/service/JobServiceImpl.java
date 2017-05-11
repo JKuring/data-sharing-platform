@@ -34,9 +34,9 @@ public class JobServiceImpl implements JobService<Message> {
 
     @Autowired
     private RabbitTemplate q_maint;
-//
-//    @Resource(name = "DELETE_DIR_HDFS")
-//    private Executor delete_dir_hdfs;
+
+    @Resource(name = "DELETE_DIR_HDFS")
+    private Executor delete_dir_hdfs;
 
     @Resource(name = "CREATE_TABLE_HBASE")
     private Executor create_table_hbase;
@@ -63,9 +63,9 @@ public class JobServiceImpl implements JobService<Message> {
             if (taskTypesMap.containsKey(jobType)) {
                 String taskType = taskTypesMap.get(jobType);
                 switch (taskType) {
-//                    case DELETE_DIR_HDFS:
-//                        delete_dir_hdfs.doJob(message);
-//                        break;
+                    case DELETE_DIR_HDFS:
+                        delete_dir_hdfs.doJob(message);
+                        break;
                     case CREATE_TABLE_HBASE:
                         create_table_hbase.doJob(message);
                         break;

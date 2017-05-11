@@ -13,12 +13,12 @@ public interface HDFSService {
      * create dir by relative path
      * @param path Need to create relative path
      */
-    public void createDir(Path path) throws IOException;
+    public void createDir(Path path);
 
     /**
      * delete dir by relative path
      * @param path Need to delete relative path
      */
-    public void deleteDir(Path path) throws IOException;
+    public void deleteDir(Path path);
 
 }

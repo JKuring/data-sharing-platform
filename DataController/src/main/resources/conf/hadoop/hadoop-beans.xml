@@ -19,7 +19,7 @@
 
     <hdp:hbase-configuration configuration-ref="hadoopConfiguration"/>
 
-    <hadoop:bean name="hdfsServiceImpl" class="com.eastcom.datacontroller.service.HDFSServiceImpl">
+    <hadoop:bean name="hdfsDaoImpl" class="com.eastcom.datacontroller.dao.HDFSDaoImpl">
         <hadoop:constructor-arg name="configuration" ref="hadoopConfiguration"/>
     </hadoop:bean>
 

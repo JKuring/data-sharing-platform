@@ -16,7 +16,6 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Created by linghang.kong on 2017/3/23.
- *
  */
 public class RabbitMQConnection {
 

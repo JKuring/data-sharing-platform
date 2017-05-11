@@ -43,7 +43,6 @@ public class JobServiceImpl implements JobService<Message> {
     private Executor aggregator_spark;
 
 
-
     @Autowired
     public JobServiceImpl(TaskType taskType) {
         this.taskType = taskType;
