@@ -65,7 +65,7 @@ public class HBaseCreateTableController implements Executor<Message> {
                             @Override
                             public void run() {
                                 logger.debug("start the thread: {}.", Thread.currentThread().getName());
-                                int result = 2;
+                                int result = Executor.SUCESSED;
                                 messageProperties.setHeader(startTime, System.currentTimeMillis());
                                 try {
                                     hbaseService.createTable(jobEntity);
@@ -73,7 +73,7 @@ public class HBaseCreateTableController implements Executor<Message> {
                                     jobEntity.setJobEndTime(System.currentTimeMillis());
                                 } catch (Exception e) {
                                     logger.error("Failed to create table, Exception: {}.", e.getMessage());
-                                    result = 1;
+                                    result = Executor.FAILED;
                                 } finally {
                                     q_maint.send(new Message(("Finish creating task: " + jobEntity.getJobName()).getBytes(), getMessageProperties(messageProperties, result)));
                                 }

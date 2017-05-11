@@ -35,9 +35,9 @@ public class HBaseKerberos {
             // configuration file.
             System.setProperty("java.security.krb5.conf", confDirPath + "krb5.conf");
             // set "user.keytab" as the download keytab file name, 注[1]
-            configuration.set("username.client.keytab.file", confDirPath + "user.keytab");
+            configuration.set("username.client.keytab.file", confDirPath + "east_wys.keytab");
             // set "hbaseuser1" as the new create user name
-            configuration.set("username.client.kerberos.principal", "wg_B@HADOOP_B.COM");
+            configuration.set("username.client.kerberos.principal", "east_wys@BCHKDC");
 
             try {
                 String hostName = InetAddress.getLocalHost().getCanonicalHostName();

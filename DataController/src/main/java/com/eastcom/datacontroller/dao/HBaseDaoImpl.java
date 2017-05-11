@@ -75,7 +75,7 @@ public class HBaseDaoImpl implements HBaseDao<HBaseEntity> {
             for (StackTraceElement s : trace) {
                 out.append("\tat " + s.toString() + "\r\n");
             }
-            logger.debug(out.toString());
+            logger.error(out.toString());
 //            System.exit(1);
         }
         return null;

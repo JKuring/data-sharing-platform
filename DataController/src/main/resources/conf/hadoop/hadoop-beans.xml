@@ -8,8 +8,14 @@
     <!--<context:property-placeholder location="classpath:/conf/hadoop/hadoop.properties"/>-->
 
     <!--配置必须为classpath的根目录下，否则配置加载会出现异常问题-->
+    <!--<hdp:configuration-->
+            <!--resources="classpath:core-site.xml,classpath:hbase-site.xml,classpath:hbase-policy.xml,classpath:hdfs-site.xml,classpath:mapred-site.xml,classpath:yarn-site.xml"/>-->
     <hdp:configuration
-            resources="classpath:core-site.xml,classpath:hbase-site.xml,classpath:hbase-policy.xml,classpath:hdfs-site.xml,classpath:mapred-site.xml,classpath:yarn-site.xml"/>
+            resources="classpath:core-site.xml,classpath:hadoop-policy.xml,classpath:hbase-policy.xml,
+            classpath:hbase-site.xml,classpath:hdfs-site.xml,classpath:hive-site.xml,classpath:httpfs-site.xml,
+            classpath:kms-site.xml,classpath:mapred-site.xml,classpath:ranger-hbase-audit.xml,
+            classpath:ranger-hbase-security.xml,classpath:ranger-hive-audit.xml,classpath:ranger-hive-security.xml,
+            classpath:ranger-policymgr-ssl.xml,classpath:xasecure-audit.xml,classpath:yarn-site.xml"/>
 
     <hdp:hbase-configuration configuration-ref="hadoopConfiguration"/>
 
