@@ -30,6 +30,8 @@ class SssManager(configServiceUrl: String, timeid: String, val mqConf: MQConf, v
   logging.debug(s"${mqConf.getPassword}, ${mqConf.getPort}, parameters length: ${mqConf.getParameters.length}")
   private val mqConnection = new RabbitMQConnection(mqConf.getUserName, mqConf.getPassword, mqConf.getHost, Integer.parseInt(mqConf.getPort))
 
+  private val taskId = "taskId"
+
   private val startTime = "startTime"
   private val endTime = "endTime"
   private val status = "status"
@@ -69,14 +71,14 @@ class SssManager(configServiceUrl: String, timeid: String, val mqConf: MQConf, v
             result = Executor.FAILED
         } finally {
           try {
-            logging.info("Sending MQ message.")
+            logging.info("Sending publish message.")
             val tmp = ArrayBuffer[String]()
             tmp ++= headProperties
             tmp += this.tableName += node.getTable
             tmp += this.schema += node.getSchema
             tmp += this.partition += node.getPartitions
             tmp += this.timeId += timeid
-            channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, getMessageProperties(tmp.toArray, result), s"Finish aggregating task: ${node.getType}, jobs parameter: ${node.getTplName}".getBytes)
+            channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, getMessageProperties(tmp.toArray,node.getTplName, result), s"Finish aggregating task: ${node.getType}, jobs parameter: ${node.getTplName}".getBytes)
             connection.close()
             logging.info("Finish sending.")
           }
@@ -103,8 +105,9 @@ class SssManager(configServiceUrl: String, timeid: String, val mqConf: MQConf, v
   }
 
 
-  private def getMessageProperties(messageProperties: Array[String], result: Int) = {
+  private def getMessageProperties(messageProperties: Array[String],tplName:String, result: Int) = {
     val tmp = MqHeadParser.getHeadProperties(messageProperties)
+    tmp.put(taskId,tmp.get(taskId)+"_"+tplName)
     tmp.put(endTime, TimeTransform.getDate(System.currentTimeMillis))
     tmp.put(status, String.valueOf(result))
     new BasicProperties.Builder().headers(tmp).build

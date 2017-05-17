@@ -95,19 +95,21 @@ public class HivePublishFTP implements Executor<Message> {
                                 InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
                                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                                 String result;
+                                StringBuffer tmp = new StringBuffer();
                                 while ((result = bufferedReader.readLine()) != null) {
                                     Matcher matcher1 = ftpPattern.matcher(result);
                                     if (matcher1.find()) {
-                                        logger.info("publish MQ!");
-                                        q_publish.send(new Message(result.getBytes(), getMessageProperties(messageProperties, rs)));
+                                        tmp.append(result);
                                     }
                                 }
+                                logger.info("publish MQ!");
+                                q_publish.send(new Message(tmp.toString().getBytes(), getMessageProperties(messageProperties, rs)));
                             }
                             logger.info("Finish! Command: {}.", command);
                         } catch (Exception e) {
                             rs = Executor.FAILED;
-                            logger.error("Failed to execute cmd: {}, exception: {}.", command, e.getMessage());
-                            q_publish.send(new Message(("Finish publishing task: " + taskId + "exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, rs)));
+                            logger.error("Failed to execute cmd: {}.", command, e.fillInStackTrace());
+                            q_publish.send(new Message(("Finish publishing task: " + taskId + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, rs)));
                         }
                     }
                 });
