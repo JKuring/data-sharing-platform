@@ -23,4 +23,8 @@
         <hadoop:constructor-arg name="configuration" ref="hadoopConfiguration"/>
     </hadoop:bean>
 
+    <!--Controller-->
+    <hadoop:bean id="deleteDirController" name="DELETE_DIR_HDFS"
+                class="com.eastcom.datacontroller.service.HDFSDeleteDirController"/>
+
 </hadoop:beans>

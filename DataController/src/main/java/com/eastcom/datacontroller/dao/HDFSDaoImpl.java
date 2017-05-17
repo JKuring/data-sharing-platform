@@ -46,7 +46,7 @@ public class HDFSDaoImpl implements HDFSDao<Path>{
 
     @Override
     public void delete(Path path) throws IOException {
-        delete(path, false);
+        delete(path, true);
     }
 
     public void delete(Path path, boolean recursive) throws IOException{

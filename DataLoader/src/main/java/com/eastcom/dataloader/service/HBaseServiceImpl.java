@@ -83,7 +83,7 @@ public class HBaseServiceImpl implements HBaseService<JobEntity> {
                 }
             }
         } catch (Exception e) {
-            logger.error("Upload data failing! Upload data to {}, the load path is {}.", currentTimeTableName, dataPath);
+            logger.error("Upload data failing! Upload data to {}, the load path is {}.", currentTimeTableName, dataPath, e.fillInStackTrace());
         }
         return result;
     }
