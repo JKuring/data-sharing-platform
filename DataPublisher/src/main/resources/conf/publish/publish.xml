@@ -12,7 +12,7 @@
     <!-- command parameters: [cmd] -->
     <publish:bean id="cmd" name="cmd" class="java.lang.String">
         <publish:constructor-arg name="value"
-                                 value="/home/ipms/eastcom/DataSharingPlatform/DataPublisher/bin/testScript.sh '[cmd]'"/>
+                                 value="/home/ipms/spark_workscript/bin/export/exp_single_table.sh [cmd]"/>
     </publish:bean>
 
     <publish:bean id="FILE_PREFIX" name="FILE_PREFIX" class="java.lang.String">

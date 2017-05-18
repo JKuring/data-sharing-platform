@@ -16,6 +16,9 @@ import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +30,7 @@ public class HivePublishFTP implements Executor<Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(HivePublishFTP.class);
 
-    private String sepa = File.separator;
+    private final String sepa = System.lineSeparator();
 
     private Pattern cmdPattern = Pattern.compile("\\[" + "cmd" + "]");
     private Pattern ftpPattern = Pattern.compile("ftp_url");
@@ -81,7 +84,7 @@ public class HivePublishFTP implements Executor<Message> {
                             logger.info("execute cmd.");
                             command = matcher.replaceFirst(getParameters(mbdPublishConf, headMap));
                             Process process = Runtime.getRuntime().exec(command);
-                            logger.info("executing......");
+                            logger.info("executing command : " + command );
                             if (process.waitFor() != 0) {
                                 InputStreamReader inputStreamReader = new InputStreamReader(process.getErrorStream());
                                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -92,18 +95,18 @@ public class HivePublishFTP implements Executor<Message> {
                                 }
                                 throw new Exception(tmp.toString());
                             } else {
-                                InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
-                                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                                String result;
-                                StringBuffer tmp = new StringBuffer();
-                                while ((result = bufferedReader.readLine()) != null) {
-                                    Matcher matcher1 = ftpPattern.matcher(result);
-                                    if (matcher1.find()) {
-                                        tmp.append(result);
-                                    }
-                                }
+//                                InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
+//                                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+//                                String result;
+//                                StringBuffer tmp = new StringBuffer();
+//                                while ((result = bufferedReader.readLine()) != null) {
+//                                    Matcher matcher1 = ftpPattern.matcher(result);
+//                                    if (matcher1.find()) {
+//                                        tmp.append(result).append(sepa);
+//                                    }
+//                                }
                                 logger.info("publish MQ!");
-                                q_publish.send(new Message(tmp.toString().getBytes(), getMessageProperties(messageProperties, rs)));
+                                q_publish.send(new Message(String.valueOf(process.exitValue()).getBytes(), getMessageProperties(messageProperties, rs)));
                             }
                             logger.info("Finish! Command: {}.", command);
                         } catch (Exception e) {
@@ -119,18 +122,33 @@ public class HivePublishFTP implements Executor<Message> {
         }
     }
 
-
     private String getParameters(MBD_PUBLISH_CONF mbdPublishConf, Map<String, Object> headMap) {
+
+        String   fileFullPath = null;
+        Date publishTime = null;
+        SimpleDateFormat originalFmt = new SimpleDateFormat("yyyyMMddHHmm");
+
+        SimpleDateFormat convertFmt = new SimpleDateFormat(mbdPublishConf.getFtpPathExpr());
+
+        try {
+             publishTime = originalFmt.parse((String) headMap.get(this.timeId));
+        } catch (ParseException e) {
+            logger.error("Error timeId  format  in message Properties ......");
+            return  null;
+        }
+        fileFullPath = convertFmt.format(publishTime);
+
         StringBuilder builder = new StringBuilder();
         builder.append(mbdPublishConf.getCatalogId()).append(" ");
         builder.append(mbdPublishConf.getRealTableName()).append(" ");
         builder.append(mbdPublishConf.getPubType()).append(" ");
         builder.append(headMap.get(this.timeId)).append(" ");
-        builder.append(mbdPublishConf.getFtpPathExpr()).append(" ");
-        builder.append(this.FILE_PREFIX).append(" ");
+        builder.append(fileFullPath).append(" ");
         builder.append(mbdPublishConf.getFtpServer()).append(" ");
-        builder.append(this.TIME_FORMAT).append(" ");
-        builder.append(mbdPublishConf.getEsbCode());
+        builder.append(mbdPublishConf.getFtpAccount()).append(" ");
+        builder.append('"'+ mbdPublishConf.getFtpPsw() +'"').append(" ");
+        builder.append(mbdPublishConf.getEsbCode()).append(" ");
+        builder.append(mbdPublishConf.getExportTableName());
         return builder.toString();
     }
 

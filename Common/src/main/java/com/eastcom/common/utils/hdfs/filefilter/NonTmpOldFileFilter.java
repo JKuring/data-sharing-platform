@@ -25,6 +25,7 @@ public class NonTmpOldFileFilter implements PathFilter {
     public boolean accept(Path path) {
         try {
             if (path.getName().endsWith(".tmp")
+                    || path.getName().endsWith("._COPYING_")
                     || ((count > 0) && (num >= count))
                     || fs.getFileStatus(path).getModificationTime() >= this.time)
                 return false;

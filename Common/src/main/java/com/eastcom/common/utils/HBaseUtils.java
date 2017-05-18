@@ -13,6 +13,7 @@ import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.hadoop.mapreduce.ToolRunner;
 
 import java.io.BufferedReader;
@@ -41,6 +42,7 @@ public class HBaseUtils {
         logger.info("class.name: {}.", configuration.get("importtsv.class.name"));
         logger.info("columns: {}.", configuration.get("importtsv.columns"));
         logger.info("bulk.output: {}.", configuration.get("importtsv.bulk.output"));
+        logger.info("jar: {}.",configuration.get("importtsv.jar.path"));
         // original class in the hbase server package
 //        Job job = ImportTsv.createSubmittableJob(configuration, new String[]{tableName, loadingPath});
 //        return job.waitForCompletion(true);
@@ -49,6 +51,7 @@ public class HBaseUtils {
         ToolRunner toolRunner = new ToolRunner();
         toolRunner.setConfiguration(configuration);
         toolRunner.setToolClass(configuration.get("importtsv.class.name", "org.apache.hadoop.hbase.mapreduce.ImportTsv"));
+        toolRunner.setJar(new ClassPathResource(configuration.get("importtsv.jar.path")));
         toolRunner.setArguments(params);
         toolRunner.setCloseFs(true);
         return toolRunner.call() <= 0;

@@ -11,6 +11,7 @@
   "granularity": "D",
   "delay": 900,
   "propertiesMap": {
+    "importtsv.jar.path" : "common-1.0-SNAPSHOT.jar",
     "importtsv.class.name": "org.apache.hadoop.hbase.mapreduce.ImportTsv",
     "importtsv.columns": "HBASE_ROW_KEY,cf",
     "importtsv.bulk.output1": "/tmp/hbload",
@@ -21,8 +22,8 @@
     "importtsv.rowkey.strategies": "r,ls|yyyyMMddHHmm",
     "importtsv.rowkey.encrypts": ",",
     "importtsv.separator": "\\|",
-    "importtsv.filter.params": "1|>|10,3|eq|0,4|rg|*a*",
-    "importtsv.filter.define.class": "com.eastcom.common.utils.filter.IntegerFilter,com.eastcom.common.utils.filter.StringFilter",
+    "importtsv.filter.params": "76|gt|0",
+    "importtsv.filter.define.class": "com.eastcom.common.utils.filter.StringFilter",
     "create.table": "no"
   },
   "tableEntity": "xdr_data:ps_gn_http_event"
