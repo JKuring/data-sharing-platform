@@ -31,23 +31,66 @@ class SlsDriver(val job: SlsJob) extends Thread with Actor {
   val nodeDataJob = ListBuffer[String]()
   val fs = FileSystem.get(sparkContext.hadoopConfiguration)
 
+//  override def run(): Unit = {
+//    try {
+//      initUdf()
+//      // 遍历任务
+//      job.nodesMap.foreach(x => {
+//        try {
+//          createDirIfNotExists(x._2.getXdrDir)
+//          createDirIfNotExists(x._2.getLoadingDir)
+//          createDirIfNotExists(x._2.getLoadedDir)
+//
+//          val n = x._2;
+//          try {
+//            //          timeOld = 0
+//            val fileStatuss = if (n.getTimeOld <= 0) {
+//              FileHelper.listStatus(fs, new Path(n.getXdrDir), new NonTmpFileFilter())
+//            } else {
+//              FileHelper.listStatus(fs, new Path(n.getXdrDir), new NonTmpOldFileFilter(n.getLoadFileOnce, new Date().getTime - n.getTimeOld * 1000, fs))
+//            }
+//            logging.info("Dir: " + x._2.getXdrDir + ", FileSize: " + fileStatuss.size);
+//            // 有文件状态，代表有文件
+//            if (fileStatuss.length > 0) {
+//              workerRouter ! SlsJobMessage(n, fileStatuss)
+//            } else {
+//              nodeDataJob += x._1;
+//            }
+//          } catch {
+//            case e: Exception => logging.error(s" [ SLS_JOB ] [ ${n.getType} ] Exec job with table [ ${n.getTplName} ] fail !!!", e)
+//          }
+//        } catch {
+//          case e: Exception => logging.error(s" [ SLS_JOB ] [ ${x._2.getType} ] Exec job with table [ ${x._2.getTplName} ] fail !!!", e)
+//        }
+//      })
+//    } catch {
+//      case e: Exception => {
+//        logging.error(s"load ${job.initCmdPath} false, shutdown the current service", e)
+//        shutdown()
+//      }
+//      case e: Throwable => {
+//        logging.error(s"load ${job.initCmdPath} false, shutdown the current service", e)
+//        shutdown()
+//      }
+//    } finally {
+//      shutdown()
+//    }
+//  }
+
+
+
   override def run(): Unit = {
     try {
       initUdf()
       // 遍历任务
       job.nodesMap.foreach(x => {
         try {
-          createDirIfNotExists(x._2.getXdrDir)
-          createDirIfNotExists(x._2.getLoadingDir)
-          createDirIfNotExists(x._2.getLoadedDir)
 
           val n = x._2;
           try {
             //          timeOld = 0
-            val fileStatuss = if (n.getTimeOld <= 0) {
+            val fileStatuss = {
               FileHelper.listStatus(fs, new Path(n.getXdrDir), new NonTmpFileFilter())
-            } else {
-              FileHelper.listStatus(fs, new Path(n.getXdrDir), new NonTmpOldFileFilter(n.getLoadFileOnce, new Date().getTime - n.getTimeOld * 1000, fs))
             }
             logging.info("Dir: " + x._2.getXdrDir + ", FileSize: " + fileStatuss.size);
             // 有文件状态，代表有文件
@@ -76,6 +119,7 @@ class SlsDriver(val job: SlsJob) extends Thread with Actor {
       shutdown()
     }
   }
+
 
   def shutdown() = {
     while (nodeDataJob.size < job.nodesMap.size) {

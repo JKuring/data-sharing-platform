@@ -20,11 +20,43 @@ class SlsManager(configServiceUrl: String) extends Actor {
   val fs = FileSystem.get(sparkContext.hadoopConfiguration)
   lazy val sparkContext = Context.getContext(Context.sparkContext).asInstanceOf[SparkContext]
 
+//  override def receive: Receive = {
+//    case SlsJobMessage(node: SlsNode, fileStatuses: Array[FileStatus]) => {
+//      try {
+//        // 移动xdr文件到一个加载目录下
+//        FileHelp.moveFiles(fs, node.getLoadingDir, fileStatuses)
+//        val startTime = new Date().getTime
+//        logging.info(s" [ SLS_JOB ] [ ${node.getType} ] Start exec load job with table [ ${node.getTplName} ] ...")
+//        try {
+//          exec(node)
+//        } catch {
+//          case e: Exception => {
+//            Thread.sleep(30000l)
+//            exec(node)
+//          }
+//        }
+//        val eastime = (new Date().getTime - startTime) / 1000
+//        logging.info(s" [ SLS_JOB ] [ ${node.getType} ] Finish exec load job with table [ ${node.getTplName} ] with [${fileStatuses.length}] files eastime [ $eastime ] s !")
+//      } catch {
+//        case e: Exception => logging.error(s" [ SLS_JOB ] [ ${node.getType} ] Exec load job with table [ ${node.getTplName} ] fail !!!", e)
+//      } finally {
+//        try {
+//          if (node.getLoadedDir != "") {
+//            FileHelp.moveFiles(fs, node.getLoadingDir, node.getLoadedDir)
+//          } else {
+//            FileHelp.rmFiles(fs, node.getLoadingDir)
+//          }
+//        } catch {
+//          case e: Exception => logging.error(s"Operation files failed, exception: ${e.getMessage}.")
+//        }
+//      }
+//      context.sender ! SlsResultMessage(node)
+//    }
+//  }
+
   override def receive: Receive = {
     case SlsJobMessage(node: SlsNode, fileStatuses: Array[FileStatus]) => {
       try {
-        // 移动xdr文件到一个加载目录下
-        FileHelp.moveFiles(fs, node.getLoadingDir, fileStatuses)
         val startTime = new Date().getTime
         logging.info(s" [ SLS_JOB ] [ ${node.getType} ] Start exec load job with table [ ${node.getTplName} ] ...")
         try {
@@ -40,19 +72,14 @@ class SlsManager(configServiceUrl: String) extends Actor {
       } catch {
         case e: Exception => logging.error(s" [ SLS_JOB ] [ ${node.getType} ] Exec load job with table [ ${node.getTplName} ] fail !!!", e)
       } finally {
-        try {
-          if (node.getLoadedDir != "") {
-            FileHelp.moveFiles(fs, node.getLoadingDir, node.getLoadedDir)
-          } else {
-            FileHelp.rmFiles(fs, node.getLoadingDir)
-          }
-        } catch {
-          case e: Exception => logging.error(s"Operation files failed, exception: ${e.getMessage}.")
-        }
+
       }
       context.sender ! SlsResultMessage(node)
     }
   }
+
+
+
 
   private def exec(node: SlsNode): Unit = {
     if (Context.hiveType == node.getType) {
