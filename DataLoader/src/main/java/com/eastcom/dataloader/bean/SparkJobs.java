@@ -24,6 +24,7 @@ public class SparkJobs {
     public void setConfigServiceUrl(String configServiceUrl) {
         this.configServiceUrl = configServiceUrl;
     }
+
     public String getName() {
         return name;
     }
@@ -81,7 +82,7 @@ public class SparkJobs {
     }
 
     public String[] getParameters() {
-        return new String[]{confFile, initCmdPath, configServiceUrl , zookeeper_hosts, zookeeper_port, timeid};
+        return new String[]{confFile, initCmdPath, configServiceUrl, zookeeper_hosts, zookeeper_port, timeid};
     }
 
 }

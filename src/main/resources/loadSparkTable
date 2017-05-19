@@ -1,21 +1,33 @@
 {
-  "name": "spark_load_test",
-  "confFile": "http://10.222.20.134:6000/config/getByCiCode?ciCode=load_spark_table_name_conf",
-  "initCmdPath": "http://10.222.20.134:6000/config/getByCiCode?ciCode=load_spark_table_name_init",
-  "tplPath": "http://10.222.20.134:6000/config/getByCiCode?ciCode=load_spark_table_name_tpl",
-  "zookeeper_hosts": "null",
-  "zookeeper_port": "12345",
-  "timeid": "#minuteminus(15)#",
-  "sparkConf": "http://10.222.20.134:6000/config/getByCiCode?ciCode=spark_load_conf"
+  "name": "spark_load_xdr",
+  "configServiceUrl":"http://10.222.20.134:6000/config/getByCiCode?ciCode=",
+  "confFile":"sparkLoadJob5MinConf",
+  "initCmdPath":"sparkInit_load",
+  "zookeeper_hosts":"null",
+  "zookeeper_port":"12345",
+  "timeid":"#minuteminus(150)#",
+  "sparkConf":"sparkLoadSubmitParam"
 }
+//sparkLoadJob5MinConf
+//hive | xdr_data | o_se_ur_bn_p2p    | | /rawdata/xdr/bb/r_bb_p2p/#{time yyyyMMdd}/#{time HH}/#{time mm}     | | | 1 | o_se_ur_bn_p2p.tpl| 0
+//hive | xdr_data | o_se_ur_bn_general| | /rawdata/xdr/bb/r_bb_general/#{time yyyyMMdd}/#{time HH}/#{time mm} | | | 1 | o_se_ur_bn_general.tpl| 0
+//hive | xdr_data | o_se_ur_bn_http   | | /rawdata/xdr/bb/r_bb_http/#{time yyyyMMdd}/#{time HH}/#{time mm}    | | | 1 | o_se_ur_bn_http.tpl| 0
+//hive | xdr_data | o_se_ur_bn_dns    | | /rawdata/xdr/bb/r_bb_dns/#{time yyyyMMdd}/#{time HH}/#{time mm}     | | | 1 | o_se_ur_bn_dns.tpl| 0
+//hive | xdr_data | o_se_ur_bn_ftp    | | /rawdata/xdr/bb/r_bb_ftp/#{time yyyyMMdd}/#{time HH}/#{time mm}     | | | 1 | o_se_ur_bn_ftp.tpl| 0
+//hive | xdr_data | o_se_ur_bn_email  | | /rawdata/xdr/bb/r_bb_email/#{time yyyyMMdd}/#{time HH}/#{time mm}   | | | 1 | o_se_ur_bn_email.tpl| 0
+//hive | xdr_data | o_se_ur_bn_voip   | | /rawdata/xdr/bb/r_bb_voip/#{time yyyyMMdd}/#{time HH}/#{time mm}    | | | 1 | o_se_ur_bn_voip.tpl| 0
+//hive | xdr_data | o_se_ur_bn_rtsp   | | /rawdata/xdr/bb/r_bb_rtsp/#{time yyyyMMdd}/#{time HH}/#{time mm}    | | | 1 | o_se_ur_bn_rtsp.tpl | 0
 
-
-//{
-//  "name": "spark_load_test",
-//  "confFile":"/work/my.txt",
-//  "initCmdPath":"http://10.222.20.134:8084/config/getByCiCode?ciCode=load_spark_table_name_init",
-//  "tplPath":"http://10.222.20.134:8084/config/getByCiCode?ciCode=load_spark_table_name_tpl",
-//  "zookeeper_hosts":"127.0.0.1",
-//  "zookeeper_port":"12345",
-//  "timeid":"#minuteminus(15)#"
-//}
+//sparkInit_load
+//set hive.exec.stagingdir=/tmp/hive-staging
+//set hive.exec.dynamic.partition=true
+//set hive.exec.dynamic.partition.mode=nonstrict
+//set hive.exec.dynamic.partitions.pernode=50000
+//set hive.exec.dynamic.partitions.partitions=50000
+//set hive.exec.reducers.bytes.per.reducer=1000000000
+//set hive.merge.mapfiles=true
+//set hive.merge.mapredfiles=true
+//set hive.merge.size.per.task=256*1000*1000
+//set spark.sql.shuffle.partitions=20
+//set mapred.max.split.size=1024000000
+//set hive.input.format=org.apache.hadoop.hive.ql.io.CombineHiveInputFormat

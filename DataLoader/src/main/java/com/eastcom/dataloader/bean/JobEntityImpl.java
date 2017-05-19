@@ -37,7 +37,7 @@ public class JobEntityImpl implements JobEntity<String> {
 
     private String tableEntity;
 
-    private JobEntityImpl(){
+    private JobEntityImpl() {
 
     }
 

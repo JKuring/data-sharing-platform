@@ -1,12 +1,34 @@
 {
-  "name": "spark_aggr_test",
-  "confFile": "http://10.222.20.134:6000/config/getByCiCode?ciCode=aggregate_spark_table_name_conf",
-  "initCmdPath": "http://10.222.20.134:6000/config/getByCiCode?ciCode=aggregate_spark_table_name_init",
-  "tplPath": "http://10.222.20.134:6000/config/getByCiCode?ciCode=aggregate_spark_table_name_tpl",
-  "zookeeper_hosts": "null",
-  "zookeeper_port": "12345",
-  "sessions": 10,
-  "timeid": "#minuteminus(15)#",
-  "timeoutMin": "5",
-  "sparkConf": "http://10.222.20.134:6000/config/getByCiCode?ciCode=spark_load_conf"
+  "name": "spark_aggr_hour",
+  "configServiceUrl":"http://10.222.20.134:6000/config/getByCiCode?ciCode=",
+  "confFile":"sparkAggrJobHourConf",
+  "initCmdPath":"sparkInit_aggregate",
+  "zookeeper_hosts":"null",
+  "zookeeper_port":"12345",
+  "sessions":10,
+  "timeid":"#minuteminus(180)#",
+  "timeoutMin":"120",
+  "sparkConf":"sparkAggrSubmitParam"
 }
+
+//sparkAggrJobHourConf
+//hive|ipms|dw_ft_se_bb_app_traffic_h||hour_partition|dw_ft_se_bb_app_traffic_h.tpl
+//hive|ipms|dw_ft_se_bb_app_tah_h||hour_partition|dw_ft_se_bb_app_tah_h.tpl
+//hive|ipms|dw_ft_se_bb_domain_top10_h||hour_partition|dw_ft_se_bb_domain_top10_h.tpl
+//hive|ipms|dw_ft_se_bb_traffic_health_h||hour_partition|dw_ft_se_bb_traffic_health_h.tpl
+//hive|ipms|dw_ft_se_bb_traffic_matrix_h||hour_partition|dw_ft_se_bb_traffic_matrix_h.tpl
+//hive|ipms|dw_ft_se_gpon_sigpi_h||hour_partition|dw_ft_se_gpon_sigpi_h.tpl
+//hive|ipms|dw_ft_se_ra_sigpi_h||hour_partition|dw_ft_se_ra_sigpi_h.tpl
+
+//sparkInit_aggregate
+//set hive.exec.stagingdir=/tmp/hive-staging
+//set hive.exec.dynamic.partition=true
+//set hive.exec.dynamic.partition.mode=nonstrict
+//set hive.exec.dynamic.partitions.pernode=50000
+//set hive.exec.dynamic.partitions.partitions=50000
+//set hive.merge.mapfiles=true
+//set hive.merge.mapredfiles=true
+//set hive.merge.size.per.task=256*1000*1000
+//set hive.exec.reducers.bytes.per.reducer=1000000000
+//set mapred.max.split.size=256000000
+//set hive.input.format=org.apache.hadoop.hive.ql.io.CombineHiveInputFormat

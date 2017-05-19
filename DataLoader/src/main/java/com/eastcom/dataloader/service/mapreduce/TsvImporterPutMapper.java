@@ -178,12 +178,15 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
             boolean filterStatus = false;
             if (this.filters != null && this.filters.size() > 0) {
                 String[] tmp = val.split(separator);
-
-                for (Integer column : this.filters.keySet()
+                try {
+                    for (Integer column : this.filters.keySet()
                         ) {
-                    filterStatus |= this.filters.get(column).filter(tmp[column]);
+                        filterStatus |= this.filters.get(column).filter(tmp[column]);
+                    }
+                }catch (ArrayIndexOutOfBoundsException e){
+                    filterStatus =true;
+                    System.err.println("Bad line at offset: " + offset.get() + ":\n ArrayIndexOutOfBoundsException: " + e.getMessage());
                 }
-
             }
             if (!filterStatus) {
 
@@ -200,8 +203,9 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
                 p.add(Bytes.toBytes(columnFamily), null, nval.getBytes());
 
                 context.write(rowKey, p);
+            }else {
+                incrementBadLineCount(1);
             }
-
         } catch (IllegalArgumentException e) {
             if (this.skipBadLines) {
                 System.err.println("Bad line at offset: " + offset.get() + ":\n" + e.getMessage());
@@ -416,6 +420,13 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
 
                 Date date = fromSdf.parse(part);
                 return toSdf.format(date);
+            } else if (type.equalsIgnoreCase("lls")) {// ms返回时间字符串
+                String format = ss[1];
+
+                SimpleDateFormat sdf = new SimpleDateFormat(format);
+                Long time = Long.parseLong(part) / 1000;
+                Date date = new Date(time);
+                return sdf.format(date);
             }
         } catch (NumberFormatException e) {
         } catch (ParseException e) {

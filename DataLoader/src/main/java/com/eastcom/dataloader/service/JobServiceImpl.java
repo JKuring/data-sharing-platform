@@ -47,7 +47,6 @@ public class JobServiceImpl implements JobService<Message> {
     private String status = "status";
 
 
-
     public void excute(Message message) {
         int jobType = 0;
         MessageProperties messageProperties = message.getMessageProperties();

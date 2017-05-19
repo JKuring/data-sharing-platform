@@ -11,9 +11,12 @@ import org.apache.hadoop.hbase.client.HConnectionManager;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.net.ConnectTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.hadoop.mapreduce.ToolRunner;
 
 import java.io.BufferedReader;
@@ -42,19 +45,26 @@ public class HBaseUtils {
         logger.info("class.name: {}.", configuration.get("importtsv.class.name"));
         logger.info("columns: {}.", configuration.get("importtsv.columns"));
         logger.info("bulk.output: {}.", configuration.get("importtsv.bulk.output"));
-        logger.info("jar: {}.",configuration.get("importtsv.jar.path"));
         // original class in the hbase server package
 //        Job job = ImportTsv.createSubmittableJob(configuration, new String[]{tableName, loadingPath});
 //        return job.waitForCompletion(true);
 
+        Resource resource = new FileSystemResource(configuration.get("importtsv.jar.path"));
         // spring tool runner
         ToolRunner toolRunner = new ToolRunner();
         toolRunner.setConfiguration(configuration);
         toolRunner.setToolClass(configuration.get("importtsv.class.name", "org.apache.hadoop.hbase.mapreduce.ImportTsv"));
-        toolRunner.setJar(new ClassPathResource(configuration.get("importtsv.jar.path")));
+        logger.info("jar path: {}.",resource.getURL());
+        toolRunner.setLibs(resource);
         toolRunner.setArguments(params);
         toolRunner.setCloseFs(true);
-        return toolRunner.call() <= 0;
+        try {
+            return toolRunner.call() <= 0;
+        }catch (ConnectTimeoutException e){
+            // Unable to connect to the JobHistory server after completing the MR task.
+            logger.warn("Unable to connect to the JobHistory server after completing the MR task, but exception: {}.",e.getMessage());
+            return true;
+        }
     }
 
     public static boolean upLoadHFile(Configuration configuration, HTable table, Path dataPath) {

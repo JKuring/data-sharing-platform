@@ -7,11 +7,11 @@ public class StringFilter implements Filter<String> {
 
 
     private String filterType;
-    private String parameter;
+    private Integer parameter;
 
     public StringFilter(String filterType, String parameter) {
         this.filterType = filterType;
-        this.parameter = parameter;
+        this.parameter = Integer.valueOf(parameter);
     }
 
     public boolean doFilter(String content) {
@@ -30,21 +30,21 @@ public class StringFilter implements Filter<String> {
     }
 
     private boolean gt(String content) {
-        if (content.length() > Integer.valueOf(parameter)) {
+        if (content.length() > this.parameter) {
             return true;
         }
         return false;
     }
 
     private boolean lt(String content) {
-        if (content.length() < Integer.valueOf(parameter)) {
+        if (content.length() < this.parameter) {
             return true;
         }
         return false;
     }
 
     private boolean eq(String content) {
-        if (content.length() == Integer.valueOf(parameter)) {
+        if (content.length() == this.parameter) {
             return true;
         }
         return false;

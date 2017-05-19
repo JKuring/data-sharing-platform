@@ -73,15 +73,18 @@ public class HBaseServiceImpl implements HBaseService<JobEntity> {
         //加载为系统参数
         Configuration configuration = jobEntity.addSystemProperties(hBaseDao.getConfiguration());
         try {
+            logger.info("create hfile!");
             if (!HBaseUtils.createHFile(configuration, currentTimeTableName, dataPath)) {
                 logger.error("Upload data failing! Please clean dirty data, and try again later.");
             } else {
+                logger.info("upload hfile!");
                 Path hdfsPath = new Path(outputPath + tmpPath);
                 if (HBaseUtils.upLoadHFile(configuration,
                         (HTable) hBaseDao.getConnection().getTable(TableName.valueOf(currentTimeTableName)), hdfsPath)) {
                     result = true;
                 }
             }
+
         } catch (Exception e) {
             logger.error("Upload data failing! Upload data to {}, the load path is {}.", currentTimeTableName, dataPath, e.fillInStackTrace());
         }
