@@ -72,7 +72,7 @@ public class SparkDataLoader implements Executor<Message> {
                                 logger.error("Failed to load table, params: {}, Exception: {}.", Arrays.toString(params), e.getMessage());
                                 result = Executor.FAILED;
                             } finally {
-                                q_load.send(new Message(("Finish loading task: " + taskId + ", jobs parameter: " + Arrays.toString(params)).getBytes(), getMessageProperties(messageProperties, result)));
+                                q_load.send(new Message(("Finish loading task: " + taskId).getBytes(), getMessageProperties(messageProperties, result)));
                             }
                         }
                     });
