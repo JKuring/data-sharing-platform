@@ -60,7 +60,7 @@ public class HBaseUtils {
         toolRunner.setCloseFs(true);
         try {
             return toolRunner.call() <= 0;
-        }catch (ConnectTimeoutException e){
+        }catch (IOException e){
             // Unable to connect to the JobHistory server after completing the MR task.
             logger.warn("Unable to connect to the JobHistory server after completing the MR task, but exception: {}.",e.getMessage());
             return true;

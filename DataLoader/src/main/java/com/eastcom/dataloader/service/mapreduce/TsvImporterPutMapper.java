@@ -329,7 +329,7 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
             res = new StringBuilder(part).reverse().toString();
         } else if (strategy.equalsIgnoreCase("o")) {
             //
-        } else if (strategy.startsWith("ls") || strategy.startsWith("sl") || strategy.startsWith("ss")) {
+        } else if (strategy.startsWith("ls") || strategy.startsWith("sl") || strategy.startsWith("ss") || strategy.startsWith("lls")) {
             res = buildDateChange(strategy, part);
         } else if (strategy.equalsIgnoreCase("ip2l")) {
             res = ip2long(part);
