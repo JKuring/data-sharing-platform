@@ -2,6 +2,8 @@ package com.eastcom.datacontroller.service;
 
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.common.message.MessageHead;
+import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.common.utils.parser.JsonParser;
 import com.eastcom.datacontroller.bean.HBaseEntityImpl;
 import com.eastcom.datacontroller.bean.HBaseJobs;
@@ -9,6 +11,7 @@ import com.eastcom.datacontroller.bean.JobEntityImpl;
 import com.eastcom.datacontroller.interfaces.dto.HBaseEntity;
 import com.eastcom.datacontroller.interfaces.dto.JobEntity;
 import com.eastcom.datacontroller.interfaces.service.HBaseService;
+import com.eastcom.datacontroller.utilities.BuildHBaseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -36,11 +39,6 @@ public class HBaseDeleteTableController implements Executor<Message> {
     @Autowired
     private RabbitTemplate q_maint;
 
-    // back head
-    private String startTime = "startTime";
-    private String endTime = "endTime";
-    private String status = "status";
-
     @Override
     public void doJob(Message message) {
         final MessageProperties messageProperties = message.getMessageProperties();
@@ -53,24 +51,24 @@ public class HBaseDeleteTableController implements Executor<Message> {
                 HBaseJobs hBaseJobs = JsonParser.parseJsonToObject(context.getBytes(), HBaseJobs.class);
                 for (String tableName : hBaseJobs.getName()
                         ) {
-                    final JobEntityImpl jobEntity = new JobEntityImpl((String) headMap.get(MessageService.Header.jobName), getHBaseEntity(tableName, hBaseJobs));
+                    final JobEntityImpl jobEntity = new JobEntityImpl((String) headMap.get(MessageService.Header.jobName), BuildHBaseEntity.getHBaseEntity(tableName, hBaseJobs));
                     jobEntity.setGranularity(hBaseJobs.getGranularity());
                     logger.info("deleteTable the table: {}.", tableName);
                     threadPoolTaskExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
                             logger.debug("start the thread: {}.", Thread.currentThread().getName());
-                            int result = 2;
-                            messageProperties.setHeader(startTime, System.currentTimeMillis());
+                            int result = Executor.SUCESSED;
+                            messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
                             try {
                                 hbaseService.deleteTable(jobEntity);
                                 //关闭任务
                                 jobEntity.setJobEndTime(System.currentTimeMillis());
                             } catch (Exception e) {
                                 logger.error("Failed to deleteTable table, Exception: {}.", e.getMessage());
-                                result = 1;
+                                result = Executor.FAILED;
                             } finally {
-                                q_maint.send(new Message(("Finish to deleteTable task: " + jobEntity.getJobName()).getBytes(), getMessageProperties(messageProperties, result)));
+                                SendMessageUtility.send(q_maint,"Finish to deleteTable task: " + jobEntity.getJobName(),messageProperties,result);
                             }
                         }
                     });
@@ -81,25 +79,5 @@ public class HBaseDeleteTableController implements Executor<Message> {
         } catch (Exception e) {
             logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
         }
-    }
-
-    private HBaseEntity getHBaseEntity(String tableName, HBaseJobs hbaseJobs) {
-        HBaseEntity hbaseEntity = new HBaseEntityImpl();
-        hbaseEntity.setName(tableName);
-        hbaseEntity.setColumns(hbaseJobs.getColumns());
-        hbaseEntity.setVersion(hbaseJobs.getVersion());
-        hbaseEntity.setCompressionType(hbaseJobs.getCompressionType());
-        hbaseEntity.setTtl(hbaseJobs.getTtl());
-        hbaseEntity.setSplitPolicy(hbaseJobs.getSplitPolicy());
-        hbaseEntity.setSpiltKeysFile(hbaseJobs.getSpiltKeysFile());
-        hbaseEntity.setCoprocessor(hbaseJobs.getCoprocessor());
-        logger.debug(hbaseEntity.toString());
-        return hbaseEntity;
-    }
-
-    private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {
-        messageProperties.setHeader(endTime, System.currentTimeMillis());
-        messageProperties.setHeader(status, result);
-        return messageProperties;
     }
 }

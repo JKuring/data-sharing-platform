@@ -4,6 +4,7 @@ import com.eastcom.aggregator.interfaces.service.JobService;
 import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.common.message.SendMessageUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -31,12 +32,6 @@ public class JobServiceImpl implements JobService<Message> {
 
     @Autowired
     private RabbitTemplate q_aggr_spark;
-
-
-    // back head
-    private String startTime = "startTime";
-    private String endTime = "endTime";
-    private String status = "status";
 
     // executor
     @Resource(name = "AGGREGATE_SPARK")
@@ -68,14 +63,8 @@ public class JobServiceImpl implements JobService<Message> {
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
-            q_aggr_spark.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, Executor.FAILED)));
+            SendMessageUtility.send(q_aggr_spark,"execute the task: " + jobType + ", exception: " + e.getMessage(),messageProperties,Executor.FAILED);
         }
-    }
-
-    private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {
-        messageProperties.setHeader(endTime, System.currentTimeMillis());
-        messageProperties.setHeader(status, result);
-        return messageProperties;
     }
 
     @Override

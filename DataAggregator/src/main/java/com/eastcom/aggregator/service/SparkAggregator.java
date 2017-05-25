@@ -5,6 +5,8 @@ import com.eastcom.aggregator.bean.SparkJobs;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.common.message.MessageHead;
+import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.common.service.HttpRequestUtils;
 import com.eastcom.common.utils.MergeArrays;
 import com.eastcom.common.utils.parser.JsonParser;
@@ -40,11 +42,6 @@ public class SparkAggregator implements Executor<Message> {
     @Autowired
     private RabbitTemplate q_aggr_spark;
 
-    // back head
-    private String startTime = "startTime";
-    private String endTime = "endTime";
-    private String status = "status";
-
 
     @Override
     public void doJob(Message message) {
@@ -64,7 +61,7 @@ public class SparkAggregator implements Executor<Message> {
                         public void run() {
                             logger.debug("start the thread: {}.", Thread.currentThread().getName());
                             String[] params = null;
-                            messageProperties.setHeader(startTime, System.currentTimeMillis());
+                            messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
                             try {
                                 try {
                                     params = MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters(), mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap));
@@ -74,7 +71,7 @@ public class SparkAggregator implements Executor<Message> {
                                 SparkSubmit$.MODULE$.main(params);
                             } catch (Exception e) {
                                 logger.error("Failed to aggregate table,  params: {}, Exception: {}.", Arrays.toString(params), e.getMessage());
-                                q_aggr_spark.send(new Message(("Finish aggregating task: " + taskId + ", jobs exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, Executor.FAILED)));
+                                SendMessageUtility.send(q_aggr_spark,"Finish aggregating task: " + taskId + ", jobs exception: " + e.getMessage(),messageProperties,Executor.FAILED);
                             }
                         }
                     });
@@ -87,12 +84,5 @@ public class SparkAggregator implements Executor<Message> {
         } catch (Exception e) {
             logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
         }
-    }
-
-
-    private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {
-        messageProperties.setHeader(endTime, System.currentTimeMillis());
-        messageProperties.setHeader(status, result);
-        return messageProperties;
     }
 }

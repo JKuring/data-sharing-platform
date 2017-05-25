@@ -3,6 +3,7 @@ package com.eastcom.dataloader.service;
 import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.dataloader.interfaces.service.JobService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +42,6 @@ public class JobServiceImpl implements JobService<Message> {
     @Resource(name = "LOAD_TABLE_SPARK")
     private Executor load_table_spark;
 
-    // back head
-    private String startTime = "startTime";
-    private String endTime = "endTime";
-    private String status = "status";
-
-
     public void excute(Message message) {
         int jobType = 0;
         MessageProperties messageProperties = message.getMessageProperties();
@@ -69,16 +64,9 @@ public class JobServiceImpl implements JobService<Message> {
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
-            q_load.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, Executor.FAILED)));
+            SendMessageUtility.send(q_load,"execute the task: " + jobType + ", exception: " + e.getMessage(),messageProperties,Executor.FAILED);
         }
     }
-
-    private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {
-        messageProperties.setHeader(endTime, System.currentTimeMillis());
-        messageProperties.setHeader(status, result);
-        return messageProperties;
-    }
-
 
     @Override
     public String getName() {

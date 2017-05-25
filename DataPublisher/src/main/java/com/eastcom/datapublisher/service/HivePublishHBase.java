@@ -24,11 +24,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by linghang.kong on 2017/4/26.
+ *
  */
-public class HivePublishFTP implements Executor<Message> {
+public class HivePublishHBase implements Executor<Message> {
 
-    private static final Logger logger = LoggerFactory.getLogger(HivePublishFTP.class);
+    private static final Logger logger = LoggerFactory.getLogger(HivePublishHBase.class);
 
     private final String sepa = System.lineSeparator();
 
@@ -47,11 +47,11 @@ public class HivePublishFTP implements Executor<Message> {
     @Autowired
     private RabbitTemplate q_publish;
 
-    @Resource(name = "pubFtpCmd")
+    @Resource(name = "pubHbaseCmd")
     private String cmd;
 
     @Override
-    public void doJob(Message message) {
+    public void doJob(final Message message) {
         final MessageProperties messageProperties = message.getMessageProperties();
         final Map<String, Object> headMap = messageProperties.getHeaders();
         final String taskId = (String) headMap.get(MessageService.Header.taskId);
@@ -130,5 +130,4 @@ public class HivePublishFTP implements Executor<Message> {
         builder.append(mbdPublishConf.getExportTableName());
         return builder.toString();
     }
-
 }

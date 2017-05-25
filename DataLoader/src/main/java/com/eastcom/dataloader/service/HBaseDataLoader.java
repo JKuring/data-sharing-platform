@@ -2,6 +2,8 @@ package com.eastcom.dataloader.service;
 
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.common.message.MessageHead;
+import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.common.service.HttpRequestUtils;
 import com.eastcom.common.utils.parser.JsonParser;
 import com.eastcom.common.utils.time.TimeTransform;
@@ -37,12 +39,6 @@ public class HBaseDataLoader implements Executor<Message> {
 
     private final static String EASTCOM_SEPARATOR = ",";
 
-    // back head
-    private String startTime = "startTime";
-    private String endTime = "endTime";
-    private String status = "status";
-
-
     @Override
     public void doJob(Message message) {
         final MessageProperties messageProperties = message.getMessageProperties();
@@ -69,17 +65,17 @@ public class HBaseDataLoader implements Executor<Message> {
                             @Override
                             public void run() {
                                 logger.debug("start the thread: {}.", Thread.currentThread().getName());
-                                int result = 2;
-                                messageProperties.setHeader(startTime, System.currentTimeMillis());
+                                int result = Executor.SUCESSED;
+                                messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
                                 try {
                                     hbaseService.partition(jobEntity);
                                     //关闭任务
                                     jobEntity.setJobEndTime(System.currentTimeMillis());
                                 } catch (Exception e) {
                                     logger.error("Failed to load table, Exception: {}.", e.getMessage());
-                                    result = 1;
+                                    result = Executor.FAILED;
                                 } finally {
-                                    q_load.send(new Message(("Finish loading task: " + jobEntity.getId()).getBytes(), getMessageProperties(messageProperties, result)));
+                                    SendMessageUtility.send(q_load,"Finish loading task: " + jobEntity.getId(),messageProperties,result);
                                 }
                             }
                         });
@@ -93,11 +89,5 @@ public class HBaseDataLoader implements Executor<Message> {
         } catch (Exception e) {
             logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
         }
-    }
-
-    private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {
-        messageProperties.setHeader(endTime, System.currentTimeMillis());
-        messageProperties.setHeader(status, result);
-        return messageProperties;
     }
 }

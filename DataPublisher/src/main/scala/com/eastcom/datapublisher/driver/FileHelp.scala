@@ -1,12 +1,9 @@
-package com.eastcom.dataloader.driver
+package com.eastcom.datapublisher.driver
 
 import com.eastcom.common.utils.hdfs.filefilter.NonTmpFileFilter
 import org.apache.hadoop.fs.{FileStatus, FileSystem, Path}
 import org.apache.log4j.Logger
 
-/**
-  * Created by slp on 2016/4/11.
-  */
 object FileHelp {
 
   val logging = Logger.getLogger(getClass)

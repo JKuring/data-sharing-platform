@@ -3,6 +3,8 @@ package com.eastcom.dataloader.service;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.common.message.MessageHead;
+import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.common.service.HttpRequestUtils;
 import com.eastcom.common.utils.MergeArrays;
 import com.eastcom.common.utils.parser.JsonParser;
@@ -29,15 +31,10 @@ public class SparkDataLoader implements Executor<Message> {
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-    SparkProperties sparkProperties;
+    private SparkProperties sparkProperties;
 
     @Autowired
     private RabbitTemplate q_load;
-
-    // back head
-    private String startTime = "startTime";
-    private String endTime = "endTime";
-    private String status = "status";
 
     @Override
     public void doJob(Message message) {
@@ -58,7 +55,7 @@ public class SparkDataLoader implements Executor<Message> {
                         public void run() {
                             logger.debug("start the thread: {}.", Thread.currentThread().getName());
                             int result = Executor.SUCESSED;
-                            messageProperties.setHeader(startTime, System.currentTimeMillis());
+                            messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
                             String[] params = null;
                             try {
                                 // submit code to cluster
@@ -72,7 +69,7 @@ public class SparkDataLoader implements Executor<Message> {
                                 logger.error("Failed to load table, params: {}, Exception: {}.", Arrays.toString(params), e.getMessage());
                                 result = Executor.FAILED;
                             } finally {
-                                q_load.send(new Message(("Finish loading task: " + taskId).getBytes(), getMessageProperties(messageProperties, result)));
+                                SendMessageUtility.send(q_load,"Finish loading task: " + taskId, messageProperties,result);
                             }
                         }
                     });
@@ -85,11 +82,5 @@ public class SparkDataLoader implements Executor<Message> {
         } catch (Exception e) {
             logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
         }
-    }
-
-    private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {
-        messageProperties.setHeader(endTime, System.currentTimeMillis());
-        messageProperties.setHeader(status, result);
-        return messageProperties;
     }
 }

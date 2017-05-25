@@ -5,22 +5,22 @@
 
     <publish:bean id="hivePublishFTP" name="PUBLISH_HIVE_FTP" class="com.eastcom.datapublisher.service.HivePublishFTP"/>
 
+    <publish:bean id="hivePublishHBase" name="PUBLISH_HIVE_HBASE" class="com.eastcom.datapublisher.service.HivePublishHBase"/>
+
     <publish:bean id="hiveWarehousePath" name="hiveWarehousePath" class="java.lang.String">
         <publish:constructor-arg name="value" value="/apps/hive/warehouse/"/>
     </publish:bean>
 
     <!-- command parameters: [cmd] -->
-    <publish:bean id="cmd" name="cmd" class="java.lang.String">
+    <publish:bean id="pubFtpCmd" name="pubFtpCmd" class="java.lang.String">
         <publish:constructor-arg name="value"
                                  value="/home/ipms/spark_workscript/bin/export/exp_single_table.sh [cmd]"/>
     </publish:bean>
 
-    <publish:bean id="FILE_PREFIX" name="FILE_PREFIX" class="java.lang.String">
-        <publish:constructor-arg name="value" value="FILE_PREFIX"/>
+    <publish:bean id="pubHbaseCmd" name="pubHbaseCmd" class="java.lang.String">
+        <publish:constructor-arg name="value"
+                                 value="/home/ipms/spark_workscript/bin/export/pub_hbase.sh [cmd]"/>
     </publish:bean>
 
-    <publish:bean id="TIME_FORMAT" name="TIME_FORMAT" class="java.lang.String">
-        <publish:constructor-arg name="value" value="YYYYMMDD"/>
-    </publish:bean>
 
 </publish:beans>

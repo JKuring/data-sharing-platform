@@ -3,7 +3,7 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <tasks:bean id="task_types" class="com.eastcom.common.bean.TaskType" scope="singleton">
+    <tasks:bean id="task_types"  class="com.eastcom.common.bean.TaskType" scope="singleton">
         <!--任务数量（预留）-->
         <tasks:property name="taskNum" value="16"/>
         <tasks:property name="taskTypesMap">

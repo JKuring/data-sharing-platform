@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,19 +27,15 @@ public class JobServiceImpl implements JobService<Message> {
     @Autowired
     private TaskType taskType;
 
-    @Autowired
-    private RabbitTemplate q_load;
-
     @Resource(name = "PUBLISH_HIVE_FTP")
-    private Executor publish_hive_ftp;
+    private Executor publishFtpExecutor;
 
-    // back head
-    private String startTime = "startTime";
-    private String endTime = "endTime";
-    private String status = "status";
+    @Resource(name = "PUBLISH_HIVE_HBASE")
+    private Executor publishHbaseExecutor;
 
     // service
     private static final String PUBLISH_HIVE_FTP = "PUBLISH_HIVE_FTP";
+    private static final String PUBLISH_HIVE_HBASE = "PUBLISH_HIVE_HBASE";
 
     public void excute(Message message) {
         int jobType = 0;
@@ -53,7 +48,10 @@ public class JobServiceImpl implements JobService<Message> {
                 String taskType = taskTypesMap.get(jobType);
                 switch (taskType) {
                     case PUBLISH_HIVE_FTP:
-                        publish_hive_ftp.doJob(message);
+                        publishFtpExecutor.doJob(message);
+                        break;
+                    case PUBLISH_HIVE_HBASE:
+                        publishHbaseExecutor.doJob(message);
                         break;
                     default:
                         throw new Exception("invalid task type!");
@@ -61,16 +59,8 @@ public class JobServiceImpl implements JobService<Message> {
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
-            q_load.send(new Message(("execute the task: " + jobType + ", exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, Executor.FAILED)));
         }
     }
-
-    private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {
-        messageProperties.setHeader(endTime, System.currentTimeMillis());
-        messageProperties.setHeader(status, result);
-        return messageProperties;
-    }
-
 
     @Override
     public String getName() {

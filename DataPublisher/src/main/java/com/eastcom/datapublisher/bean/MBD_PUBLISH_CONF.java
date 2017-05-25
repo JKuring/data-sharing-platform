@@ -38,8 +38,6 @@ public class MBD_PUBLISH_CONF {
 
     private String exportTableName;
 
-
-
     public String getCatalogId() {
         return catalogId;
     }
@@ -120,7 +118,6 @@ public class MBD_PUBLISH_CONF {
         this.hbaseTableName = hbaseTableName;
     }
 
-
     public String getHdfsExportPath() {
         return hdfsExportPath;
     }
@@ -141,7 +138,7 @@ public class MBD_PUBLISH_CONF {
         return exportSchema;
     }
 
-    public void setExportSchema(String exportSchema) {
+    public void  setExportSchema(String exportSchema) {
         this.exportSchema = exportSchema;
     }
 
@@ -163,4 +160,7 @@ public class MBD_PUBLISH_CONF {
     public void setExportTableName(String exportTableName) {
         this.exportTableName = exportTableName;
     }
+
+
+
 }

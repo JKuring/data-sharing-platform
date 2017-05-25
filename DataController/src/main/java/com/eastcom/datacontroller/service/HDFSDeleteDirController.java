@@ -2,6 +2,7 @@ package com.eastcom.datacontroller.service;
 
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.common.utils.parser.JsonParser;
 import com.eastcom.datacontroller.bean.HDFSJobs;
 import com.eastcom.datacontroller.interfaces.service.HDFSService;
@@ -32,12 +33,6 @@ public class HDFSDeleteDirController implements Executor<Message> {
     @Autowired
     private HDFSService hdfsService;
 
-    // back head
-    private String startTime = "startTime";
-    private String endTime = "endTime";
-    private String status = "status";
-
-
     @Override
     public void doJob(Message message) {
         final MessageProperties messageProperties = message.getMessageProperties();
@@ -63,7 +58,7 @@ public class HDFSDeleteDirController implements Executor<Message> {
                                     logger.error("Failed to delete path, Exception: {}.", e.getMessage());
                                     result = Executor.FAILED;
                                 } finally {
-                                    q_maint.send(new Message(("Finish deleting task: " + p.getName()).getBytes(), getMessageProperties(messageProperties, result)));
+                                    SendMessageUtility.send(q_maint,"Finish deleting task: " + p.getName(),messageProperties,result);
                                 }
                             }
                         });
@@ -73,13 +68,7 @@ public class HDFSDeleteDirController implements Executor<Message> {
                 }
             }
         } catch (Exception e) {
-
+            logger.error("Failed to delete path.", e.fillInStackTrace());
         }
-    }
-
-    private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {
-        messageProperties.setHeader(endTime, System.currentTimeMillis());
-        messageProperties.setHeader(status, result);
-        return messageProperties;
     }
 }

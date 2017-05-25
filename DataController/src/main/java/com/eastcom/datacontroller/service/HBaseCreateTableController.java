@@ -2,6 +2,8 @@ package com.eastcom.datacontroller.service;
 
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.common.message.MessageHead;
+import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.common.utils.parser.JsonParser;
 import com.eastcom.common.utils.time.TimeTransform;
 import com.eastcom.datacontroller.bean.HBaseEntityImpl;
@@ -10,6 +12,7 @@ import com.eastcom.datacontroller.bean.JobEntityImpl;
 import com.eastcom.datacontroller.interfaces.dto.HBaseEntity;
 import com.eastcom.datacontroller.interfaces.dto.JobEntity;
 import com.eastcom.datacontroller.interfaces.service.HBaseService;
+import com.eastcom.datacontroller.utilities.BuildHBaseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -36,11 +39,6 @@ public class HBaseCreateTableController implements Executor<Message> {
     @Autowired
     private RabbitTemplate q_maint;
 
-    // back head
-    private String startTime = "startTime";
-    private String endTime = "endTime";
-    private String status = "status";
-
 
     @Override
     public void doJob(Message message) {
@@ -54,7 +52,7 @@ public class HBaseCreateTableController implements Executor<Message> {
                 HBaseJobs hBaseJobs = JsonParser.parseJsonToObject(context.getBytes(), HBaseJobs.class);
                 for (String tableName : hBaseJobs.getName()
                         ) {
-                    final JobEntity jobEntity = new JobEntityImpl((String) headMap.get(MessageService.Header.jobName), getHBaseEntity(tableName, hBaseJobs));
+                    final JobEntity jobEntity = new JobEntityImpl((String) headMap.get(MessageService.Header.jobName), BuildHBaseEntity.getHBaseEntity(tableName, hBaseJobs));
                     jobEntity.setJobStartTime(System.currentTimeMillis());
                     jobEntity.setCreateTime(TimeTransform.getTimestamp(hBaseJobs.getTime()));
                     jobEntity.setPreDays(hBaseJobs.getPreDays());
@@ -66,7 +64,7 @@ public class HBaseCreateTableController implements Executor<Message> {
                             public void run() {
                                 logger.debug("start the thread: {}.", Thread.currentThread().getName());
                                 int result = Executor.SUCESSED;
-                                messageProperties.setHeader(startTime, System.currentTimeMillis());
+                                messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
                                 try {
                                     hbaseService.createTable(jobEntity);
                                     //关闭任务
@@ -75,7 +73,7 @@ public class HBaseCreateTableController implements Executor<Message> {
                                     logger.error("Failed to create table, Exception: {}.", e.getMessage());
                                     result = Executor.FAILED;
                                 } finally {
-                                    q_maint.send(new Message(("Finish creating task: " + jobEntity.getJobName()).getBytes(), getMessageProperties(messageProperties, result)));
+                                    SendMessageUtility.send(q_maint,"Finish creating task: " + jobEntity.getJobName(),messageProperties,result);
                                 }
                             }
                         });
@@ -89,25 +87,5 @@ public class HBaseCreateTableController implements Executor<Message> {
         } catch (Exception e) {
             logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
         }
-    }
-
-    private HBaseEntity getHBaseEntity(String tableName, HBaseJobs hbaseJobs) {
-        HBaseEntity hbaseEntity = new HBaseEntityImpl();
-        hbaseEntity.setName(tableName);
-        hbaseEntity.setColumns(hbaseJobs.getColumns());
-        hbaseEntity.setVersion(hbaseJobs.getVersion());
-        hbaseEntity.setCompressionType(hbaseJobs.getCompressionType());
-        hbaseEntity.setTtl(hbaseJobs.getTtl());
-        hbaseEntity.setSplitPolicy(hbaseJobs.getSplitPolicy());
-        hbaseEntity.setSpiltKeysFile(hbaseJobs.getSpiltKeysFile());
-        hbaseEntity.setCoprocessor(hbaseJobs.getCoprocessor());
-        logger.debug(hbaseEntity.toString());
-        return hbaseEntity;
-    }
-
-    private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {
-        messageProperties.setHeader(endTime, System.currentTimeMillis());
-        messageProperties.setHeader(status, result);
-        return messageProperties;
     }
 }
