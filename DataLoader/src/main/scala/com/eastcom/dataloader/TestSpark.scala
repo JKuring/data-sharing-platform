@@ -1,5 +1,7 @@
 package com.eastcom.dataloader
 
+import com.cloudera.spark.hbase.HBaseContext
+import org.apache.hadoop.hbase.HBaseConfiguration
 import org.apache.log4j.Logger
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
@@ -23,7 +25,6 @@ object TestSpark {
 
     // 创建HiveContext
     val sqlContext = new HiveContext(sc)
-
 
     sqlContext.sql(args(0))
     sc.stop();

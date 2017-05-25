@@ -73,7 +73,7 @@ public class SparkAggregator implements Executor<Message> {
                                 }
                                 SparkSubmit$.MODULE$.main(params);
                             } catch (Exception e) {
-                                logger.error("Failed to aggregate table, parMBD_PUBLISH_CONFams: {}, Exception: {}.", Arrays.toString(params), e.getMessage());
+                                logger.error("Failed to aggregate table,  params: {}, Exception: {}.", Arrays.toString(params), e.getMessage());
                                 q_aggr_spark.send(new Message(("Finish aggregating task: " + taskId + ", jobs exception: " + e.getMessage()).getBytes(), getMessageProperties(messageProperties, Executor.FAILED)));
                             }
                         }

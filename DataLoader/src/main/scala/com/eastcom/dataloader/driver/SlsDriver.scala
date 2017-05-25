@@ -100,7 +100,7 @@ class SlsDriver(val job: SlsJob) extends Thread with Actor {
               nodeDataJob += x._1;
             }
           } catch {
-            case e: Exception => logging.error(s" [ SLS_JOB ] [ ${n.getType} ] Exec job with table [ ${n.getTplName} ] fail !!!", e)
+            case e: Exception => logging.error(s" [ SLS_JOB ] [ ${n.getType} ] Exec job with table [ ${n.getTplName} ] fail !", e)
           }
         } catch {
           case e: Exception => logging.error(s" [ SLS_JOB ] [ ${x._2.getType} ] Exec job with table [ ${x._2.getTplName} ] fail !!!", e)
