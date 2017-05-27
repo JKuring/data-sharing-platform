@@ -8,7 +8,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 /**
   * Created by linghang.kong on 2017/4/19.
   */
-object TestSpark {
+object SparkSql {
 
   private final val logging = Logger.getLogger(getClass)
 

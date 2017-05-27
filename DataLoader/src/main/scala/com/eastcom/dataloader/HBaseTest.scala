@@ -1,12 +1,20 @@
 package com.eastcom.dataloader
 
+import java.io.File
+import java.security.PrivilegedExceptionAction
+
 import com.cloudera.spark.hbase.HBaseContext
 import com.eastcom.dataloader.SlsLauncher.getClass
+import org.apache.commons.io.FileUtils
+import org.apache.hadoop.fs.{FileSystem, FileUtil, Path}
 import org.apache.hadoop.hbase.HBaseConfiguration
 import org.apache.hadoop.hbase.client.Scan
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat
 import org.apache.hadoop.hbase.util.Bytes
+import org.apache.hadoop.security.UserGroupInformation
+import org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod
 import org.apache.log4j.Logger
+import org.apache.spark.deploy.SparkHadoopUtil
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.hive.HiveContext
 
@@ -19,7 +27,7 @@ object HBaseTest {
 
   def main(args: Array[String]): Unit = {
 
-    val Array(tableName,hdfsPath,zookeeper_hosts,zookeeper_port) = args
+    val Array(user,tableName,hdfsPath,localPath) = args
     // 配置spark configuration
     val sparkConf = new SparkConf()
 
@@ -37,8 +45,55 @@ object HBaseTest {
 //    val sqlContext = new HiveContext(sc)
     logging.info("hbase.regionserver.keytab.file: "+conf.get("hbase.regionserver.keytab.file"))
     logging.info("hbase.regionserver.port: "+conf.get("hbase.regionserver.port"))
+    logging.info("username.client.keytab.file: "+conf.get("username.client.keytab.file"))
+    logging.info("HADOOP_TOKEN_FILE_LOCATION: "+System.getenv("HADOOP_TOKEN_FILE_LOCATION"))
+//    conf.set("hbase.mapred.output.quorum",zookeeper_hosts)
 
-    val hBaseContext = new HBaseContext(sc,conf)
+//      val creds = SparkHadoopUtil.get.getCurrentUserCredentials()
+//
+//      logging.info("creds: " + creds.getAllTokens.toArray.mkString)
+//
+//      val ugi = UserGroupInformation.getCurrentUser
+//      ugi.addCredentials(creds)
+//      // specify that this is a proxy user
+//      ugi.setAuthenticationMethod(AuthenticationMethod.PROXY)
+//      UserGroupInformation.setLoginUser(ugi)
+//
+//      val u = UserGroupInformation.getLoginUser
+
+    val fileSystem = FileSystem.get(conf)
+    fileSystem.copyToLocalFile(false,new Path(hdfsPath),new Path(localPath))
+    fileSystem.close()
+
+    val keytable = FileUtils
+    val u = UserGroupInformation.loginUserFromKeytabAndReturnUGI(user,localPath)
+
+    logging.info("getUserName: "+u.getUserName)
+    logging.info("getProxyUser: "+u.getProxyUser)
+    logging.info("getAccessId: "+u.getAccessId)
+    logging.info("getAccessKey: "+u.getAccessKey)
+    if (u.hasKerberosCredentials) {
+      logging.info("UGI OK!")
+    }
+
+
+    u.doAs(new PrivilegedExceptionAction[Void] {
+      override def run(): Void = {
+        val hBaseContext = new HBaseContext(sc,conf)
+        val scan = new Scan()
+        scan.setBatch(100)
+        val scanResult=hBaseContext.hbaseRDD(tableName,scan)
+
+        logging.info("TestResult: "+scanResult.collect().mkString)
+        null
+      }
+    })
+
+    if (new File(localPath).delete()){
+      logging.info("succeeded to delete file!")
+    }else{
+      FileUtils.deleteDirectory(new File(localPath))
+    }
 
 
 // source API
@@ -62,11 +117,7 @@ object HBaseTest {
 
 
 
-    val scan = new Scan()
-    scan.setBatch(100)
-    val scanResult=hBaseContext.hbaseRDD(tableName,scan)
 
-    logging.info("TestResult: "+scanResult.collect().mkString)
 
 //    val result = sqlContext.sql(sql)
 //
