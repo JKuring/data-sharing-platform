@@ -3,7 +3,7 @@
 //  "time":"#minuteminus(100)#"
 //}
 {
-  "id": null,
+  "id": "xdr_data:http",
   "jobName": "xdr_data:http",
   "status": false,
   "dataPath": "/rawdata/xdr/bb/r_bb_http",
@@ -22,6 +22,7 @@
     "importtsv.rowkey.strategies": "r,lls|yyyyMMddHHmm",
     "importtsv.rowkey.encrypts": ",",
     "importtsv.separator": "\\|",
+    "importtsv.filter.column.num":"81",
     "importtsv.filter.params": "76|gt|0",
     "importtsv.filter.define.class": "com.eastcom.common.utils.filter.StringFilter",
     "create.table": "no"

@@ -28,7 +28,7 @@ import java.util.Map;
 public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBytesWritable, Put> {
 
     public static final String CF_DEFAULT = "cf";
-    public static final String SEP_DEFAULT = "|";
+    public static final String SEP_DEFAULT = "\\|";
     public static final boolean WRITE_TO_WAL_DEFAULT = false;
 
     private String columnFamily = CF_DEFAULT;
@@ -46,12 +46,14 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
     private Counter badLineCount;
 
     // filter
-    public final static String EASTCOM_FILTER_PARAMS = "importtsv.filter.params";
-    public final static String EASTCOM_FILTER_DEFINE = "importtsv.filter.define.class";
+    private final static String EASTCOM_FILTER_PARAMS = "importtsv.filter.params";
+    private final static String EASTCOM_FILTER_DEFINE = "importtsv.filter.define.class";
+    private final static String EASTCOM_FILTER_COLUMN_NUM = "importtsv.filter.column.num";
+
     private final static String EASTCOM_FILTER_SEPARATOR = ",";
     private final static String EASTCOM_FILTER_SEPARATOR_PARAMS = "\\|";
     private Map<Integer, FilterImpl<String>> filters = null;
-    private String filterColumnNum;
+    private Integer filterColumnNum = 0;
 
     /**
      * 如果不添加参数不会实例化该过滤器，可以对多个列进行过滤，如果有自定义函数，请按照行对应过滤函数类，
@@ -64,6 +66,11 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
             Configuration conf = context.getConfiguration();
 
             String filterContext = conf.get(EASTCOM_FILTER_PARAMS);
+            String column_num = conf.get(EASTCOM_FILTER_COLUMN_NUM);
+            // filter unsatisfactory num of column.
+            if (column_num != null && column_num.length() > 0) {
+                this.filterColumnNum = Integer.valueOf(column_num);
+            }
             if (filterContext.length() != 0) {
                 filters = new HashMap<>();
                 String defineFilterClass = conf.get(EASTCOM_FILTER_DEFINE);
@@ -171,25 +178,29 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
     @SuppressWarnings("deprecation")
     public void map(LongWritable offset, Text value,
                     Mapper<LongWritable, Text, ImmutableBytesWritable, Put>.Context context) throws IOException {
+        String val = value + "";
+        String[] tmp = val.split(separator, 1024);
         try {
-            String val = value + "";
-
             // execute filter
             boolean filterStatus = false;
-            if (this.filters != null && this.filters.size() > 0) {
-                String[] tmp = val.split(separator);
+            if (this.filterColumnNum != 0 && this.filterColumnNum != tmp.length) {
+                filterStatus = true;
+            } else if (this.filters != null && this.filters.size() > 0) {
                 try {
                     for (Integer column : this.filters.keySet()
-                        ) {
-                        filterStatus |= this.filters.get(column).filter(tmp[column]);
+                            ) {
+                        String p = tmp[column];
+                        if (p !=null) {
+                            filterStatus |= this.filters.get(column).filter(tmp[column]);
+                        }else
+                            filterStatus = true;
                     }
-                }catch (ArrayIndexOutOfBoundsException e){
-                    filterStatus =true;
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    filterStatus = true;
                     System.err.println("Bad line at offset: " + offset.get() + ":\n ArrayIndexOutOfBoundsException: " + e.getMessage());
                 }
             }
             if (!filterStatus) {
-
                 String row = buildRowkey(val);
                 if (row == null)
                     throw new IllegalArgumentException("rowkey不能为空.");
@@ -203,7 +214,7 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
                 p.add(Bytes.toBytes(columnFamily), null, nval.getBytes());
 
                 context.write(rowKey, p);
-            }else {
+            } else {
                 incrementBadLineCount(1);
             }
         } catch (IllegalArgumentException e) {
@@ -273,14 +284,18 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
                 }
             }
 
-            if (part == null || part.length() == 0)
+            if (part == null || part.length() == 0) {
+                System.err.println("列值为空");
                 return null;
+            }
 
             part = keyStrategyChange(part, i);
             part = keyEncryptChange(part, i);
 
-            if (part == null)
+            if (part == null) {
+                System.err.println("转换后值为空");
                 return null;
+            }
 
             row.append(part).append(rowKeySeparator);
         }

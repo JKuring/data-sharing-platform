@@ -5,7 +5,6 @@ package com.eastcom.datapublisher.utils;
  */
 public class HBaseTokenDownload {
 
-
     public static void download(){
 
     }
