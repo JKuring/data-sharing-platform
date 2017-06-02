@@ -23,7 +23,7 @@
     "importtsv.rowkey.encrypts": ",",
     "importtsv.separator": "\\|",
     "importtsv.filter.column.num":"81",
-    "importtsv.filter.params": "76|gt|0",
+    "importtsv.filter.params": "76|eq|0",
     "importtsv.filter.define.class": "com.eastcom.common.utils.filter.StringFilter",
     "create.table": "no"
   },

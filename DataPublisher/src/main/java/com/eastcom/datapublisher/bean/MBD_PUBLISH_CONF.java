@@ -138,7 +138,7 @@ public class MBD_PUBLISH_CONF {
         return exportSchema;
     }
 
-    public void  setExportSchema(String exportSchema) {
+    public void setExportSchema(String exportSchema) {
         this.exportSchema = exportSchema;
     }
 
@@ -160,7 +160,6 @@ public class MBD_PUBLISH_CONF {
     public void setExportTableName(String exportTableName) {
         this.exportTableName = exportTableName;
     }
-
 
 
 }

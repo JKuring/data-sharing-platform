@@ -33,11 +33,6 @@ public class HivePublishHBase implements Executor<Message> {
     private final String sepa = System.lineSeparator();
 
     private Pattern cmdPattern = Pattern.compile("\\[" + "cmd" + "]");
-    private Pattern ftpPattern = Pattern.compile("ftp_url");
-
-    private final String tableName = "tableName";
-
-    private final String partition = "partition";
 
     private final String timeId = "timeId";
 
@@ -68,12 +63,15 @@ public class HivePublishHBase implements Executor<Message> {
                         String command = null;
                         try {
                             String parameters = getParameters(mbdPublishConf, headMap);
+                            if (parameters == null)
+                                throw new Exception("Encounter  incorrect  publish  config  messages ");
+
                             command = matcher.replaceFirst(parameters);
-                            
-                            String[] cmdArray = new String[] { "/bin/sh", "-c",  command };
-                            
+
+                            String[] cmdArray = new String[]{"/bin/sh", "-c", command};
+
                             Process process = Runtime.getRuntime().exec(cmdArray);
-                            logger.info("executing command : " + command );
+                            logger.info("executing command : " + command);
                             if (process.waitFor() != 0) {
                                 InputStreamReader inputStreamReader = new InputStreamReader(process.getErrorStream());
                                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -85,13 +83,13 @@ public class HivePublishHBase implements Executor<Message> {
                                 throw new Exception(tmp.toString());
                             } else {
                                 logger.info("publish MQ!");
-                                SendMessageUtility.send(q_publish,"exit code: "+String.valueOf(process.exitValue()),messageProperties,rs);
+                                SendMessageUtility.send(q_publish, "exit code: " + String.valueOf(process.exitValue()), messageProperties, rs);
                             }
                             logger.info("Finish! Command: {}.", command);
                         } catch (Exception e) {
                             rs = Executor.FAILED;
                             logger.error("Failed to execute cmd: {}.", command, e.fillInStackTrace());
-                            SendMessageUtility.send(q_publish,"Finish publishing task: " + taskId + ", exception: " + e.getMessage(),messageProperties,rs);
+                            SendMessageUtility.send(q_publish, "Finish publishing task: " + taskId + ", exception: " + e.getMessage(), messageProperties, rs);
                         }
                     }
                 });
@@ -103,31 +101,25 @@ public class HivePublishHBase implements Executor<Message> {
 
     private String getParameters(MBD_PUBLISH_CONF mbdPublishConf, Map<String, Object> headMap) {
 
-        String   fileFullPath = null;
+        String fileFullPath = null;
         Date publishTime = null;
         SimpleDateFormat originalFmt = new SimpleDateFormat("yyyyMMddHHmm");
 
         SimpleDateFormat convertFmt = new SimpleDateFormat(mbdPublishConf.getFtpPathExpr());
 
         try {
-             publishTime = originalFmt.parse((String) headMap.get(this.timeId));
+            publishTime = originalFmt.parse((String) headMap.get(this.timeId));
         } catch (ParseException e) {
             logger.error("Error timeId  format  in message Properties ......");
-            return  null;
+            return null;
         }
         fileFullPath = convertFmt.format(publishTime);
-
+        // parameter  list : TEMPLATE_FILE_NAME , HDFS_EXPORT_PATH ,  timeid , target_table
         StringBuilder builder = new StringBuilder();
-        builder.append(mbdPublishConf.getCatalogId()).append(" ");
-        builder.append(mbdPublishConf.getRealTableName()).append(" ");
-        builder.append(mbdPublishConf.getPubType()).append(" ");
+        builder.append(mbdPublishConf.getExportTableName()).append(" ");
+        builder.append(mbdPublishConf.getHdfsExportPath()).append(" ");
         builder.append(headMap.get(this.timeId)).append(" ");
-        builder.append(fileFullPath).append(" ");
-        builder.append(mbdPublishConf.getFtpServer()).append(" ");
-        builder.append(mbdPublishConf.getFtpAccount()).append(" '");
-        builder.append( mbdPublishConf.getFtpPsw().trim()).append("' ");
-        builder.append(mbdPublishConf.getEsbCode()).append(" ");
-        builder.append(mbdPublishConf.getExportTableName());
+        builder.append(mbdPublishConf.getHbaseTableName());
         return builder.toString();
     }
 }

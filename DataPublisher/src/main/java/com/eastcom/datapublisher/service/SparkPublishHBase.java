@@ -14,7 +14,6 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -49,10 +48,10 @@ public class SparkPublishHBase implements Executor<Message> {
 
     private SparkProperties sparkProperties;
 
-    @Value("${global.configServiceUrl}")
+    //    @Value("${global.configServiceUrl}")
     private String configServiceUrl;
 
-    @Value("${global.sparkSubmitParamCiCode}")
+    //    @Value("${global.sparkSubmitParamCiCode}")
     private String sparkSubmitCiCode;
 
     @Override
@@ -106,9 +105,9 @@ public class SparkPublishHBase implements Executor<Message> {
 //        }
         // configServiceUrl, tplCiCode , hdfsExportPath, hbaseTableName,  timeid , zookeeper_hosts, zookeeper_port,
         // Hbase  发布参数 :configServiceUrl , 取数模板 ciCode ，  HDFS 中间输出路径 , HBASE 表名 ,  取数时间 , zk 地址， zk端口
-        return new String[]{configServiceUrl , mbdPublishConf.getExportTableName(),
+        return new String[]{configServiceUrl, mbdPublishConf.getExportTableName(),
                 mbdPublishConf.getHdfsExportPath(), mbdPublishConf.getHbaseTableName(),
-                (String) headMap.get(this.timeId) };
+                (String) headMap.get(this.timeId)};
 
     }
 

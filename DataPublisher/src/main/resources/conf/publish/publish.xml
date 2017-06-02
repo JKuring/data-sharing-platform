@@ -22,5 +22,4 @@
                                  value="/home/ipms/spark_workscript/bin/export/pub_hbase.sh [cmd]"/>
     </publish:bean>
 
-
 </publish:beans>
