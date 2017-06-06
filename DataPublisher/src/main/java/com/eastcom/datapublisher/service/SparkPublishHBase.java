@@ -28,18 +28,13 @@ import java.util.Map;
 public class SparkPublishHBase implements Executor<Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(SparkPublishHBase.class);
-
+    private final String tableName = "tableName";
+    private final String partition = "partition";
+    private final String timeId = "timeId";
     // back head
     private String startTime = "startTime";
     private String endTime = "endTime";
     private String status = "status";
-
-    private final String tableName = "tableName";
-
-    private final String partition = "partition";
-
-    private final String timeId = "timeId";
-
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 

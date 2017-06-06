@@ -10,6 +10,6 @@ public class NonTmpFileFilter implements PathFilter {
 
     @Override
     public boolean accept(Path path) {
-        return !(path.getName().endsWith(".tmp") || path.getName().endsWith("._COPYING_"))  ;
+        return !(path.getName().endsWith(".tmp") || path.getName().endsWith("._COPYING_"));
     }
 }

@@ -2,8 +2,6 @@ package com.eastcom.datacontroller.service;
 
 import com.eastcom.datacontroller.interfaces.dao.HDFSDao;
 import com.eastcom.datacontroller.interfaces.service.HDFSService;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +24,7 @@ public class HDFSServiceImpl implements HDFSService {
     private HDFSDao<Path> hdfsDao;
 
 
-    public HDFSServiceImpl(){
+    public HDFSServiceImpl() {
     }
 
 
@@ -35,7 +33,7 @@ public class HDFSServiceImpl implements HDFSService {
         try {
             hdfsDao.create(path);
         } catch (IOException e) {
-            logger.error("Failed to create dir {}.",path.getName(),e.fillInStackTrace());
+            logger.error("Failed to create dir {}.", path.getName(), e.fillInStackTrace());
         }
     }
 
@@ -44,7 +42,7 @@ public class HDFSServiceImpl implements HDFSService {
         try {
             hdfsDao.delete(path);
         } catch (IOException e) {
-            logger.error("Failed to delete dir {}.",path.getName(),e.fillInStackTrace());
+            logger.error("Failed to delete dir {}.", path.getName(), e.fillInStackTrace());
         }
 
     }

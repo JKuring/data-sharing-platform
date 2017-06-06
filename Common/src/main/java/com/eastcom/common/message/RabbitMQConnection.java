@@ -42,31 +42,6 @@ public class RabbitMQConnection {
         factory.setPort(this.port);
     }
 
-    public Connection createConnection() {
-        try {
-            return factory.newConnection();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        } catch (TimeoutException e) {
-            logger.error(e.getMessage());
-        }
-        return null;
-    }
-
-    public void deleteConnection(Connection connection) {
-        try {
-            connection.close();
-        } catch (IOException e) {
-            logger.error("can not close the connection, exception: {}.", e.getMessage());
-        }
-    }
-
-    public Channel getChannel(Connection connection, String exchangeName, String routingKey) throws IOException {
-        Channel channel = connection.createChannel();
-        return channel;
-    }
-
-
     public static void main(String[] args) throws IOException, TimeoutException {
 //
 //        RabbitMQConnection rabbitMQConnection = new RabbitMQConnection("admin", "admin", "10.221.247.50", 20100);
@@ -117,5 +92,29 @@ public class RabbitMQConnection {
         Channel channel = connection.createChannel();
         channel.basicPublish("E_SUYAN_SCHEDULE", "R_REPLY_DRIVE", new AMQP.BasicProperties.Builder().headers(headers).build(), "123".getBytes());
         connection.close();
+    }
+
+    public Connection createConnection() {
+        try {
+            return factory.newConnection();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        } catch (TimeoutException e) {
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+    public void deleteConnection(Connection connection) {
+        try {
+            connection.close();
+        } catch (IOException e) {
+            logger.error("can not close the connection, exception: {}.", e.getMessage());
+        }
+    }
+
+    public Channel getChannel(Connection connection, String exchangeName, String routingKey) throws IOException {
+        Channel channel = connection.createChannel();
+        return channel;
     }
 }

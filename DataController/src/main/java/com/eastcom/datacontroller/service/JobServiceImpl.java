@@ -46,7 +46,6 @@ public class JobServiceImpl implements JobService<Message> {
     private Executor delete_table_hbase;
 
 
-
     public void excute(Message message) {
         int jobType = 0;
         MessageProperties messageProperties = message.getMessageProperties();
@@ -72,7 +71,7 @@ public class JobServiceImpl implements JobService<Message> {
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
-            SendMessageUtility.send(q_maint,"execute the task: " + jobType + ", exception: " + e.getMessage(),messageProperties,Executor.FAILED);
+            SendMessageUtility.send(q_maint, "execute the task: " + jobType + ", exception: " + e.getMessage(), messageProperties, Executor.FAILED);
         }
     }
 

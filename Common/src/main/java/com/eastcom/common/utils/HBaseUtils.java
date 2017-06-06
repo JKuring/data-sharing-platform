@@ -11,10 +11,8 @@ import org.apache.hadoop.hbase.client.HConnectionManager;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.net.ConnectTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.hadoop.mapreduce.ToolRunner;
@@ -54,15 +52,15 @@ public class HBaseUtils {
         ToolRunner toolRunner = new ToolRunner();
         toolRunner.setConfiguration(configuration);
         toolRunner.setToolClass(configuration.get("importtsv.class.name", "org.apache.hadoop.hbase.mapreduce.ImportTsv"));
-        logger.info("jar path: {}.",resource.getURL());
+        logger.info("jar path: {}.", resource.getURL());
         toolRunner.setLibs(resource);
         toolRunner.setArguments(params);
         toolRunner.setCloseFs(true);
         try {
             return toolRunner.call() <= 0;
-        }catch (IOException e){
+        } catch (IOException e) {
             // Unable to connect to the JobHistory server after completing the MR task.
-            logger.warn("Unable to connect to the JobHistory server after completing the MR task, but exception: {}.",e.getMessage());
+            logger.warn("Unable to connect to the JobHistory server after completing the MR task, but exception: {}.", e.getMessage());
             return true;
         }
     }

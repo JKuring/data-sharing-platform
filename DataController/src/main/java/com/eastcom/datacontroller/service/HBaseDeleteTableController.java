@@ -5,10 +5,8 @@ import com.eastcom.common.interfaces.service.MessageService;
 import com.eastcom.common.message.MessageHead;
 import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.common.utils.parser.JsonParser;
-import com.eastcom.datacontroller.bean.HBaseEntityImpl;
 import com.eastcom.datacontroller.bean.HBaseJobs;
 import com.eastcom.datacontroller.bean.JobEntityImpl;
-import com.eastcom.datacontroller.interfaces.dto.HBaseEntity;
 import com.eastcom.datacontroller.interfaces.dto.JobEntity;
 import com.eastcom.datacontroller.interfaces.service.HBaseService;
 import com.eastcom.datacontroller.utilities.BuildHBaseEntity;
@@ -54,30 +52,37 @@ public class HBaseDeleteTableController implements Executor<Message> {
                     final JobEntityImpl jobEntity = new JobEntityImpl((String) headMap.get(MessageService.Header.jobName), BuildHBaseEntity.getHBaseEntity(tableName, hBaseJobs));
                     jobEntity.setGranularity(hBaseJobs.getGranularity());
                     logger.info("deleteTable the table: {}.", tableName);
-                    threadPoolTaskExecutor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            logger.debug("start the thread: {}.", Thread.currentThread().getName());
-                            int result = Executor.SUCESSED;
-                            messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
-                            try {
-                                hbaseService.deleteTable(jobEntity);
-                                //关闭任务
-                                jobEntity.setJobEndTime(System.currentTimeMillis());
-                            } catch (Exception e) {
-                                logger.error("Failed to deleteTable table, Exception: {}.", e.getMessage());
-                                result = Executor.FAILED;
-                            } finally {
-                                SendMessageUtility.send(q_maint,"Finish to deleteTable task: " + jobEntity.getJobName(),messageProperties,result);
+                    try {
+                        threadPoolTaskExecutor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                logger.debug("start the thread: {}.", Thread.currentThread().getName());
+                                int result = Executor.SUCESSED;
+                                messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
+                                try {
+                                    hbaseService.deleteTable(jobEntity);
+                                    //关闭任务
+                                    jobEntity.setJobEndTime(System.currentTimeMillis());
+                                } catch (Exception e) {
+                                    logger.error("Failed to deleteTable table, Exception: {}.", e.getMessage());
+                                    result = Executor.FAILED;
+                                } finally {
+                                    SendMessageUtility.send(q_maint, "Finish to deleteTable task: " + jobEntity.getJobName(), messageProperties, result);
+                                }
                             }
-                        }
-                    });
+                        });
+                    } catch (Exception e) {
+                        logger.debug("Thread pool: {}.", e.getMessage());
+                        throw e;
+                    }
                 }
             } else {
-                throw new Exception("Unable task!");
+                throw new Exception("Unable task! task ID is null.");
             }
         } catch (Exception e) {
             logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
+            SendMessageUtility.send(q_maint, "Finish deleting task: " + taskId + ", exception: " + e.getMessage(), messageProperties, Executor.FAILED);
+
         }
     }
 }

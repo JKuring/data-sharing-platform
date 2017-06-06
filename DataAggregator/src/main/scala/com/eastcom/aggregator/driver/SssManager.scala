@@ -47,6 +47,7 @@ class SssManager(configServiceUrl: String, timeid: String, val mqConf: MQConf, v
     case SssJobMessage(node: SssNode) => {
       logging.info(s"start to connect MQ!")
       var result = Executor.FAILED
+      var message = "ok"
       try {
         val connection = mqConnection.createConnection()
         val channel = connection.createChannel()
@@ -69,6 +70,7 @@ class SssManager(configServiceUrl: String, timeid: String, val mqConf: MQConf, v
         } catch {
           case e: Exception => logging.error(s" [ SSS_JOB ] [ ${node.getType} ] Exec job with table [ ${node.getTplName} ] at time [ $timeid ] fail !!!", e)
             result = Executor.FAILED
+            message = e.getMessage
         } finally {
           try {
             logging.info("Sending publish message.")
@@ -78,7 +80,7 @@ class SssManager(configServiceUrl: String, timeid: String, val mqConf: MQConf, v
             tmp += this.schema += node.getSchema
             tmp += this.partition += node.getPartitions
             tmp += this.timeId += timeid
-            channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, getMessageProperties(tmp.toArray,node.getTplName, result), s"Finish aggregating task: ${node.getType}, jobs parameter: ${node.getTplName}".getBytes)
+            channel.basicPublish(mqConf.getExchange, mqConf.getRoutingKey, getMessageProperties(tmp.toArray,node.getTplName, result), s"Finish aggregating task: ${node.getType}, jobs parameter: ${node.getTplName}, message: $message".getBytes)
             connection.close()
             logging.info("Finish sending.")
           }

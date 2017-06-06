@@ -69,18 +69,21 @@ public class SparkDataLoader implements Executor<Message> {
                                 logger.error("Failed to load table, params: {}, Exception: {}.", Arrays.toString(params), e.getMessage());
                                 result = Executor.FAILED;
                             } finally {
-                                SendMessageUtility.send(q_load,"Finish loading task: " + taskId, messageProperties,result);
+                                SendMessageUtility.send(q_load, "Finish loading task: " + taskId, messageProperties, result);
                             }
                         }
                     });
                 } catch (Exception e) {
                     logger.error("Thread pool: {}.", e.getMessage());
+                    throw e;
                 }
             } else {
-                throw new Exception("Unable task!");
+                throw new Exception("Unable task! task ID is null.");
             }
         } catch (Exception e) {
             logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
+            SendMessageUtility.send(q_load, "Finish loading task: " + taskId + ", exception: " + e.getMessage(), messageProperties, Executor.FAILED);
+
         }
     }
 }

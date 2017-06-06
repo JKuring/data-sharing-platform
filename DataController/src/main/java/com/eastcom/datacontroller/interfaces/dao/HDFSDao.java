@@ -12,25 +12,25 @@ import java.io.IOException;
 public interface HDFSDao<T> extends BaseDao<T>, Closeable {
 
     /**
-     *
      * @return
      */
     public Configuration getConfiguration();
 
     /**
-     *
      * @return
      */
     public FileSystem getFileSystem();
 
     /**
      * create dir by relative path
+     *
      * @param path Need to create relative path
      */
     public void create(T path) throws IOException;
 
     /**
      * delete dir by relative path
+     *
      * @param path Need to delete relative path
      */
     public void delete(T path) throws IOException;

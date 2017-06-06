@@ -43,10 +43,6 @@ import static java.lang.String.format;
 @InterfaceStability.Stable
 public class ImportFilterTsv extends Configured implements Tool {
 
-    protected static final Log LOG = LogFactory.getLog(ImportTsv.class);
-
-    final static String NAME = "importtsv";
-
     public final static String MAPPER_CONF_KEY = "importtsv.mapper.class";
     public final static String BULK_OUTPUT_CONF_KEY = "importtsv.bulk.output";
     public final static String TIMESTAMP_CONF_KEY = "importtsv.timestamp";
@@ -60,365 +56,17 @@ public class ImportFilterTsv extends Configured implements Tool {
     //This config is used to propagate credentials from parent MR jobs which launch
     //ImportTSV jobs. SEE IntegrationTestImportTsv.
     public final static String CREDENTIALS_LOCATION = "credentials_location";
+    public final static String CREATE_TABLE_CONF_KEY = "create.table";
+    public final static String NO_STRICT_COL_FAMILY = "no.strict";
+    // define-self params to filter
+    public final static String EASTCOM_FILTER_PARAMS = "importtsv.filter.params";
+    public final static String EASTCOM_FILTER_DEFINE = "importtsv.filter.define.class";
+    protected static final Log LOG = LogFactory.getLog(ImportTsv.class);
+    final static String NAME = "importtsv";
     final static String DEFAULT_SEPARATOR = "\t";
     final static String DEFAULT_ATTRIBUTES_SEPERATOR = "=>";
     final static String DEFAULT_MULTIPLE_ATTRIBUTES_SEPERATOR = ",";
     final static Class DEFAULT_MAPPER = TsvImporterMapper.class;
-    public final static String CREATE_TABLE_CONF_KEY = "create.table";
-    public final static String NO_STRICT_COL_FAMILY = "no.strict";
-
-    // define-self params to filter
-    public final static String EASTCOM_FILTER_PARAMS = "importtsv.filter.params";
-    public final static String EASTCOM_FILTER_DEFINE = "importtsv.filter.define.class";
-
-    public static class TsvParser {
-        /**
-         * Column families and qualifiers mapped to the TSV columns
-         */
-        private final byte[][] families;
-        private final byte[][] qualifiers;
-
-        private final byte separatorByte;
-
-        private int rowKeyColumnIndex;
-
-        private int maxColumnCount;
-
-        // Default value must be negative
-        public static final int DEFAULT_TIMESTAMP_COLUMN_INDEX = -1;
-
-        private int timestampKeyColumnIndex = DEFAULT_TIMESTAMP_COLUMN_INDEX;
-
-        public static final String ROWKEY_COLUMN_SPEC = "HBASE_ROW_KEY";
-
-        public static final String TIMESTAMPKEY_COLUMN_SPEC = "HBASE_TS_KEY";
-
-        public static final String ATTRIBUTES_COLUMN_SPEC = "HBASE_ATTRIBUTES_KEY";
-
-        public static final String CELL_VISIBILITY_COLUMN_SPEC = "HBASE_CELL_VISIBILITY";
-
-        public static final String CELL_TTL_COLUMN_SPEC = "HBASE_CELL_TTL";
-
-        private int attrKeyColumnIndex = DEFAULT_ATTRIBUTES_COLUMN_INDEX;
-
-        public static final int DEFAULT_ATTRIBUTES_COLUMN_INDEX = -1;
-
-        public static final int DEFAULT_CELL_VISIBILITY_COLUMN_INDEX = -1;
-
-        public static final int DEFAULT_CELL_TTL_COLUMN_INDEX = -1;
-
-        private int cellVisibilityColumnIndex = DEFAULT_CELL_VISIBILITY_COLUMN_INDEX;
-
-        private int cellTTLColumnIndex = DEFAULT_CELL_TTL_COLUMN_INDEX;
-
-        /**
-         * @param columnsSpecification the list of columns to parser out, comma separated.
-         *                             The row key should be the special token TsvParser.ROWKEY_COLUMN_SPEC
-         * @param separatorStr
-         */
-        public TsvParser(String columnsSpecification, String separatorStr) {
-            // Configure separator
-            byte[] separator = Bytes.toBytes(separatorStr);
-            Preconditions.checkArgument(separator.length == 1,
-                    "TsvParser only supports single-byte separators");
-            separatorByte = separator[0];
-
-            // Configure columns
-            ArrayList<String> columnStrings = Lists.newArrayList(
-                    Splitter.on(',').trimResults().split(columnsSpecification));
-
-            maxColumnCount = columnStrings.size();
-            families = new byte[maxColumnCount][];
-            qualifiers = new byte[maxColumnCount][];
-
-            for (int i = 0; i < columnStrings.size(); i++) {
-                String str = columnStrings.get(i);
-                if (ROWKEY_COLUMN_SPEC.equals(str)) {
-                    rowKeyColumnIndex = i;
-                    continue;
-                }
-                if (TIMESTAMPKEY_COLUMN_SPEC.equals(str)) {
-                    timestampKeyColumnIndex = i;
-                    continue;
-                }
-                if (ATTRIBUTES_COLUMN_SPEC.equals(str)) {
-                    attrKeyColumnIndex = i;
-                    continue;
-                }
-                if (CELL_VISIBILITY_COLUMN_SPEC.equals(str)) {
-                    cellVisibilityColumnIndex = i;
-                    continue;
-                }
-                if (CELL_TTL_COLUMN_SPEC.equals(str)) {
-                    cellTTLColumnIndex = i;
-                    continue;
-                }
-                String[] parts = str.split(":", 2);
-                if (parts.length == 1) {
-                    families[i] = str.getBytes();
-                    qualifiers[i] = HConstants.EMPTY_BYTE_ARRAY;
-                } else {
-                    families[i] = parts[0].getBytes();
-                    qualifiers[i] = parts[1].getBytes();
-                }
-            }
-        }
-
-        public boolean hasTimestamp() {
-            return timestampKeyColumnIndex != DEFAULT_TIMESTAMP_COLUMN_INDEX;
-        }
-
-        public int getTimestampKeyColumnIndex() {
-            return timestampKeyColumnIndex;
-        }
-
-        public boolean hasAttributes() {
-            return attrKeyColumnIndex != DEFAULT_ATTRIBUTES_COLUMN_INDEX;
-        }
-
-        public boolean hasCellVisibility() {
-            return cellVisibilityColumnIndex != DEFAULT_CELL_VISIBILITY_COLUMN_INDEX;
-        }
-
-        public boolean hasCellTTL() {
-            return cellTTLColumnIndex != DEFAULT_CELL_VISIBILITY_COLUMN_INDEX;
-        }
-
-        public int getAttributesKeyColumnIndex() {
-            return attrKeyColumnIndex;
-        }
-
-        public int getCellVisibilityColumnIndex() {
-            return cellVisibilityColumnIndex;
-        }
-
-        public int getCellTTLColumnIndex() {
-            return cellTTLColumnIndex;
-        }
-
-        public int getRowKeyColumnIndex() {
-            return rowKeyColumnIndex;
-        }
-
-        public byte[] getFamily(int idx) {
-            return families[idx];
-        }
-
-        public byte[] getQualifier(int idx) {
-            return qualifiers[idx];
-        }
-
-        public ParsedLine parse(byte[] lineBytes, int length)
-                throws BadTsvLineException {
-            // Enumerate separator offsets
-            ArrayList<Integer> tabOffsets = new ArrayList<Integer>(maxColumnCount);
-            for (int i = 0; i < length; i++) {
-                if (lineBytes[i] == separatorByte) {
-                    tabOffsets.add(i);
-                }
-            }
-            if (tabOffsets.isEmpty()) {
-                throw new BadTsvLineException("No delimiter");
-            }
-
-            tabOffsets.add(length);
-
-            if (tabOffsets.size() > maxColumnCount) {
-                throw new BadTsvLineException("Excessive columns");
-            } else if (tabOffsets.size() <= getRowKeyColumnIndex()) {
-                throw new BadTsvLineException("No row key");
-            } else if (hasTimestamp()
-                    && tabOffsets.size() <= getTimestampKeyColumnIndex()) {
-                throw new BadTsvLineException("No timestamp");
-            } else if (hasAttributes() && tabOffsets.size() <= getAttributesKeyColumnIndex()) {
-                throw new BadTsvLineException("No attributes specified");
-            } else if (hasCellVisibility() && tabOffsets.size() <= getCellVisibilityColumnIndex()) {
-                throw new BadTsvLineException("No cell visibility specified");
-            } else if (hasCellTTL() && tabOffsets.size() <= getCellTTLColumnIndex()) {
-                throw new BadTsvLineException("No cell TTL specified");
-            }
-            return new ParsedLine(tabOffsets, lineBytes);
-        }
-
-        class ParsedLine {
-            private final ArrayList<Integer> tabOffsets;
-            private byte[] lineBytes;
-
-            ParsedLine(ArrayList<Integer> tabOffsets, byte[] lineBytes) {
-                this.tabOffsets = tabOffsets;
-                this.lineBytes = lineBytes;
-            }
-
-            public int getRowKeyOffset() {
-                return getColumnOffset(rowKeyColumnIndex);
-            }
-
-            public int getRowKeyLength() {
-                return getColumnLength(rowKeyColumnIndex);
-            }
-
-            public long getTimestamp(long ts) throws BadTsvLineException {
-                // Return ts if HBASE_TS_KEY is not configured in column spec
-                if (!hasTimestamp()) {
-                    return ts;
-                }
-
-                String timeStampStr = Bytes.toString(lineBytes,
-                        getColumnOffset(timestampKeyColumnIndex),
-                        getColumnLength(timestampKeyColumnIndex));
-                try {
-                    return Long.parseLong(timeStampStr);
-                } catch (NumberFormatException nfe) {
-                    // treat this record as bad record
-                    throw new BadTsvLineException("Invalid timestamp " + timeStampStr);
-                }
-            }
-
-            private String getAttributes() {
-                if (!hasAttributes()) {
-                    return null;
-                } else {
-                    return Bytes.toString(lineBytes, getColumnOffset(attrKeyColumnIndex),
-                            getColumnLength(attrKeyColumnIndex));
-                }
-            }
-
-            public String[] getIndividualAttributes() {
-                String attributes = getAttributes();
-                if (attributes != null) {
-                    return attributes.split(DEFAULT_MULTIPLE_ATTRIBUTES_SEPERATOR);
-                } else {
-                    return null;
-                }
-            }
-
-            public int getAttributeKeyOffset() {
-                if (hasAttributes()) {
-                    return getColumnOffset(attrKeyColumnIndex);
-                } else {
-                    return DEFAULT_ATTRIBUTES_COLUMN_INDEX;
-                }
-            }
-
-            public int getAttributeKeyLength() {
-                if (hasAttributes()) {
-                    return getColumnLength(attrKeyColumnIndex);
-                } else {
-                    return DEFAULT_ATTRIBUTES_COLUMN_INDEX;
-                }
-            }
-
-            public int getCellVisibilityColumnOffset() {
-                if (hasCellVisibility()) {
-                    return getColumnOffset(cellVisibilityColumnIndex);
-                } else {
-                    return DEFAULT_CELL_VISIBILITY_COLUMN_INDEX;
-                }
-            }
-
-            public int getCellVisibilityColumnLength() {
-                if (hasCellVisibility()) {
-                    return getColumnLength(cellVisibilityColumnIndex);
-                } else {
-                    return DEFAULT_CELL_VISIBILITY_COLUMN_INDEX;
-                }
-            }
-
-            public String getCellVisibility() {
-                if (!hasCellVisibility()) {
-                    return null;
-                } else {
-                    return Bytes.toString(lineBytes, getColumnOffset(cellVisibilityColumnIndex),
-                            getColumnLength(cellVisibilityColumnIndex));
-                }
-            }
-
-            public int getCellTTLColumnOffset() {
-                if (hasCellTTL()) {
-                    return getColumnOffset(cellTTLColumnIndex);
-                } else {
-                    return DEFAULT_CELL_TTL_COLUMN_INDEX;
-                }
-            }
-
-            public int getCellTTLColumnLength() {
-                if (hasCellTTL()) {
-                    return getColumnLength(cellTTLColumnIndex);
-                } else {
-                    return DEFAULT_CELL_TTL_COLUMN_INDEX;
-                }
-            }
-
-            public long getCellTTL() {
-                if (!hasCellTTL()) {
-                    return 0;
-                } else {
-                    return Bytes.toLong(lineBytes, getColumnOffset(cellTTLColumnIndex),
-                            getColumnLength(cellTTLColumnIndex));
-                }
-            }
-
-            public int getColumnOffset(int idx) {
-                if (idx > 0)
-                    return tabOffsets.get(idx - 1) + 1;
-                else
-                    return 0;
-            }
-
-            public int getColumnLength(int idx) {
-                return tabOffsets.get(idx) - getColumnOffset(idx);
-            }
-
-            public int getColumnCount() {
-                return tabOffsets.size();
-            }
-
-            public byte[] getLineBytes() {
-                return lineBytes;
-            }
-        }
-
-        public static class BadTsvLineException extends Exception {
-            public BadTsvLineException(String err) {
-                super(err);
-            }
-
-            private static final long serialVersionUID = 1L;
-        }
-
-        /**
-         * Return starting position and length of row key from the specified line bytes.
-         *
-         * @param lineBytes
-         * @param length
-         * @return Pair of row key offset and length.
-         * @throws BadTsvLineException
-         */
-        public Pair<Integer, Integer> parseRowKey(byte[] lineBytes, int length)
-                throws BadTsvLineException {
-            int rkColumnIndex = 0;
-            int startPos = 0, endPos = 0;
-            for (int i = 0; i <= length; i++) {
-                if (i == length || lineBytes[i] == separatorByte) {
-                    endPos = i - 1;
-                    if (rkColumnIndex++ == getRowKeyColumnIndex()) {
-                        if ((endPos + 1) == startPos) {
-                            throw new BadTsvLineException("Empty value for ROW KEY.");
-                        }
-                        break;
-                    } else {
-                        startPos = endPos + 2;
-                    }
-                }
-                if (i == length) {
-                    throw new BadTsvLineException(
-                            "Row key does not exist as number of columns in the line"
-                                    + " are less than row key position.");
-                }
-            }
-            return new Pair<Integer, Integer>(startPos, endPos - startPos + 1);
-        }
-    }
 
     /**
      * Sets up the actual job.
@@ -700,5 +348,339 @@ public class ImportFilterTsv extends Configured implements Tool {
 
         Job job = createSubmittableJob(getConf(), otherArgs);
         return job.waitForCompletion(true) ? 0 : 1;
+    }
+
+    public static class TsvParser {
+        // Default value must be negative
+        public static final int DEFAULT_TIMESTAMP_COLUMN_INDEX = -1;
+        public static final String ROWKEY_COLUMN_SPEC = "HBASE_ROW_KEY";
+        public static final String TIMESTAMPKEY_COLUMN_SPEC = "HBASE_TS_KEY";
+        public static final String ATTRIBUTES_COLUMN_SPEC = "HBASE_ATTRIBUTES_KEY";
+        public static final String CELL_VISIBILITY_COLUMN_SPEC = "HBASE_CELL_VISIBILITY";
+        public static final String CELL_TTL_COLUMN_SPEC = "HBASE_CELL_TTL";
+        public static final int DEFAULT_ATTRIBUTES_COLUMN_INDEX = -1;
+        public static final int DEFAULT_CELL_VISIBILITY_COLUMN_INDEX = -1;
+        public static final int DEFAULT_CELL_TTL_COLUMN_INDEX = -1;
+        /**
+         * Column families and qualifiers mapped to the TSV columns
+         */
+        private final byte[][] families;
+        private final byte[][] qualifiers;
+        private final byte separatorByte;
+        private int rowKeyColumnIndex;
+        private int maxColumnCount;
+        private int timestampKeyColumnIndex = DEFAULT_TIMESTAMP_COLUMN_INDEX;
+        private int attrKeyColumnIndex = DEFAULT_ATTRIBUTES_COLUMN_INDEX;
+        private int cellVisibilityColumnIndex = DEFAULT_CELL_VISIBILITY_COLUMN_INDEX;
+
+        private int cellTTLColumnIndex = DEFAULT_CELL_TTL_COLUMN_INDEX;
+
+        /**
+         * @param columnsSpecification the list of columns to parser out, comma separated.
+         *                             The row key should be the special token TsvParser.ROWKEY_COLUMN_SPEC
+         * @param separatorStr
+         */
+        public TsvParser(String columnsSpecification, String separatorStr) {
+            // Configure separator
+            byte[] separator = Bytes.toBytes(separatorStr);
+            Preconditions.checkArgument(separator.length == 1,
+                    "TsvParser only supports single-byte separators");
+            separatorByte = separator[0];
+
+            // Configure columns
+            ArrayList<String> columnStrings = Lists.newArrayList(
+                    Splitter.on(',').trimResults().split(columnsSpecification));
+
+            maxColumnCount = columnStrings.size();
+            families = new byte[maxColumnCount][];
+            qualifiers = new byte[maxColumnCount][];
+
+            for (int i = 0; i < columnStrings.size(); i++) {
+                String str = columnStrings.get(i);
+                if (ROWKEY_COLUMN_SPEC.equals(str)) {
+                    rowKeyColumnIndex = i;
+                    continue;
+                }
+                if (TIMESTAMPKEY_COLUMN_SPEC.equals(str)) {
+                    timestampKeyColumnIndex = i;
+                    continue;
+                }
+                if (ATTRIBUTES_COLUMN_SPEC.equals(str)) {
+                    attrKeyColumnIndex = i;
+                    continue;
+                }
+                if (CELL_VISIBILITY_COLUMN_SPEC.equals(str)) {
+                    cellVisibilityColumnIndex = i;
+                    continue;
+                }
+                if (CELL_TTL_COLUMN_SPEC.equals(str)) {
+                    cellTTLColumnIndex = i;
+                    continue;
+                }
+                String[] parts = str.split(":", 2);
+                if (parts.length == 1) {
+                    families[i] = str.getBytes();
+                    qualifiers[i] = HConstants.EMPTY_BYTE_ARRAY;
+                } else {
+                    families[i] = parts[0].getBytes();
+                    qualifiers[i] = parts[1].getBytes();
+                }
+            }
+        }
+
+        public boolean hasTimestamp() {
+            return timestampKeyColumnIndex != DEFAULT_TIMESTAMP_COLUMN_INDEX;
+        }
+
+        public int getTimestampKeyColumnIndex() {
+            return timestampKeyColumnIndex;
+        }
+
+        public boolean hasAttributes() {
+            return attrKeyColumnIndex != DEFAULT_ATTRIBUTES_COLUMN_INDEX;
+        }
+
+        public boolean hasCellVisibility() {
+            return cellVisibilityColumnIndex != DEFAULT_CELL_VISIBILITY_COLUMN_INDEX;
+        }
+
+        public boolean hasCellTTL() {
+            return cellTTLColumnIndex != DEFAULT_CELL_VISIBILITY_COLUMN_INDEX;
+        }
+
+        public int getAttributesKeyColumnIndex() {
+            return attrKeyColumnIndex;
+        }
+
+        public int getCellVisibilityColumnIndex() {
+            return cellVisibilityColumnIndex;
+        }
+
+        public int getCellTTLColumnIndex() {
+            return cellTTLColumnIndex;
+        }
+
+        public int getRowKeyColumnIndex() {
+            return rowKeyColumnIndex;
+        }
+
+        public byte[] getFamily(int idx) {
+            return families[idx];
+        }
+
+        public byte[] getQualifier(int idx) {
+            return qualifiers[idx];
+        }
+
+        public ParsedLine parse(byte[] lineBytes, int length)
+                throws BadTsvLineException {
+            // Enumerate separator offsets
+            ArrayList<Integer> tabOffsets = new ArrayList<Integer>(maxColumnCount);
+            for (int i = 0; i < length; i++) {
+                if (lineBytes[i] == separatorByte) {
+                    tabOffsets.add(i);
+                }
+            }
+            if (tabOffsets.isEmpty()) {
+                throw new BadTsvLineException("No delimiter");
+            }
+
+            tabOffsets.add(length);
+
+            if (tabOffsets.size() > maxColumnCount) {
+                throw new BadTsvLineException("Excessive columns");
+            } else if (tabOffsets.size() <= getRowKeyColumnIndex()) {
+                throw new BadTsvLineException("No row key");
+            } else if (hasTimestamp()
+                    && tabOffsets.size() <= getTimestampKeyColumnIndex()) {
+                throw new BadTsvLineException("No timestamp");
+            } else if (hasAttributes() && tabOffsets.size() <= getAttributesKeyColumnIndex()) {
+                throw new BadTsvLineException("No attributes specified");
+            } else if (hasCellVisibility() && tabOffsets.size() <= getCellVisibilityColumnIndex()) {
+                throw new BadTsvLineException("No cell visibility specified");
+            } else if (hasCellTTL() && tabOffsets.size() <= getCellTTLColumnIndex()) {
+                throw new BadTsvLineException("No cell TTL specified");
+            }
+            return new ParsedLine(tabOffsets, lineBytes);
+        }
+
+        /**
+         * Return starting position and length of row key from the specified line bytes.
+         *
+         * @param lineBytes
+         * @param length
+         * @return Pair of row key offset and length.
+         * @throws BadTsvLineException
+         */
+        public Pair<Integer, Integer> parseRowKey(byte[] lineBytes, int length)
+                throws BadTsvLineException {
+            int rkColumnIndex = 0;
+            int startPos = 0, endPos = 0;
+            for (int i = 0; i <= length; i++) {
+                if (i == length || lineBytes[i] == separatorByte) {
+                    endPos = i - 1;
+                    if (rkColumnIndex++ == getRowKeyColumnIndex()) {
+                        if ((endPos + 1) == startPos) {
+                            throw new BadTsvLineException("Empty value for ROW KEY.");
+                        }
+                        break;
+                    } else {
+                        startPos = endPos + 2;
+                    }
+                }
+                if (i == length) {
+                    throw new BadTsvLineException(
+                            "Row key does not exist as number of columns in the line"
+                                    + " are less than row key position.");
+                }
+            }
+            return new Pair<Integer, Integer>(startPos, endPos - startPos + 1);
+        }
+
+        public static class BadTsvLineException extends Exception {
+            private static final long serialVersionUID = 1L;
+
+            public BadTsvLineException(String err) {
+                super(err);
+            }
+        }
+
+        class ParsedLine {
+            private final ArrayList<Integer> tabOffsets;
+            private byte[] lineBytes;
+
+            ParsedLine(ArrayList<Integer> tabOffsets, byte[] lineBytes) {
+                this.tabOffsets = tabOffsets;
+                this.lineBytes = lineBytes;
+            }
+
+            public int getRowKeyOffset() {
+                return getColumnOffset(rowKeyColumnIndex);
+            }
+
+            public int getRowKeyLength() {
+                return getColumnLength(rowKeyColumnIndex);
+            }
+
+            public long getTimestamp(long ts) throws BadTsvLineException {
+                // Return ts if HBASE_TS_KEY is not configured in column spec
+                if (!hasTimestamp()) {
+                    return ts;
+                }
+
+                String timeStampStr = Bytes.toString(lineBytes,
+                        getColumnOffset(timestampKeyColumnIndex),
+                        getColumnLength(timestampKeyColumnIndex));
+                try {
+                    return Long.parseLong(timeStampStr);
+                } catch (NumberFormatException nfe) {
+                    // treat this record as bad record
+                    throw new BadTsvLineException("Invalid timestamp " + timeStampStr);
+                }
+            }
+
+            private String getAttributes() {
+                if (!hasAttributes()) {
+                    return null;
+                } else {
+                    return Bytes.toString(lineBytes, getColumnOffset(attrKeyColumnIndex),
+                            getColumnLength(attrKeyColumnIndex));
+                }
+            }
+
+            public String[] getIndividualAttributes() {
+                String attributes = getAttributes();
+                if (attributes != null) {
+                    return attributes.split(DEFAULT_MULTIPLE_ATTRIBUTES_SEPERATOR);
+                } else {
+                    return null;
+                }
+            }
+
+            public int getAttributeKeyOffset() {
+                if (hasAttributes()) {
+                    return getColumnOffset(attrKeyColumnIndex);
+                } else {
+                    return DEFAULT_ATTRIBUTES_COLUMN_INDEX;
+                }
+            }
+
+            public int getAttributeKeyLength() {
+                if (hasAttributes()) {
+                    return getColumnLength(attrKeyColumnIndex);
+                } else {
+                    return DEFAULT_ATTRIBUTES_COLUMN_INDEX;
+                }
+            }
+
+            public int getCellVisibilityColumnOffset() {
+                if (hasCellVisibility()) {
+                    return getColumnOffset(cellVisibilityColumnIndex);
+                } else {
+                    return DEFAULT_CELL_VISIBILITY_COLUMN_INDEX;
+                }
+            }
+
+            public int getCellVisibilityColumnLength() {
+                if (hasCellVisibility()) {
+                    return getColumnLength(cellVisibilityColumnIndex);
+                } else {
+                    return DEFAULT_CELL_VISIBILITY_COLUMN_INDEX;
+                }
+            }
+
+            public String getCellVisibility() {
+                if (!hasCellVisibility()) {
+                    return null;
+                } else {
+                    return Bytes.toString(lineBytes, getColumnOffset(cellVisibilityColumnIndex),
+                            getColumnLength(cellVisibilityColumnIndex));
+                }
+            }
+
+            public int getCellTTLColumnOffset() {
+                if (hasCellTTL()) {
+                    return getColumnOffset(cellTTLColumnIndex);
+                } else {
+                    return DEFAULT_CELL_TTL_COLUMN_INDEX;
+                }
+            }
+
+            public int getCellTTLColumnLength() {
+                if (hasCellTTL()) {
+                    return getColumnLength(cellTTLColumnIndex);
+                } else {
+                    return DEFAULT_CELL_TTL_COLUMN_INDEX;
+                }
+            }
+
+            public long getCellTTL() {
+                if (!hasCellTTL()) {
+                    return 0;
+                } else {
+                    return Bytes.toLong(lineBytes, getColumnOffset(cellTTLColumnIndex),
+                            getColumnLength(cellTTLColumnIndex));
+                }
+            }
+
+            public int getColumnOffset(int idx) {
+                if (idx > 0)
+                    return tabOffsets.get(idx - 1) + 1;
+                else
+                    return 0;
+            }
+
+            public int getColumnLength(int idx) {
+                return tabOffsets.get(idx) - getColumnOffset(idx);
+            }
+
+            public int getColumnCount() {
+                return tabOffsets.size();
+            }
+
+            public byte[] getLineBytes() {
+                return lineBytes;
+            }
+        }
     }
 }

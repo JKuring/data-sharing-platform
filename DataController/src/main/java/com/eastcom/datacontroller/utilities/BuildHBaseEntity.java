@@ -24,7 +24,7 @@ public class BuildHBaseEntity {
             hbaseEntity.setSplitPolicy(hbaseJobs.getSplitPolicy());
             hbaseEntity.setSpiltKeysFile(hbaseJobs.getSpiltKeysFile());
             hbaseEntity.setCoprocessor(hbaseJobs.getCoprocessor());
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("Failed to build HBaseEntity.");
         }
         return hbaseEntity;

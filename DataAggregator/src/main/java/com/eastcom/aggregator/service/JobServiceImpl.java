@@ -24,12 +24,9 @@ import java.util.Map;
 public class JobServiceImpl implements JobService<Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
-
-    private final TaskType taskType;
-
     // task types
     private static final String AGGREGATE_SPARK = "AGGREGATE_SPARK";
-
+    private final TaskType taskType;
     @Autowired
     private RabbitTemplate q_aggr_spark;
 
@@ -63,7 +60,7 @@ public class JobServiceImpl implements JobService<Message> {
             }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
-            SendMessageUtility.send(q_aggr_spark,"execute the task: " + jobType + ", exception: " + e.getMessage(),messageProperties,Executor.FAILED);
+            SendMessageUtility.send(q_aggr_spark, "execute the task: " + jobType + ", exception: " + e.getMessage(), messageProperties, Executor.FAILED);
         }
     }
 

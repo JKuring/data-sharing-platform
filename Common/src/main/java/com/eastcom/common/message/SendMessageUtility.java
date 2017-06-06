@@ -14,12 +14,12 @@ public class SendMessageUtility {
     private static final Logger logger = LoggerFactory.getLogger(SendMessageUtility.class);
 
 
-    public static boolean send(RabbitTemplate rabbitTemplate, String message, MessageProperties messageProperties, int result){
+    public static boolean send(RabbitTemplate rabbitTemplate, String message, MessageProperties messageProperties, int result) {
         boolean status = false;
         try {
-            rabbitTemplate.send(new Message(message.getBytes(), MessageHead.getMessageProperties(messageProperties,result)));
+            rabbitTemplate.send(new Message(message.getBytes(), MessageHead.getMessageProperties(messageProperties, result)));
             status = true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return status;

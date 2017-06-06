@@ -58,17 +58,19 @@ public class HDFSDeleteDirController implements Executor<Message> {
                                     logger.error("Failed to delete path, Exception: {}.", e.getMessage());
                                     result = Executor.FAILED;
                                 } finally {
-                                    SendMessageUtility.send(q_maint,"Finish deleting task: " + p.getName(),messageProperties,result);
+                                    SendMessageUtility.send(q_maint, "Finish deleting task: " + p.getName(), messageProperties, result);
                                 }
                             }
                         });
                     } catch (Exception e) {
                         logger.debug("Thread pool: {}.", e.getMessage());
+                        throw e;
                     }
                 }
             }
         } catch (Exception e) {
             logger.error("Failed to delete path.", e.fillInStackTrace());
+            SendMessageUtility.send(q_maint, "Finish deleting task: " + taskId + ", exception: " + e.getMessage(), messageProperties, Executor.FAILED);
         }
     }
 }

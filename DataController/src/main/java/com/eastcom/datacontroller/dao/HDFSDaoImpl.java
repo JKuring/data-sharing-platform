@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by linghang.kong on 2017/1/20.
  */
-public class HDFSDaoImpl implements HDFSDao<Path>{
+public class HDFSDaoImpl implements HDFSDao<Path> {
 
     private static final Logger logger = LoggerFactory.getLogger(HDFSDaoImpl.class);
 
@@ -49,9 +49,9 @@ public class HDFSDaoImpl implements HDFSDao<Path>{
         delete(path, true);
     }
 
-    public void delete(Path path, boolean recursive) throws IOException{
-        if (!this.fileSystem.delete(path,recursive)) throw new IOException("Could not delete " + path);
-        logger.info("Finish deleting the dir of {}.",path.getName());
+    public void delete(Path path, boolean recursive) throws IOException {
+        if (!this.fileSystem.delete(path, recursive)) throw new IOException("Could not delete " + path);
+        logger.info("Finish deleting the dir of {}.", path.getName());
     }
 
     @Override
@@ -81,12 +81,12 @@ public class HDFSDaoImpl implements HDFSDao<Path>{
 
     @Override
     public void create(Path path) throws IOException {
-        create(path,false);
+        create(path, false);
     }
 
     public void create(Path path, boolean overwrite) throws IOException {
-        this.fileSystem.create(path,overwrite);
-        logger.info("Finish creating the dir of {}.",path.getName());
+        this.fileSystem.create(path, overwrite);
+        logger.info("Finish creating the dir of {}.", path.getName());
     }
 
     @Override

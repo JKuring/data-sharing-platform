@@ -28,32 +28,33 @@ import java.util.Map;
 public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBytesWritable, Put> {
 
     public static final String CF_DEFAULT = "cf";
-    public static final String SEP_DEFAULT = "\\|";
+    public static final String SEP_DEFAULT = "|";
     public static final boolean WRITE_TO_WAL_DEFAULT = false;
-
+    // filter
+    private final static String EASTCOM_FILTER_PARAMS = "importtsv.filter.params";
+    private final static String EASTCOM_FILTER_DEFINE = "importtsv.filter.define.class";
+    private final static String EASTCOM_FILTER_COLUMN_NUM = "importtsv.filter.column.num";
+    private final static String EASTCOM_FILTER_SEPARATOR = ",";
+    private final static String EASTCOM_FILTER_SEPARATOR_PARAMS = "\\|";
     private String columnFamily = CF_DEFAULT;
     private String charset;
     private String keyIndexs = "0";
     private String keyStrategies = "0";
     private String keyEncrypts = "0";
     private String valueEncrypts = "0";
-
     private boolean isWriteToWAL;
-
-    private String separator = SEP_DEFAULT;
+    private String separator = "\\|";
     private String rowKeySeparator = SEP_DEFAULT;
     private boolean skipBadLines;
     private Counter badLineCount;
-
-    // filter
-    private final static String EASTCOM_FILTER_PARAMS = "importtsv.filter.params";
-    private final static String EASTCOM_FILTER_DEFINE = "importtsv.filter.define.class";
-    private final static String EASTCOM_FILTER_COLUMN_NUM = "importtsv.filter.column.num";
-
-    private final static String EASTCOM_FILTER_SEPARATOR = ",";
-    private final static String EASTCOM_FILTER_SEPARATOR_PARAMS = "\\|";
     private Map<Integer, FilterImpl<String>> filters = null;
     private Integer filterColumnNum = 0;
+    private String[] columnK;
+    private String[] strategyK;
+    private String[] encryptKeys;
+    private String[] encryptValues;
+    private char[] KEYNUM_ENCRYPT_MAP = "8374012596".toCharArray();
+    private char[] KEYNUM_DECRYPT_MAP = "4561379208".toCharArray();
 
     /**
      * 如果不添加参数不会实例化该过滤器，可以对多个列进行过滤，如果有自定义函数，请按照行对应过滤函数类，
@@ -169,12 +170,6 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
 
     }
 
-    private String[] columnK;
-    private String[] strategyK;
-
-    private String[] encryptKeys;
-    private String[] encryptValues;
-
     @SuppressWarnings("deprecation")
     public void map(LongWritable offset, Text value,
                     Mapper<LongWritable, Text, ImmutableBytesWritable, Put>.Context context) throws IOException {
@@ -190,9 +185,9 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
                     for (Integer column : this.filters.keySet()
                             ) {
                         String p = tmp[column];
-                        if (p !=null) {
+                        if (p != null) {
                             filterStatus |= this.filters.get(column).filter(tmp[column]);
-                        }else
+                        } else
                             filterStatus = true;
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
@@ -448,9 +443,6 @@ public class TsvImporterPutMapper extends Mapper<LongWritable, Text, ImmutableBy
         }
         return part;
     }
-
-    private char[] KEYNUM_ENCRYPT_MAP = "8374012596".toCharArray();
-    private char[] KEYNUM_DECRYPT_MAP = "4561379208".toCharArray();
 
     public String encryptChars(String text, String charset) {
         try {

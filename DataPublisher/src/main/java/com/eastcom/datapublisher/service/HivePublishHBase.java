@@ -31,11 +31,8 @@ public class HivePublishHBase implements Executor<Message> {
     private static final Logger logger = LoggerFactory.getLogger(HivePublishHBase.class);
 
     private final String sepa = System.lineSeparator();
-
-    private Pattern cmdPattern = Pattern.compile("\\[" + "cmd" + "]");
-
     private final String timeId = "timeId";
-
+    private Pattern cmdPattern = Pattern.compile("\\[" + "cmd" + "]");
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 

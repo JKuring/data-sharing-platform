@@ -1,7 +1,5 @@
 package com.eastcom.datacontroller.bean;
 
-import org.apache.hadoop.fs.Path;
-
 import java.util.List;
 
 /**

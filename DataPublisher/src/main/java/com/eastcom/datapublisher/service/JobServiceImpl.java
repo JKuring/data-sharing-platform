@@ -23,19 +23,15 @@ import java.util.Map;
 public class JobServiceImpl implements JobService<Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
-
-    @Autowired
-    private TaskType taskType;
-
-    @Resource(name = "PUBLISH_HIVE_FTP")
-    private Executor publishFtpExecutor;
-
-    @Resource(name = "PUBLISH_HIVE_HBASE")
-    private Executor publishHbaseExecutor;
-
     // service
     private static final String PUBLISH_HIVE_FTP = "PUBLISH_HIVE_FTP";
     private static final String PUBLISH_HIVE_HBASE = "PUBLISH_HIVE_HBASE";
+    @Autowired
+    private TaskType taskType;
+    @Resource(name = "PUBLISH_HIVE_FTP")
+    private Executor publishFtpExecutor;
+    @Resource(name = "PUBLISH_HIVE_HBASE")
+    private Executor publishHbaseExecutor;
 
     public void excute(Message message) {
         int jobType = 0;

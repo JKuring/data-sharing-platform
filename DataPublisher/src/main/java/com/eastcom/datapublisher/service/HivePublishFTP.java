@@ -31,16 +31,11 @@ public class HivePublishFTP implements Executor<Message> {
     private static final Logger logger = LoggerFactory.getLogger(HivePublishFTP.class);
 
     private final String sepa = System.lineSeparator();
-
+    private final String tableName = "tableName";
+    private final String partition = "partition";
+    private final String timeId = "timeId";
     private Pattern cmdPattern = Pattern.compile("\\[" + "cmd" + "]");
     private Pattern ftpPattern = Pattern.compile("ftp_url");
-
-    private final String tableName = "tableName";
-
-    private final String partition = "partition";
-
-    private final String timeId = "timeId";
-
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 

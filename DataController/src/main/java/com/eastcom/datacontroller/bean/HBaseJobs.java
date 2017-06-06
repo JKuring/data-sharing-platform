@@ -8,6 +8,7 @@ import java.io.File;
  */
 public class HBaseJobs {
 
+    private final String EASTCOM_SEPARATOR = ",";
     private String name;
     private String time;
     private String[] columns;
@@ -19,9 +20,7 @@ public class HBaseJobs {
     private String coprocessor;
     private int preDays = 3;
     private String granularity;
-
     private boolean currentIsCreated = false;
-    private final String EASTCOM_SEPARATOR = ",";
 
 
     public HBaseJobs() {

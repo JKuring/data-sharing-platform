@@ -6,10 +6,8 @@ import com.eastcom.common.message.MessageHead;
 import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.common.utils.parser.JsonParser;
 import com.eastcom.common.utils.time.TimeTransform;
-import com.eastcom.datacontroller.bean.HBaseEntityImpl;
 import com.eastcom.datacontroller.bean.HBaseJobs;
 import com.eastcom.datacontroller.bean.JobEntityImpl;
-import com.eastcom.datacontroller.interfaces.dto.HBaseEntity;
 import com.eastcom.datacontroller.interfaces.dto.JobEntity;
 import com.eastcom.datacontroller.interfaces.service.HBaseService;
 import com.eastcom.datacontroller.utilities.BuildHBaseEntity;
@@ -73,19 +71,21 @@ public class HBaseCreateTableController implements Executor<Message> {
                                     logger.error("Failed to create table, Exception: {}.", e.getMessage());
                                     result = Executor.FAILED;
                                 } finally {
-                                    SendMessageUtility.send(q_maint,"Finish creating task: " + jobEntity.getJobName(),messageProperties,result);
+                                    SendMessageUtility.send(q_maint, "Finish creating task: " + jobEntity.getJobName(), messageProperties, result);
                                 }
                             }
                         });
                     } catch (Exception e) {
                         logger.debug("Thread pool: {}.", e.getMessage());
+                        throw e;
                     }
                 }
             } else {
-                throw new Exception("Unable task!");
+                throw new Exception("Unable task! task ID is null.");
             }
         } catch (Exception e) {
             logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
+            SendMessageUtility.send(q_maint, "Finish creating task: " + taskId + ", exception: " + e.getMessage(), messageProperties, Executor.FAILED);
         }
     }
 }

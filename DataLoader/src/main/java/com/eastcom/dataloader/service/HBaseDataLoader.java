@@ -27,17 +27,13 @@ import java.util.Map;
 public class HBaseDataLoader implements Executor<Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(HBaseDataLoader.class);
-
+    private final static String EASTCOM_SEPARATOR = ",";
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
-
     @Autowired
     private HBaseService<JobEntity> hbaseService;
-
     @Autowired
     private RabbitTemplate q_load;
-
-    private final static String EASTCOM_SEPARATOR = ",";
 
     @Override
     public void doJob(Message message) {
@@ -75,19 +71,21 @@ public class HBaseDataLoader implements Executor<Message> {
                                     logger.error("Failed to load table, Exception: {}.", e.getMessage());
                                     result = Executor.FAILED;
                                 } finally {
-                                    SendMessageUtility.send(q_load,"Finish loading task: " + jobEntity.getId(),messageProperties,result);
+                                    SendMessageUtility.send(q_load, "Finish loading task: " + jobEntity.getId(), messageProperties, result);
                                 }
                             }
                         });
                     } catch (Exception e) {
                         logger.debug("Thread pool: {}.", e.getMessage());
+                        throw e;
                     }
                 }
             } else {
-                throw new Exception("Unable task!");
+                throw new Exception("Unable task! task ID is null.");
             }
         } catch (Exception e) {
             logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
+            SendMessageUtility.send(q_load, "Finish loading task: " + taskId + ", exception: " + e.getMessage(), messageProperties, Executor.FAILED);
         }
     }
 }
