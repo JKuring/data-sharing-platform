@@ -27,6 +27,7 @@ import org.apache.hadoop.hbase.client._
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.hadoop.hbase.mapreduce.{IdentityTableMapper, TableInputFormat, TableMapReduceUtil}
 import org.apache.hadoop.io.Text
+import org.apache.hadoop.mapred.JobConf
 import org.apache.hadoop.mapreduce.Job
 import org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod
 import org.apache.hadoop.security.token.{Token, TokenIdentifier}
@@ -56,7 +57,7 @@ class HBaseContextCluster(@transient sc: SparkContext,
                           @transient token: String,
                           val tmpHdfsConfgFile: String = null) extends Serializable with Logging {
 
-  val tk = new Token[(_$1) forSome {type _$1 <: TokenIdentifier}]()
+  @transient val tk = new Token[(_$1) forSome {type _$1 <: TokenIdentifier}]()
   tk.decodeFromUrlString(token)
 
   @transient var credentials = SparkHadoopUtil.get.getCurrentUserCredentials()
@@ -194,11 +195,13 @@ class HBaseContextCluster(@transient sc: SparkContext,
     */
   def bulkPut[T](rdd: RDD[T], tableName: String, f: (T) => Put, autoFlush: Boolean) {
 
+    log.info("1")
     rdd.foreachPartition(
       it => hbaseForeachPartition[T](
         broadcastedConf,
         it,
         (iterator, hConnection) => {
+          log.info("3")
           val htable = hConnection.getTable(tableName)
           htable.setAutoFlush(autoFlush, true)
           iterator.foreach(T => htable.put(f(T)))
@@ -579,8 +582,25 @@ class HBaseContextCluster(@transient sc: SparkContext,
     TableMapReduceUtil.initCredentials(job)
     log.info("initTableMapperJob Job.")
     TableMapReduceUtil.initTableMapperJob(tableName, scan, classOf[IdentityTableMapper], null, null, job)
+    var conf = job.getConfiguration()
+//    if (conf.isInstanceOf[JobConf]) {
+//      conf = conf.asInstanceOf[JobConf]
+//      log.info("as JobConf object to create job.")
+//    }
+    log.info("as JobConf object to create job.")
+    val jobConf = conf.asInstanceOf[JobConf]
+    val credentials= jobConf.getCredentials
+    log.info("token num: "+credentials.numberOfTokens())
 
-    sc.newAPIHadoopRDD(job.getConfiguration(),
+    val tmp = credentials.getAllTokens.iterator()
+
+    while (tmp.hasNext){
+      val token = tmp.next()
+      log.info("service: "+token.getService+", kind: "+token.getKind)
+    }
+
+
+    sc.newAPIHadoopRDD(jobConf,
       classOf[TableInputFormat],
       classOf[ImmutableBytesWritable],
       classOf[Result]).map(f)
@@ -633,7 +653,7 @@ class HBaseContextCluster(@transient sc: SparkContext,
                                         f: (Iterator[T], HConnection) => Unit) = {
 
     val config = getConf(configBroadcast)
-
+    log.info("2")
 
     applyCreds(configBroadcast)
     // specify that this is a proxy user
@@ -741,6 +761,6 @@ class HBaseContextCluster(@transient sc: SparkContext,
     * or security issues. For instance, an Array[AnyRef] can hold any type T, but may lose primitive
     * specialization.
     */
-//  private[spark]
+  //  private[spark]
   def fakeClassTag[T]: ClassTag[T] = ClassTag.AnyRef.asInstanceOf[ClassTag[T]]
 }

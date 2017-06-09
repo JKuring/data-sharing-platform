@@ -57,6 +57,7 @@ class HBaseContext(@transient sc: SparkContext,
   @transient var tmpHdfsConfiguration: Configuration = config
   @transient var appliedCredentials = false;
   @transient val job = new Job(config)
+  job.getCredentials
   TableMapReduceUtil.initCredentials(job)
   val broadcastedConf = sc.broadcast(new SerializableWritable(config))
   val credentialsConf = sc.broadcast(new SerializableWritable(job.getCredentials()))

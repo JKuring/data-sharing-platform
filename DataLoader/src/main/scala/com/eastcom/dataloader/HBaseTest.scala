@@ -1,23 +1,21 @@
 package com.eastcom.dataloader
 
 import java.io.File
-import java.security.PrivilegedExceptionAction
 
-import com.cloudera.spark.hbase.HBaseContext
-import com.eastcom.dataloader.SlsLauncher.getClass
+import com.eastcom.dataloader.context.SqlFileParser
+import com.eastcom.dataloader.utils.HBaseContextCluster
 import org.apache.commons.io.FileUtils
-import org.apache.hadoop.fs.{FileSystem, FileUtil, Path}
-import org.apache.hadoop.hbase.{HBaseConfiguration, TableName}
-import org.apache.hadoop.hbase.client.{ConnectionFactory, Scan}
-import org.apache.hadoop.hbase.mapreduce.TableInputFormat
-import org.apache.hadoop.hbase.util.Bytes
+import org.apache.hadoop.fs.{FileSystem, Path}
+import org.apache.hadoop.hbase.HBaseConfiguration
+import org.apache.hadoop.hbase.client.{Put, Scan}
+import org.apache.hadoop.mapred.JobConf
 import org.apache.hadoop.security.UserGroupInformation
-import org.apache.hadoop.security.UserGroupInformation.AuthenticationMethod
 import org.apache.hadoop.security.token.Token
 import org.apache.log4j.Logger
 import org.apache.spark.deploy.SparkHadoopUtil
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.sql.{DataFrame, Row}
 import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * Created by linghang.kong on 2017/5/24.
@@ -28,7 +26,7 @@ object HBaseTest {
 
   def main(args: Array[String]): Unit = {
 
-    val Array(user, tableName, hdfsPath, localPath) = args
+    val Array(user, tableName, hdfsPath, localPath, sql) = args
 
     try {
       // 配置spark configuration
@@ -38,13 +36,29 @@ object HBaseTest {
       // 创建SparkContext
       val sc = new SparkContext(sparkConf.setAppName(s"spark load job at time=${System.currentTimeMillis()}"))
 
+      // yarn token
+      var cred = SparkHadoopUtil.get.getCurrentUserCredentials()
+      val tmp = cred.getAllTokens.iterator()
+      while (tmp.hasNext){
+        logging.info("yarn token:"+tmp.next().encodeToUrlString())
+      }
+
+
+      // 创建HiveContext
+      val sqlContext = new HiveContext(sc)
+
+      var result:DataFrame = null
+      val sqls = SqlFileParser.parse(sql)
+      for (sql: String <- sqls) {
+        logging.info(s"Execute Sql: $sql")
+        result = sqlContext.sql(sql)
+      }
+
       val conf = HBaseConfiguration.create()
       conf.set("username.client.keytab.file", localPath)
       // set "hbaseuser1" as the new create user name
       conf.set("username.client.kerberos.principal", user)
 
-      UserGroupInformation.setConfiguration(conf);
-      UserGroupInformation.loginUserFromKeytab(user, localPath);
       //    conf.set("hbase.zookeeper.quorum", zookeeper_hosts)
       //    conf.set("hbase.zookeeper.property.clientPort", if (zookeeper_port == "null") "2181" else zookeeper_port)
       //
@@ -71,64 +85,108 @@ object HBaseTest {
       //
       //      val u = UserGroupInformation.getLoginUser
 
+      class Column(column: String) extends java.io.Serializable {
+        private val Array(family_, qualifier_) = column.split(":", -1)
+        val family = family_.trim.getBytes("utf-8")
+        val qualifier = if (!"".equalsIgnoreCase(qualifier_)) {
+          qualifier_.trim.getBytes("utf-8")
+        } else {
+          null
+        }
+      }
+
       val fileSystem = FileSystem.get(conf)
       fileSystem.copyToLocalFile(false, new Path(hdfsPath), new Path(localPath))
 
-      val localFile= new File(localPath)
+      val localFile = new File(localPath)
 
-      if (localFile.exists()){
-        logging.info(localPath+" file exist.")
+      if (localFile.exists()) {
+        logging.info(localPath + " file exist.")
       }
 
-      // 添加token
-      //    val strToken = FileUtils.readFileToString(new File(localPath))
-      //    val token = new Token()
-      //    token.decodeFromUrlString(strToken)
-      //    logging.info("service: "+token.getService)
-      //
-      //    val u =UserGroupInformation.getCurrentUser()
-      //
-      //    u.addToken(token)
-      //
-      //    logging.info("getUserName: "+u.getUserName)
-      //    logging.info("getProxyUser: "+u.getProxyUser)
-      //    logging.info("getAccessId: "+u.getAccessId)
-      //    logging.info("getAccessKey: "+u.getAccessKey)
-      //    if (u.hasKerberosCredentials) {
-      //      logging.info("UGI OK!")
-      //    }
 
-      //    u.doAs(new PrivilegedExceptionAction[Void]{
-      //      override def run(): Void = {
-      //        val connection = ConnectionFactory.createConnection(conf)
-      //        val admin = connection.getAdmin
-      //        if(admin.tableExists(TableName.valueOf(tableName))){
-      //          logging.info("table exist.")
-      //        }
-      //        connection.close()
-      //        null
-      //      }
-      //    })
+      //      UserGroupInformation.setConfiguration(conf)
+      //      UserGroupInformation.loginUserFromKeytab(user, localPath)
+
+      val strToken = FileUtils.readFileToString(new File(localPath))
+      val token = new Token()
+      token.decodeFromUrlString(strToken)
+      logging.info("service: " + token.encodeToUrlString())
+
+      val u = UserGroupInformation.getCurrentUser()
+
+      u.addToken(token)
+
+      val credentials = u.getCredentials
 
 
-      //    u.doAs(new PrivilegedExceptionAction[Void] {
-      //      override def run(): Void = {
-      //        val hBaseContext = new HBaseContext(sc,conf,strToken)
-      //        val scan = new Scan()
-      //        scan.setBatch(100)
-      //        val scanResult=hBaseContext.hbaseScanRDD(tableName,scan)
-      //
-      //        logging.info("TestResult: "+scanResult.collect().mkString)
-      //        null
-      //      }
-      //    })
+      val jobConf = new JobConf(conf)
+      jobConf.setCredentials(credentials)
+      if (credentials.numberOfTokens() > 0) {
+        // 添加token
+        //    val strToken = FileUtils.readFileToString(new File(localPath))
+        //    val token = new Token()
+        //    token.decodeFromUrlString(strToken)
+        //    logging.info("service: "+token.getService)
+        //
+        //    val u =UserGroupInformation.getCurrentUser()
+        //
+        //    u.addToken(token)
+        //
+        //    logging.info("getUserName: "+u.getUserName)
+        //    logging.info("getProxyUser: "+u.getProxyUser)
+        //    logging.info("getAccessId: "+u.getAccessId)
+        //    logging.info("getAccessKey: "+u.getAccessKey)
+        //    if (u.hasKerberosCredentials) {
+        //      logging.info("UGI OK!")
+        //    }
 
-      val hBaseContext = new HBaseContext(sc, conf)
-      val scan = new Scan()
-      scan.setBatch(100)
-      val scanResult = hBaseContext.hbaseRDD(tableName, scan)
+        //    u.doAs(new PrivilegedExceptionAction[Void]{
+        //      override def run(): Void = {
+        //        val connection = ConnectionFactory.createConnection(conf)
+        //        val admin = connection.getAdmin
+        //        if(admin.tableExists(TableName.valueOf(tableName))){
+        //          logging.info("table exist.")
+        //        }
+        //        connection.close()
+        //        null
+        //      }
+        //    })
 
-      logging.info("TestResult: " + scanResult.collect().mkString)
+
+        //    u.doAs(new PrivilegedExceptionAction[Void] {
+        //      override def run(): Void = {
+        //        val hBaseContext = new HBaseContext(sc,conf,strToken)
+        //        val scan = new Scan()
+        //        scan.setBatch(100)
+        //        val scanResult=hBaseContext.hbaseScanRDD(tableName,scan)
+        //
+        //        logging.info("TestResult: "+scanResult.collect().mkString)
+        //        null
+        //      }
+        //    })
+
+        val hBaseContext = new HBaseContextCluster(sc, jobConf, strToken)
+
+//        val column = new Column("cf:")
+//        logging.info("sql: "+sql)
+//        val scanResult = hBaseContext.bulkPut(result.rdd, tableName,
+//          (row: Row) => {
+//            logging.info("row 0:"+row.getString(0))
+//            val put = new Put(row.getString(0).getBytes("utf-8"))
+//            put.setWriteToWAL(false)
+//            logging.info("row 1:"+row.getString(1))
+//            put.add(column.family, column.qualifier, row.getString(1).getBytes("utf-8"))
+//            put
+//          },
+//          autoFlush = false)
+
+        val scan = new Scan()
+        scan.setBatch(100)
+        val  scanResult = hBaseContext.hbaseScanRDD(tableName,scan)
+        scanResult.saveAsTextFile("/user/east_wys/hbaseScanTest")
+        logging.info("TestResult: " +scanResult.count() )
+      }
 
 
       // source API
@@ -172,12 +230,16 @@ object HBaseTest {
       //    Thread.currentThread().wait(1000)
       logging.info("close SparkContext.")
       sc.stop();
-    }catch {
-      case e: Exception => {logging.error(e.getMessage)}
-    }finally {
-      if (new File(localPath).delete()){
+    } catch {
+      case e: Exception => {
+        logging.error(e.getMessage)
+        logging.error(e.getCause)
+        logging.error(e.fillInStackTrace())
+      }
+    } finally {
+      if (new File(localPath).delete()) {
         logging.info("succeeded to delete file!")
-      }else{
+      } else {
         FileUtils.deleteDirectory(new File(localPath))
       }
     }
