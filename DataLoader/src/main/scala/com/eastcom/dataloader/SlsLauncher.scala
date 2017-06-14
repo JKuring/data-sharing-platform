@@ -62,8 +62,6 @@ object SlsLauncher {
     // add HBaseContext
     if (zookeeper_hosts != "null") {
       val conf = HBaseConfiguration.create()
-      conf.set("hbase.zookeeper.quorum", zookeeper_hosts)
-      conf.set("hbase.zookeeper.property.clientPort", if (zookeeper_port == "null") "2181" else zookeeper_port)
       val hbaseContext = new HBaseContext(sc, conf)
       logging.warn(s"hbase.zookeeper.quorum=${zookeeper_hosts};hbase.zookeeper.property.clientPort=${zookeeper_port}")
       Context.+(Context.hbaseContext, hbaseContext)

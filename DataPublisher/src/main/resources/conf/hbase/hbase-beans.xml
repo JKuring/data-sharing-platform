@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hbase:beans
+        xmlns:hbase="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:hdp="http://www.springframework.org/schema/hadoop"
+
+
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/hadoop
+          http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+
+    <hbase:import resource="classpath:hadoop/hadoop-beans.xml"/>
+
+    <!--dao-->
+    <hbase:bean id="hbaseDaoImpl" class="com.eastcom.datapublisher.dao.HBaseDaoImpl">
+        <hbase:constructor-arg ref="hbaseConfiguration"/>
+    </hbase:bean>
+
+    <hbase:bean id="hivePublishHBase" name="PUBLISH_HIVE_HBASE" class="com.eastcom.datapublisher.service.HivePublishHBase"/>
+
+
+</hbase:beans>

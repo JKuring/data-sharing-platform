@@ -11,6 +11,14 @@
         <publish:constructor-arg name="value" value="/apps/hive/warehouse/"/>
     </publish:bean>
 
+    <publish:bean id="app_properties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <publish:property name="locations">
+            <publish:array>
+                <publish:value>classpath:application.properties</publish:value>
+            </publish:array>
+        </publish:property>
+    </publish:bean>
+
     <!-- command parameters: [cmd] -->
     <publish:bean id="pubFtpCmd" name="pubFtpCmd" class="java.lang.String">
         <publish:constructor-arg name="value"

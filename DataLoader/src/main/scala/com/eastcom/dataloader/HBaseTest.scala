@@ -36,11 +36,14 @@ object HBaseTest {
       // 创建SparkContext
       val sc = new SparkContext(sparkConf.setAppName(s"spark load job at time=${System.currentTimeMillis()}"))
 
+      var tmpStrToken:String = null
       // yarn token
       var cred = SparkHadoopUtil.get.getCurrentUserCredentials()
       val tmp = cred.getAllTokens.iterator()
       while (tmp.hasNext){
-        logging.info("yarn token:"+tmp.next().encodeToUrlString())
+        val tmp_token = tmp.next()
+        tmpStrToken = tmp_token.encodeToUrlString()
+        logging.info(tmp_token.getService+" "+tmp_token.getKind+" "+tmpStrToken)
       }
 
 
@@ -168,24 +171,24 @@ object HBaseTest {
 
         val hBaseContext = new HBaseContextCluster(sc, jobConf, strToken)
 
-//        val column = new Column("cf:")
-//        logging.info("sql: "+sql)
-//        val scanResult = hBaseContext.bulkPut(result.rdd, tableName,
-//          (row: Row) => {
-//            logging.info("row 0:"+row.getString(0))
-//            val put = new Put(row.getString(0).getBytes("utf-8"))
-//            put.setWriteToWAL(false)
-//            logging.info("row 1:"+row.getString(1))
-//            put.add(column.family, column.qualifier, row.getString(1).getBytes("utf-8"))
-//            put
-//          },
-//          autoFlush = false)
+        val column = new Column("cf:")
+        logging.info("sql: "+sql)
+        val scanResult = hBaseContext.bulkPut(result.rdd, tableName,
+          (row: Row) => {
+            logging.info("row 0:"+row.getString(0))
+            val put = new Put(row.getString(0).getBytes("utf-8"))
+            put.setWriteToWAL(false)
+            logging.info("row 1:"+row.getString(1))
+            put.add(column.family, column.qualifier, row.getString(1).getBytes("utf-8"))
+            put
+          },
+          autoFlush = false)
 
-        val scan = new Scan()
-        scan.setBatch(100)
-        val  scanResult = hBaseContext.hbaseScanRDD(tableName,scan)
-        scanResult.saveAsTextFile("/user/east_wys/hbaseScanTest")
-        logging.info("TestResult: " +scanResult.count() )
+//        val scan = new Scan()
+//        scan.setBatch(100)
+//        val  scanResult = hBaseContext.hbaseScanRDD(tableName,scan)
+//        scanResult.saveAsTextFile("/user/east_wys/hbaseScanTest")
+//        logging.info("TestResult: " +scanResult.count() )
       }
 
 

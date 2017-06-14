@@ -3,10 +3,14 @@ package com.eastcom.datapublisher.service;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.common.message.MessageHead;
+import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.common.service.HttpRequestUtils;
 import com.eastcom.common.utils.MergeArrays;
 import com.eastcom.common.utils.parser.JsonParser;
 import com.eastcom.datapublisher.bean.MBD_PUBLISH_CONF;
+import com.eastcom.datapublisher.utils.HBaseTokenUpload;
+import org.apache.hadoop.fs.Path;
 import org.apache.spark.deploy.SparkSubmit$;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +18,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -31,10 +36,7 @@ public class SparkPublishHBase implements Executor<Message> {
     private final String tableName = "tableName";
     private final String partition = "partition";
     private final String timeId = "timeId";
-    // back head
-    private String startTime = "startTime";
-    private String endTime = "endTime";
-    private String status = "status";
+
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
@@ -43,11 +45,17 @@ public class SparkPublishHBase implements Executor<Message> {
 
     private SparkProperties sparkProperties;
 
-    //    @Value("${global.configServiceUrl}")
+    @Value("${global.configServiceUrl}")
     private String configServiceUrl;
 
-    //    @Value("${global.sparkSubmitParamCiCode}")
+    @Value("${global.sparkSubmitParamCiCode}")
     private String sparkSubmitCiCode;
+
+    @Value("${global.hbaseTokenInHDFSPath}")
+    private String hbaseTokenInHDFSPath;
+
+    @Autowired
+    private HBaseTokenUpload hBaseTokenUpload;
 
     @Override
     public void doJob(Message message) {
@@ -61,34 +69,40 @@ public class SparkPublishHBase implements Executor<Message> {
             final MBD_PUBLISH_CONF mbdPublishConf = JsonParser.parseJsonToObject(context.getBytes(), MBD_PUBLISH_CONF.class);
             sparkProperties = HttpRequestUtils.httpGet(configServiceUrl + sparkSubmitCiCode, SparkProperties.class);
             try {
+                this.hBaseTokenUpload.upload(new Path(hbaseTokenInHDFSPath));
                 threadPoolTaskExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
                         logger.debug("start the thread: {}.", Thread.currentThread().getName());
+                        int result = Executor.SUCESSED;
                         String[] params = null;
-                        messageProperties.setHeader(startTime, System.currentTimeMillis());
+                        messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
                         try {
                             try {
-                                params = MergeArrays.merge(sparkProperties.toParametersArray(), getParameters(mbdPublishConf, headMap));
+                                params = MergeArrays.merge(sparkProperties.toParametersArray(), getParameters(mbdPublishConf, headMap, hbaseTokenInHDFSPath));
                             } catch (Exception e) {
                                 throw new Exception("Parameters false!!!!!!!");
                             }
                             SparkSubmit$.MODULE$.main(params);
                         } catch (Exception e) {
                             logger.error("Failed to aggregate table,  params: {}, Exception: {}.", Arrays.toString(params), e.getMessage());
-//                            q_aggr_spark.send(new Message(("Finish aggregating task: " + taskId + ", jobs parameter: " + Arrays.toString(params)).getBytes(), getMessageProperties(messageProperties, Executor.FAILED)));
+                            result = Executor.FAILED;
+                        }finally {
+                            SendMessageUtility.send(q_publish, "Finish loading task: " + taskId, messageProperties, result);
                         }
                     }
                 });
             } catch (Exception e) {
-                logger.debug("Thread pool: {}.", e.getMessage());
+                logger.error("Thread pool: {}.", e.getMessage());
+                throw e;
             }
         } catch (Exception e) {
             logger.error("Failed to execute the task id: {}, message: {}, exception: {}.", taskId, context, e.getMessage());
+            SendMessageUtility.send(q_publish, "Finish publishing task: " + taskId + ", exception: " + e.getMessage(), messageProperties, Executor.FAILED);
         }
     }
 
-    private String[] getParameters(MBD_PUBLISH_CONF mbdPublishConf, Map<String, Object> headMap) {
+    private String[] getParameters(MBD_PUBLISH_CONF mbdPublishConf, Map<String, Object> headMap,String path) {
 
 //        Date publishTime = null;
 //        SimpleDateFormat originalFmt = new SimpleDateFormat("yyyyMMddHHmm");
@@ -102,13 +116,7 @@ public class SparkPublishHBase implements Executor<Message> {
         // Hbase  发布参数 :configServiceUrl , 取数模板 ciCode ，  HDFS 中间输出路径 , HBASE 表名 ,  取数时间 , zk 地址， zk端口
         return new String[]{configServiceUrl, mbdPublishConf.getExportTableName(),
                 mbdPublishConf.getHdfsExportPath(), mbdPublishConf.getHbaseTableName(),
-                (String) headMap.get(this.timeId)};
+                (String) headMap.get(this.timeId), path};
 
-    }
-
-    private MessageProperties getMessageProperties(MessageProperties messageProperties, int result) {
-        messageProperties.setHeader(endTime, System.currentTimeMillis());
-        messageProperties.setHeader(status, result);
-        return messageProperties;
     }
 }

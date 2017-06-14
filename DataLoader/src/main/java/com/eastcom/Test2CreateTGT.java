@@ -53,7 +53,6 @@ public class Test2CreateTGT {
                     logger.info("hbase.regionserver.keytab.file: "+configuration.get("hbase.regionserver.keytab.file"));
                     logger.info("hbase.regionserver.port: "+configuration.get("hbase.regionserver.port"));
                     hBaseDao.deleteTable(TableName.valueOf("test"));
-
                 }
                 Token<AuthenticationTokenIdentifier> token =
                         TokenUtil.obtainToken(connection);

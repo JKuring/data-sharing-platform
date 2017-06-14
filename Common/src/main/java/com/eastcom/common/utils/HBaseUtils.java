@@ -17,10 +17,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.hadoop.mapreduce.ToolRunner;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +70,11 @@ public class HBaseUtils {
             loadIncrementalHFiles.doBulkLoad(dataPath, table);
             result = true;
         } catch (Exception e) {
-            logger.error("Can't upload the data of {} minutes, exception: {}.", dataPath.getName(), e.getMessage());
+            if (e instanceof FileNotFoundException){
+                logger.error("resource data is empty! Exception: {}",e.getMessage());
+            }else {
+                logger.error("Can't upload the data of {} minutes, exception: {}.", dataPath.getName(), e.getMessage());
+            }
         } finally {
             if (table != null) {
                 try {

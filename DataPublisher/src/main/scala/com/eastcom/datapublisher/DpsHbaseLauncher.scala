@@ -7,6 +7,7 @@ import com.eastcom.datapublisher.driver.DpsHbaseDriver
 import com.eastcom.datapublisher.driver.DpsHbaseNode
 import com.eastcom.datapublisher.exception.DpsException
 import com.eastcom.datapublisher.message.DpsStartMessage
+import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hbase.HBaseConfiguration
 import org.apache.log4j.Logger
 import org.apache.spark.sql.hive.HiveContext
@@ -18,12 +19,14 @@ object DpsHbaseLauncher {
 
   def main(args: Array[String]): Unit = {
 
+    val localPath = "/tmp/token"
+
 
     if (args == null || args.isEmpty)
       throw new DpsException("parameter list shoud be ( exportHdfsPath, hbaseTableName, configServiceUrl, zookeeper_hosts, zookeeper_port, timeid)")
 
 
-    val Array(configServiceUrl, tplCiCode, hdfsExportPath, hbaseTableName, zookeeper_hosts, zookeeper_port, timeid) = args
+    val Array(configServiceUrl, tplCiCode, hdfsExportPath, hbaseTableName, zookeeper_hosts, zookeeper_port, timeid, path) = args
 
     // 配置spark configuration
     val sparkConf = new SparkConf()
@@ -44,9 +47,17 @@ object DpsHbaseLauncher {
     // 创建 HBaseContext
     if (zookeeper_hosts != "null") {
       val conf = HBaseConfiguration.create()
-      //      conf.set("hbase.zookeeper.quorum", zookeeper_hosts)
-      //      conf.set("hbase.zookeeper.property.clientPort", if (zookeeper_port == "null") "2181" else zookeeper_port)
-      //      logging.warn(s"hbase.zookeeper.quorum=${zookeeper_hosts};hbase.zookeeper.property.clientPort=${zookeeper_port}")
+      val fileSystem = FileSystem.get(conf)
+      try {
+        fileSystem.copyToLocalFile(false, new Path(path), new Path(localPath))
+      }catch {
+        case e:Exception => {
+          logging.error(e)
+          Thread.sleep(1000l)
+          //
+          fileSystem.copyToLocalFile(false, new Path(path), new Path(localPath))
+        }
+      }
       val hbaseContext = new HBaseContext(sc, conf)
       AppContext.+(AppContext.hbaseContext, hbaseContext)
 

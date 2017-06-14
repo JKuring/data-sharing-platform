@@ -7,6 +7,9 @@
 
     <context:component-scan base-package="com.eastcom"/>
 
+    <!-- hbase conf -->
+    <publisher:import resource="classpath:hbase/hbase-beans.xml"/>
+
     <!-- load mq factory -->
     <publisher:import resource="classpath:work/rabbitmq.xml"/>
 
