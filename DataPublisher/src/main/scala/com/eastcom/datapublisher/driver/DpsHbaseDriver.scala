@@ -10,8 +10,8 @@ import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hbase.client.Put
 import org.apache.log4j.Logger
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.{DataFrame, Row}
 import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.sql.{DataFrame, Row}
 
 
 class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
@@ -65,12 +65,6 @@ class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
     }
   }
 
-  override def receive: Actor.Receive = {
-    case DpsStartMessage => {
-      this.start()
-    }
-  }
-
   def putModeExecutor(result: DataFrame) = {
 
     val column = new Column("cf:")
@@ -85,6 +79,17 @@ class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
       autoFlush = false)
   }
 
+  def shutdown() = {
+    context.system.shutdown()
+    AppContext.shutdown()
+  }
+
+  override def receive: Actor.Receive = {
+    case DpsStartMessage => {
+      this.start()
+    }
+  }
+
   def bulkloadExecutor(result: DataFrame) = {
 
     // 创建中间输出目录
@@ -93,15 +98,10 @@ class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
 
     val fileStatuss = FileHelper.listStatus(fs, new Path(node.getHdfsExportPath), new NonTmpFileFilter())
     if (fileStatuss.length > 0) {
-        // TODO : not implement yet
+      // TODO : not implement yet
     }
     else
       logging.error(s" [ DPS_JOB ]  Exec Publish job with table [ ${node.getHbaseTableName} ] abort , no data to process ...!");
-  }
-
-  def shutdown() = {
-    context.system.shutdown()
-    AppContext.shutdown()
   }
 
   //  private def initUdf(): Unit = {
@@ -118,15 +118,14 @@ class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
   //    })
   //  }
 
-
   class Column(column: String) extends Serializable {
-    private val Array(family_, qualifier_) = column.split(":", -1)
     val family = family_.trim.getBytes(AppContext.character)
     val qualifier = if (!"".equalsIgnoreCase(qualifier_)) {
       qualifier_.trim.getBytes(AppContext.character)
     } else {
       null
     }
+    private val Array(family_, qualifier_) = column.split(":", -1)
   }
 
 }

@@ -39,9 +39,9 @@
     </hbase:bean>
 
     <!--Controller-->
-    <hbase:bean id="createTableController" name="CREATE_TABLE_HBASE"
+    <hbase:bean id="CREATE_TABLE_HBASE"
                 class="com.eastcom.datacontroller.service.HBaseCreateTableController"/>
-    <hbase:bean id="deleteTableController" name="DELETE_TABLE_HBASE"
+    <hbase:bean id="DELETE_TABLE_HBASE"
                 class="com.eastcom.datacontroller.service.HBaseDeleteTableController"/>
 
 </hbase:beans>

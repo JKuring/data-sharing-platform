@@ -1,7 +1,6 @@
 package com.eastcom.datapublisher.message
 
 import com.eastcom.datapublisher.driver.{DpsFtpNode, DpsHbaseNode, DpsNode}
-import org.apache.hadoop.fs.FileStatus
 
 
 sealed trait DpsMessage

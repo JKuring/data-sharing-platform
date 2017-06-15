@@ -17,9 +17,9 @@ import org.apache.spark.deploy.SparkHadoopUtil
 import org.apache.spark.rdd.RDD
 
 class HBaseScanRDDCluster(sc: SparkContext,
-                   @transient tableName: String,
-                   @transient scan: Scan,
-                   configBroadcast: Broadcast[SerializableWritable[Configuration]],
+                          @transient tableName: String,
+                          @transient scan: Scan,
+                          configBroadcast: Broadcast[SerializableWritable[Configuration]],
                           tokenConf: Broadcast[SerializableWritable[Token[(_$1) forSome {type _$1 <: TokenIdentifier}]]])
   extends RDD[(Array[Byte], java.util.List[(Array[Byte], Array[Byte], Array[Byte])])](sc, Nil)
     with SparkHadoopMapReduceUtilExtended
@@ -27,7 +27,7 @@ class HBaseScanRDDCluster(sc: SparkContext,
 
   ///
   @transient val jobTransient = new Job(configBroadcast.value.value, "ExampleRead");
-  jobTransient.getCredentials.addToken(new Text("Eastcom_token"),tokenConf.value.value)
+  jobTransient.getCredentials.addToken(new Text("Eastcom_token"), tokenConf.value.value)
   TableMapReduceUtil.initTableMapperJob(
     tableName, // input HBase table name
     scan, // Scan instance to control CF and attribute selection
@@ -40,13 +40,11 @@ class HBaseScanRDDCluster(sc: SparkContext,
   jobConfigurationTrans.set(TableInputFormat.INPUT_TABLE, tableName)
   val jobConfigBroadcast = sc.broadcast(new SerializableWritable(jobConfigurationTrans))
   ////
-
+  @transient protected val jobId = new JobID(jobTrackerId, id)
   private val jobTrackerId: String = {
     val formatter = new SimpleDateFormat("yyyyMMddHHmm")
     formatter.format(new Date())
   }
-
-  @transient protected val jobId = new JobID(jobTrackerId, id)
 
   override def getPartitions: Array[Partition] = {
 
@@ -131,16 +129,16 @@ class HBaseScanRDDCluster(sc: SparkContext,
     val creds = SparkHadoopUtil.get.getCurrentUserCredentials()
 
     val ugi = UserGroupInformation.getCurrentUser();
-//    ugi.addCredentials(creds)
+    //    ugi.addCredentials(creds)
     ugi.addToken(tokenConf.value.value)
     // specify that this is a proxy user
     ugi.setAuthenticationMethod(AuthenticationMethod.PROXY)
   }
 
   class NewHadoopPartition(
-                                           rddId: Int,
-                                           val index: Int,
-                                           @transient rawSplit: InputSplit with Writable)
+                            rddId: Int,
+                            val index: Int,
+                            @transient rawSplit: InputSplit with Writable)
     extends Partition {
 
     val serializableHadoopSplit = new SerializableWritable(rawSplit)

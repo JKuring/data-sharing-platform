@@ -2,8 +2,7 @@ package com.eastcom.datapublisher
 
 import akka.actor.{ActorSystem, Props}
 import com.eastcom.datapublisher.context.AppContext
-import com.eastcom.datapublisher.driver.DpsHbaseDriver
-import com.eastcom.datapublisher.driver.DpsHbaseNode
+import com.eastcom.datapublisher.driver.{DpsHbaseDriver, DpsHbaseNode}
 import com.eastcom.datapublisher.exception.DpsException
 import com.eastcom.datapublisher.message.DpsStartMessage
 import com.eastcom.datapublisher.utils.{CredentialsFromLocalPath, HBaseContextCluster}
@@ -27,7 +26,7 @@ object DpsHbaseLauncher {
       throw new DpsException("parameter list shoud be ( exportHdfsPath, hbaseTableName, configServiceUrl, zookeeper_hosts, zookeeper_port, timeid)")
 
 
-    val Array(configServiceUrl, tplCiCode, hdfsExportPath, hbaseTableName, zookeeper_hosts, zookeeper_port, timeid, path) = args
+    val Array(configServiceUrl, tplCiCode, hdfsExportPath, hbaseTableName, timeid, path) = args
 
     // 配置spark configuration
     val sparkConf = new SparkConf()
@@ -46,29 +45,27 @@ object DpsHbaseLauncher {
     sqlContext.setConf("hive.exec.dynamic.partition.mode", "nonstrict")
 
     // 创建 HBaseContext
-    if (zookeeper_hosts != "null") {
-      val conf = HBaseConfiguration.create()
-      val fileSystem = FileSystem.get(conf)
-      try {
+    val conf = HBaseConfiguration.create()
+    val fileSystem = FileSystem.get(conf)
+    try {
+      fileSystem.copyToLocalFile(false, new Path(path), new Path(localPath))
+    } catch {
+      case e: Exception => {
+        logging.error(e)
+        Thread.sleep(1000l)
+        //
         fileSystem.copyToLocalFile(false, new Path(path), new Path(localPath))
-      }catch {
-        case e:Exception => {
-          logging.error(e)
-          Thread.sleep(1000l)
-          //
-          fileSystem.copyToLocalFile(false, new Path(path), new Path(localPath))
-        }
       }
-      val credentialsFromLocalPath = new CredentialsFromLocalPath(conf,path,localPath)
-      val jobConf = new JobConf(conf)
-      jobConf.setCredentials(credentialsFromLocalPath.getCredential())
-      val hbaseContext = new HBaseContextCluster(sc, conf,credentialsFromLocalPath.getStrToken())
-      AppContext.+(AppContext.hbaseContext, hbaseContext)
     }
+    val credentialsFromLocalPath = new CredentialsFromLocalPath(conf, path, localPath)
+    val jobConf = new JobConf(conf)
+    jobConf.setCredentials(credentialsFromLocalPath.getCredential())
+    val hbaseContext = new HBaseContextCluster(sc, conf, credentialsFromLocalPath.getStrToken())
+    AppContext.+(AppContext.hbaseContext, hbaseContext)
 
     AppContext.timeid = timeid
 
-    val system = ActorSystem(s"spark-publish-job-${hbaseTableName}-${timeid}")
+    val system = ActorSystem(s"spark-publish-job-${timeid}")
 
     //创建任务
     val pubNode = new DpsHbaseNode(hdfsExportPath, configServiceUrl, tplCiCode, timeid, hbaseTableName)

@@ -1,7 +1,5 @@
 {
-  "name": "spark_load_xdr",
-  "configServiceUrl":"http://10.11.122.144:6000/config/getByCiCode?ciCode=",
-  "confFile":"sparkLoadJob5MinConf",
-  "initCmdPath":"sparkInit_load",
-  "sparkConf":"sparkLoadSubmitParam"
+  "exportTableName": "dw_ft_se_res_stats_5m_h",
+  "hbaseTableName":"ipms:bb_res_stats_5m",
+  "hdfsExportPath":"/tmp"
 }

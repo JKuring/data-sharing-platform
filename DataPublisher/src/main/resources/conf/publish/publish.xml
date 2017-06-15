@@ -5,7 +5,7 @@
 
     <publish:bean id="hivePublishFTP" name="PUBLISH_HIVE_FTP" class="com.eastcom.datapublisher.service.HivePublishFTP"/>
 
-    <publish:bean id="hivePublishHBase" name="PUBLISH_HIVE_HBASE" class="com.eastcom.datapublisher.service.HivePublishHBase"/>
+    <publish:bean id="hivePublishHBase" name="PUBLISH_HIVE_HBASE" class="com.eastcom.datapublisher.service.SparkPublishHBase"/>
 
     <publish:bean id="hiveWarehousePath" name="hiveWarehousePath" class="java.lang.String">
         <publish:constructor-arg name="value" value="/apps/hive/warehouse/"/>

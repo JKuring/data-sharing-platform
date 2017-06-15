@@ -18,6 +18,7 @@ public interface MessageService {
         public static final String endTime = "endTime";
         public static final String jobType = "jobType";
         public static final String jobName = "jobName";
+        public static final String status = "status";
         public static final String content_encoding = "content_encoding";
         public static final String content_type = "content_type";
     }

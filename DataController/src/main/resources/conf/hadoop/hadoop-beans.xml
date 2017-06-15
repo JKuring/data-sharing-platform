@@ -24,7 +24,7 @@
     </hadoop:bean>
 
     <!--Controller-->
-    <hadoop:bean id="deleteDirController" name="DELETE_DIR_HDFS"
+    <hadoop:bean id="DELETE_DIR_HDFS"
                 class="com.eastcom.datacontroller.service.HDFSDeleteDirController"/>
 
 </hadoop:beans>

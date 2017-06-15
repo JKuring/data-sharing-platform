@@ -74,7 +74,7 @@ public class HivePublishFTP implements Executor<Message> {
                             logger.info("executing command : " + command);
                             exitCode = process.waitFor();
                             if (exitCode == 92) {
-                                SendMessageUtility.send(q_publish, "Successfully, exit code: " + String.valueOf(process.exitValue()), messageProperties, Executor.FAILED);
+                                SendMessageUtility.send(q_publish,  "Table "+mbdPublishConf.getCatalogId()+": "+mbdPublishConf.getRealTableName()+" is no data, exit code: " + String.valueOf(process.exitValue()), messageProperties, Executor.FAILED);
                             }else if (exitCode !=0){
                                 InputStreamReader inputStreamReader = new InputStreamReader(process.getErrorStream());
                                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -86,7 +86,7 @@ public class HivePublishFTP implements Executor<Message> {
                                 throw new Exception(tmp.toString());
                             }else {
                                 logger.info("publish MQ!");
-                                SendMessageUtility.send(q_publish,  "Table "+mbdPublishConf.getCatalogId()+": "+mbdPublishConf.getRealTableName()+" is no data, exit code: " + String.valueOf(process.exitValue()), messageProperties, rs);
+                                SendMessageUtility.send(q_publish, "Successfully, exit code: " + String.valueOf(process.exitValue()), messageProperties, rs);
                             }
                             logger.info("Finish! Command: {}.", command);
                         } catch (Exception e) {

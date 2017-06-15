@@ -50,17 +50,17 @@
       <name>hbase.coprocessor.master.classes</name>
       <value>org.apache.ranger.authorization.hbase.RangerAuthorizationCoprocessor</value>
     </property>
-
+    
     <property>
         <name>hbase.coprocessor.region.classes</name>
         <value>org.apache.hadoop.hbase.security.token.TokenProvider,org.apache.hadoop.hbase.security.access.SecureBulkLoadEndpoint,org.apache.ranger.authorization.hbase.RangerAuthorizationCoprocessor</value>
-        </property>
+    </property>
 
     <property>
         <name>hbase.coprocessor.regionserver.classes</name>
         <value>org.apache.ranger.authorization.hbase.RangerAuthorizationCoprocessor</value>
-    </property>
-    
+    </property>   
+ 
     <property>
       <name>hbase.defaults.for.version.skip</name>
       <value>true</value>

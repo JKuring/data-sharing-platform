@@ -18,19 +18,14 @@ object AppContext {
   val sparkContext = "sparkContext"
   val character = "utf-8"
   val contextMap = Map[String, AnyRef]()
-
-  var timeid = ""
-
-  var finished = false
-
   val logging = Logger.getLogger(getClass)
+  val hiveType = "pubFr"
+  val hbaseType = "hbase"
+  var timeid = ""
+  var finished = false
 
   def +(name: String, context: AnyRef): Unit = {
     contextMap += (name -> context)
-  }
-
-  def getContext(name: String): AnyRef = {
-    contextMap.getOrElse(name, null)
   }
 
   /**
@@ -40,9 +35,9 @@ object AppContext {
     * @param tplCiCode
     * @return
     */
-  def getSql( configServiceUrl: String, tplCiCode: String ): String = {
-       // http
-    var tpl: String = HttpRequestUtils.httpGet(configServiceUrl + tplCiCode , "".getClass).split("\\n").mkString(" \n")
+  def getSql(configServiceUrl: String, tplCiCode: String): String = {
+    // http
+    var tpl: String = HttpRequestUtils.httpGet(configServiceUrl + tplCiCode, "".getClass).split("\\n").mkString(" \n")
 
     val stat_month = if (timeid.length >= 6) timeid.substring(0, 6) else timeid
     val stat_date = if (timeid.length >= 8) timeid.substring(0, 8) else timeid
@@ -57,17 +52,6 @@ object AppContext {
     tpl = replaceTimePlaceHolder(tpl)
     logging.info(s"[ SQL ] [ $tpl ]")
     tpl
-  }
-
-  val hiveType = "pubFr"
-  val hbaseType = "hbase"
-
-  def isFinish() = finished
-
-  def shutdown() = {
-    logging.info("shutdown SparkContext!")
-    AppContext.getContext(AppContext.sparkContext).asInstanceOf[SparkContext].stop()
-    finished = true
   }
 
   /**
@@ -136,5 +120,17 @@ object AppContext {
         t.printStackTrace()
         template
     }
+  }
+
+  def isFinish() = finished
+
+  def shutdown() = {
+    logging.info("shutdown SparkContext!")
+    AppContext.getContext(AppContext.sparkContext).asInstanceOf[SparkContext].stop()
+    finished = true
+  }
+
+  def getContext(name: String): AnyRef = {
+    contextMap.getOrElse(name, null)
   }
 }
