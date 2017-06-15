@@ -1,14 +1,15 @@
 package com.eastcom.datapublisher
 
 import akka.actor.{ActorSystem, Props}
-import com.cloudera.spark.hbase.HBaseContext
 import com.eastcom.datapublisher.context.AppContext
 import com.eastcom.datapublisher.driver.DpsHbaseDriver
 import com.eastcom.datapublisher.driver.DpsHbaseNode
 import com.eastcom.datapublisher.exception.DpsException
 import com.eastcom.datapublisher.message.DpsStartMessage
+import com.eastcom.datapublisher.utils.{CredentialsFromLocalPath, HBaseContextCluster}
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hbase.HBaseConfiguration
+import org.apache.hadoop.mapred.JobConf
 import org.apache.log4j.Logger
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
@@ -58,9 +59,11 @@ object DpsHbaseLauncher {
           fileSystem.copyToLocalFile(false, new Path(path), new Path(localPath))
         }
       }
-      val hbaseContext = new HBaseContext(sc, conf)
+      val credentialsFromLocalPath = new CredentialsFromLocalPath(conf,path,localPath)
+      val jobConf = new JobConf(conf)
+      jobConf.setCredentials(credentialsFromLocalPath.getCredential())
+      val hbaseContext = new HBaseContextCluster(sc, conf,credentialsFromLocalPath.getStrToken())
       AppContext.+(AppContext.hbaseContext, hbaseContext)
-
     }
 
     AppContext.timeid = timeid
@@ -68,7 +71,7 @@ object DpsHbaseLauncher {
     val system = ActorSystem(s"spark-publish-job-${hbaseTableName}-${timeid}")
 
     //创建任务
-    val pubNode = new DpsHbaseNode(hdfsExportPath, configServiceUrl, tplCiCode, timeid, hbaseTableName);
+    val pubNode = new DpsHbaseNode(hdfsExportPath, configServiceUrl, tplCiCode, timeid, hbaseTableName)
 
     // 创建ActorRef
     val masterRouter = system.actorOf(Props(new DpsHbaseDriver(pubNode)), "dpsMasterRouter")

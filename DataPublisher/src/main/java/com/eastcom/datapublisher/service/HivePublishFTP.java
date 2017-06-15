@@ -61,6 +61,7 @@ public class HivePublishFTP implements Executor<Message> {
                     public void run() {
                         int rs = Executor.SUCESSED;
                         String command = null;
+                        int exitCode = -1;
                         try {
                             String parameters = getParameters(mbdPublishConf, headMap);
                             if (parameters == null)
@@ -71,7 +72,10 @@ public class HivePublishFTP implements Executor<Message> {
 
                             Process process = Runtime.getRuntime().exec(cmdArray);
                             logger.info("executing command : " + command);
-                            if (process.waitFor() != 0) {
+                            exitCode = process.waitFor();
+                            if (exitCode == 92) {
+                                SendMessageUtility.send(q_publish, "Successfully, exit code: " + String.valueOf(process.exitValue()), messageProperties, Executor.FAILED);
+                            }else if (exitCode !=0){
                                 InputStreamReader inputStreamReader = new InputStreamReader(process.getErrorStream());
                                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                                 String result;
@@ -80,15 +84,15 @@ public class HivePublishFTP implements Executor<Message> {
                                     tmp.append(result).append("\n");
                                 }
                                 throw new Exception(tmp.toString());
-                            } else {
+                            }else {
                                 logger.info("publish MQ!");
-                                SendMessageUtility.send(q_publish, "Successfully, exit code: " + String.valueOf(process.exitValue()), messageProperties, rs);
+                                SendMessageUtility.send(q_publish,  "Table "+mbdPublishConf.getCatalogId()+": "+mbdPublishConf.getRealTableName()+" is no data, exit code: " + String.valueOf(process.exitValue()), messageProperties, rs);
                             }
                             logger.info("Finish! Command: {}.", command);
                         } catch (Exception e) {
                             rs = Executor.FAILED;
                             logger.error("Failed to execute cmd: {}.", command, e.fillInStackTrace());
-                            SendMessageUtility.send(q_publish, "Finish publishing task: " + taskId + ", exception: " + e.getMessage(), messageProperties, rs);
+                            SendMessageUtility.send(q_publish, "Finish publishing task: " + taskId + ", exitCode: " + exitCode, messageProperties, rs);
                         }
                     }
                 });

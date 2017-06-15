@@ -1,30 +1,25 @@
 package com.eastcom.datapublisher.driver
 
-import akka.actor.{Actor, Props}
-import akka.routing.RoundRobinRouter
-import com.cloudera.spark.hbase.HBaseContext
-import com.eastcom.common.service.HttpRequestUtils
+import akka.actor.Actor
 import com.eastcom.common.utils.hdfs.filefilter.NonTmpFileFilter
 import com.eastcom.common.utils.hdfs.util.FileHelper
 import com.eastcom.datapublisher.context.{AppContext, SqlFileParser}
-import com.eastcom.datapublisher.exception.DpsException
-import com.eastcom.datapublisher.message.{DpsHBaseJobMessage, DpsResultMessage, DpsStartMessage}
+import com.eastcom.datapublisher.message.DpsStartMessage
+import com.eastcom.datapublisher.utils.HBaseContextCluster
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hbase.client.Put
 import org.apache.log4j.Logger
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{DataFrame, Row}
 import org.apache.spark.sql.hive.HiveContext
-import org.apache.spark.sql.types.{StringType, StructField, StructType}
 
-import scala.collection.mutable.ListBuffer
 
 class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
 
   val logging = Logger.getLogger(getClass)
   val sqlContext = AppContext.getContext(AppContext.hiveContext).asInstanceOf[HiveContext]
   val sparkContext = AppContext.getContext(AppContext.sparkContext).asInstanceOf[SparkContext]
-  val hbaseContext = AppContext.getContext(AppContext.hbaseContext).asInstanceOf[HBaseContext]
+  val hbaseContext = AppContext.getContext(AppContext.hbaseContext).asInstanceOf[HBaseContextCluster]
 
 
   val fs = FileSystem.get(sparkContext.hadoopConfiguration)

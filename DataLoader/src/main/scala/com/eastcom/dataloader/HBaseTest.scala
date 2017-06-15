@@ -118,7 +118,7 @@ object HBaseTest {
 
       val u = UserGroupInformation.getCurrentUser()
 
-      u.addToken(token)
+//      u.addToken(token)
 
       val credentials = u.getCredentials
 
