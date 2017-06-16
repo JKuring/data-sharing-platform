@@ -1,18 +1,19 @@
 package com.eastcom.datapublisher.driver
 
+import java.sql.{Date, Timestamp}
+
 import akka.actor.Actor
 import com.eastcom.common.utils.hdfs.filefilter.NonTmpFileFilter
 import com.eastcom.common.utils.hdfs.util.FileHelper
 import com.eastcom.datapublisher.context.{AppContext, SqlFileParser}
 import com.eastcom.datapublisher.message.DpsStartMessage
-import com.eastcom.datapublisher.utils.HBaseContextCluster
+import com.eastcom.datapublisher.utils.{Column, HBaseContextCluster}
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hbase.client.Put
 import org.apache.log4j.Logger
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.{DataFrame, Row}
-
 
 class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
 
@@ -33,6 +34,7 @@ class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
         // 切换DB
         //    sqlContext.sql(s"use ${node.getSchema}")
         // 解析sql语句，替换时间参数
+        logging.info(node.getConfigServiceUrl + node.getTplCiCode)
         val sqlText = AppContext.getSql(node.getConfigServiceUrl, node.getTplCiCode)
 
         val sqls = SqlFileParser.parse(sqlText)
@@ -71,9 +73,22 @@ class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
 
     hbaseContext.bulkPut(result.rdd, node.getHbaseTableName,
       (row: Row) => {
-        val put = new Put(row.getString(0).getBytes(AppContext.character))
+        val tmp = row.get(0)
+        var put: Put = null
+        var values: String = null
+        tmp match {
+          case timestamp: Timestamp =>
+            put = new Put(timestamp.toString.getBytes(AppContext.character))
+          case date: Date =>
+            put = new Put(date.toString.getBytes(AppContext.character))
+          case _ =>
+            put = new Put(row.getString(0).getBytes(AppContext.character))
+        }
         put.setWriteToWAL(false)
-        put.add(column.family, column.qualifier, row.getString(1).getBytes(AppContext.character))
+        for (i <- 1 to row.length) {
+          values += row.getString(i)
+        }
+        put.add(column.family, column.qualifier, values.getBytes(AppContext.character))
         put
       },
       autoFlush = false)
@@ -117,15 +132,5 @@ class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
   //      }
   //    })
   //  }
-
-  class Column(column: String) extends Serializable {
-    val family = family_.trim.getBytes(AppContext.character)
-    val qualifier = if (!"".equalsIgnoreCase(qualifier_)) {
-      qualifier_.trim.getBytes(AppContext.character)
-    } else {
-      null
-    }
-    private val Array(family_, qualifier_) = column.split(":", -1)
-  }
 
 }

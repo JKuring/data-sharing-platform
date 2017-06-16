@@ -114,7 +114,7 @@ public class SparkPublishHBase implements Executor<Message> {
 //        }
         // configServiceUrl, tplCiCode , hdfsExportPath, hbaseTableName,  timeid , zookeeper_hosts, zookeeper_port,
         // Hbase  发布参数 :configServiceUrl , 取数模板 ciCode ，  HDFS 中间输出路径 , HBASE 表名 ,  取数时间 , zk 地址， zk端口
-        return new String[]{configServiceUrl, mbdPublishConf.getExportTableName(),
+        return new String[]{configServiceUrl, mbdPublishConf.getRealTableName(),
                 mbdPublishConf.getHdfsExportPath(), mbdPublishConf.getHbaseTableName(),
                 (String) headMap.get(this.timeId), path};
 

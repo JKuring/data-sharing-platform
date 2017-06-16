@@ -65,10 +65,10 @@ object DpsHbaseLauncher {
 
     AppContext.timeid = timeid
 
-    val system = ActorSystem(s"spark-publish-job-${timeid}")
+    val system = ActorSystem(s"sparkPublishJob")
 
     //创建任务
-    val pubNode = new DpsHbaseNode(hdfsExportPath, configServiceUrl, tplCiCode, timeid, hbaseTableName)
+    val pubNode = new DpsHbaseNode(configServiceUrl, tplCiCode, hdfsExportPath, timeid, hbaseTableName)
 
     // 创建ActorRef
     val masterRouter = system.actorOf(Props(new DpsHbaseDriver(pubNode)), "dpsMasterRouter")
