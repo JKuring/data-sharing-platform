@@ -85,7 +85,7 @@ class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
             put = new Put(row.getString(0).getBytes(AppContext.character))
         }
         put.setWriteToWAL(false)
-        for (i <- 1 to row.length) {
+        for (i <- 1 until row.length) {
           values += row.getString(i)
         }
         put.add(column.family, column.qualifier, values.getBytes(AppContext.character))
