@@ -7,9 +7,15 @@ import java.util.List;
  */
 public class HDFSJobs {
 
+    private String timeId;
+
     private int path_num = 0;
 
     private List<String> paths;
+
+    private String timePathFormat;
+
+    private boolean df = false;
 
     public HDFSJobs() {
     }
@@ -28,5 +34,29 @@ public class HDFSJobs {
 
     public void setPaths(List<String> paths) {
         this.paths = paths;
+    }
+
+    public String getTimeId() {
+        return timeId;
+    }
+
+    public void setTimeId(String timeId) {
+        this.timeId = timeId;
+    }
+
+    public String getTimePathFormat() {
+        return timePathFormat;
+    }
+
+    public void setTimePathFormat(String timePathFormat) {
+        this.timePathFormat = timePathFormat;
+    }
+
+    public boolean isDf() {
+        return df;
+    }
+
+    public void setDf(boolean df) {
+        this.df = df;
     }
 }

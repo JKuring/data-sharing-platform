@@ -1,5 +1,6 @@
 package com.eastcom.common.utils.time;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 /**
@@ -8,7 +9,12 @@ import org.junit.Test;
 public class TimeTransformTest {
     @Test
     public void getTimestamp() throws Exception {
-        System.out.println(TimeTransform.getDate(TimeTransform.getTimestamp("201703271758")));
+        DateTime time = new DateTime(TimeTransform.getDate("201706260305"));
+        System.out.println(time.getYear());
+        System.out.println(time.getMonthOfYear());
+        System.out.println(time.getDayOfMonth());
+        System.out.println(time.getHourOfDay());
+        System.out.println(time.getMinuteOfHour());
     }
 
 }

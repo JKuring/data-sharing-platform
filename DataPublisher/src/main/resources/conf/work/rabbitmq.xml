@@ -28,7 +28,7 @@
     </rabbit:listener-container>
 
     <rabbit:listener-container
-            connection-factory="connectionFactory"><!-- 可以指定接收的线程池 ，异步接收 -->
+            connection-factory="connectionFactory" acknowledge="auto"><!-- 可以指定接收的线程池 ，异步接收 -->
         <rabbit:listener queues="Q_PUBLISH_HBASE" ref="messageReceiver"/>
     </rabbit:listener-container>
 

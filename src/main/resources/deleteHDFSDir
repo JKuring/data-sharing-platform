@@ -1,7 +1,9 @@
 {
+  "timeId": "201706260305",
   "path_num": 2,
   "paths": [
-    "/123",
-    "/456"
-  ]
+    "/user/east_wys/test/linghang"
+  ],
+  "timePathFormat":"YYYYMMdd/HH/mm",
+  "df": true
 }

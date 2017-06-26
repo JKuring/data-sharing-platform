@@ -117,6 +117,5 @@ public class SparkPublishHBase implements Executor<Message> {
         return new String[]{configServiceUrl, mbdPublishConf.getRealTableName(),
                 mbdPublishConf.getHdfsExportPath(), mbdPublishConf.getHbaseTableName(),
                 (String) headMap.get(this.timeId), path};
-
     }
 }

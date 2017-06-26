@@ -26,4 +26,11 @@ public class TimeTransform {
         return timestamp;
     }
 
+    public static Date getDate(String date) throws ParseException {
+
+        Date d = unsimpleDateFormat.parse(date);
+
+        return d;
+    }
+
 }

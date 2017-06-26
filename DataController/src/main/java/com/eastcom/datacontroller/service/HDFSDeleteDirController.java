@@ -4,6 +4,7 @@ import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
 import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.common.utils.parser.JsonParser;
+import com.eastcom.common.utils.time.TimeTransform;
 import com.eastcom.datacontroller.bean.HDFSJobs;
 import com.eastcom.datacontroller.interfaces.service.HDFSService;
 import org.apache.hadoop.fs.Path;
@@ -33,6 +34,8 @@ public class HDFSDeleteDirController implements Executor<Message> {
     @Autowired
     private HDFSService hdfsService;
 
+//    private DateTimeFormatter format = DateTimeFormat.forPattern("yyyyMMddHHmm");
+
     @Override
     public void doJob(Message message) {
         final MessageProperties messageProperties = message.getMessageProperties();
@@ -42,8 +45,8 @@ public class HDFSDeleteDirController implements Executor<Message> {
         try {
             if (taskId != null) {
                 logger.info("start the task: {}.", taskId);
-                HDFSJobs hBaseJobs = JsonParser.parseJsonToObject(context.getBytes(), HDFSJobs.class);
-                for (String path : hBaseJobs.getPaths()
+                final HDFSJobs hBaseJobs = JsonParser.parseJsonToObject(context.getBytes(), HDFSJobs.class);
+                for (final String path : hBaseJobs.getPaths()
                         ) {
                     logger.debug("start the thread: {}.", Thread.currentThread().getName());
                     try {
@@ -53,7 +56,8 @@ public class HDFSDeleteDirController implements Executor<Message> {
                             public void run() {
                                 int result = Executor.SUCESSED;
                                 try {
-                                    hdfsService.deleteDir(p);
+                                    logger.debug("path: {}, timeId: {}, df: {}", path, hBaseJobs.getTimeId(), hBaseJobs.isDf());
+                                    hdfsService.deleteByTime(p, TimeTransform.getDate(hBaseJobs.getTimeId()), hBaseJobs.isDf(), hBaseJobs.getTimePathFormat());
                                 } catch (Exception e) {
                                     logger.error("Failed to delete path, Exception: {}.", e.getMessage());
                                     result = Executor.FAILED;
@@ -63,7 +67,7 @@ public class HDFSDeleteDirController implements Executor<Message> {
                             }
                         });
                     } catch (Exception e) {
-                        logger.debug("Thread pool: {}.", e.getMessage());
+                        logger.error("Thread pool: {}.", e.getMessage());
                         throw e;
                     }
                 }
