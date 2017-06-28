@@ -9,7 +9,7 @@ import org.springframework.amqp.core.MessageProperties;
 public class MessageHead {
 
     // back head
-    public static final String startTime = "startTime";
+//    public static final String startTime = "startTime";
 //    public static final String endTime = "endTime";
 //    public static final String status = "status";
 

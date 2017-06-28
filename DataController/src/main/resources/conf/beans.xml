@@ -13,6 +13,9 @@
     <controller:import resource="classpath:work/task-types.xml"/>
 
     <controller:import resource="classpath:hbase/hbase-beans.xml"/>
+
+    <controller:import resource="classpath:hive/hive-beans.xml"/>
+
     <!-- load mq factory-->
     <controller:import resource="classpath:work/rabbitmq.xml"/>
 

@@ -57,11 +57,14 @@ public class SparkPublishHBase implements Executor<Message> {
     @Autowired
     private HBaseTokenUpload hBaseTokenUpload;
 
+    private final String prefix = "PUBLISH_HBASE_";
+
     @Override
     public void doJob(Message message) {
         final MessageProperties messageProperties = message.getMessageProperties();
         final Map<String, Object> headMap = messageProperties.getHeaders();
         final String taskId = (String) headMap.get(MessageService.Header.taskId);
+        headMap.put(MessageService.Header.taskId, prefix + taskId);
         String context = new String(message.getBody());
 
         try {
@@ -76,7 +79,7 @@ public class SparkPublishHBase implements Executor<Message> {
                         logger.debug("start the thread: {}.", Thread.currentThread().getName());
                         int result = Executor.SUCESSED;
                         String[] params = null;
-                        messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
+                        messageProperties.setHeader(MessageService.Header.startTime, System.currentTimeMillis());
                         try {
                             try {
                                 params = MergeArrays.merge(sparkProperties.toParametersArray(), getParameters(mbdPublishConf, headMap, hbaseTokenInHDFSPath));
@@ -88,7 +91,7 @@ public class SparkPublishHBase implements Executor<Message> {
                             logger.error("Failed to aggregate table,  params: {}, Exception: {}.", Arrays.toString(params), e.getMessage());
                             result = Executor.FAILED;
                         }finally {
-                            SendMessageUtility.send(q_publish, "Finish loading task: " + taskId, messageProperties, result);
+                            SendMessageUtility.send(q_publish, "Finish publishing task: " + taskId, messageProperties, result);
                         }
                     }
                 });

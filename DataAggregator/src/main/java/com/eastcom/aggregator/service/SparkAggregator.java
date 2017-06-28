@@ -61,7 +61,7 @@ public class SparkAggregator implements Executor<Message> {
                         public void run() {
                             logger.debug("start the thread: {}.", Thread.currentThread().getName());
                             String[] params = null;
-                            messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
+                            messageProperties.setHeader(MessageService.Header.startTime, System.currentTimeMillis());
                             try {
                                 try {
                                     params = MergeArrays.merge(sparkProperties.toParametersArray(), sparkJobs.getParameters(), mqConf.getParameters(), MqHeadParser.getHeadArrays(headMap));

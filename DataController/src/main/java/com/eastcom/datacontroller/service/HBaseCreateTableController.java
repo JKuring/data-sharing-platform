@@ -62,7 +62,7 @@ public class HBaseCreateTableController implements Executor<Message> {
                             public void run() {
                                 logger.debug("start the thread: {}.", Thread.currentThread().getName());
                                 int result = Executor.SUCESSED;
-                                messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
+                                messageProperties.setHeader(MessageService.Header.startTime, System.currentTimeMillis());
                                 try {
                                     hbaseService.createTable(jobEntity);
                                     //关闭任务

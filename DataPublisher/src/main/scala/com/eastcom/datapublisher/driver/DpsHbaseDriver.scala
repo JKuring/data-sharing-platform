@@ -75,7 +75,7 @@ class DpsHbaseDriver(val node: DpsHbaseNode) extends Thread with Actor {
       (row: Row) => {
         val tmp = row.get(0)
         var put: Put = null
-        var values: String = null
+        var values: String = ""
         tmp match {
           case timestamp: Timestamp =>
             put = new Put(timestamp.toString.getBytes(AppContext.character))

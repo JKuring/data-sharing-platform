@@ -11,11 +11,34 @@
 
     <artifactId>data-controller</artifactId>
 
+    <properties>
+        <dbcp2_version>2.1.1</dbcp2_version>
+        <hive_jdbc_verison>1.1.0</hive_jdbc_verison>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.eastcom</groupId>
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>${dbcp2_version}</version>
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.apache.hive</groupId>-->
+            <!--<artifactId>hive-cli</artifactId>-->
+            <!--<version>2.1.1</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-jdbc</artifactId>
+            <version>${hive_jdbc_verison}</version>
         </dependency>
     </dependencies>
 

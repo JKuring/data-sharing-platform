@@ -110,7 +110,7 @@ class SssManager(configServiceUrl: String, timeid: String, val mqConf: MQConf, v
   private def getMessageProperties(messageProperties: Array[String],tplName:String, result: Int) = {
     val tmp = MqHeadParser.getHeadProperties(messageProperties)
     tmp.put(taskId,tmp.get(taskId)+"_"+tplName)
-    tmp.put(endTime, TimeTransform.getDate(System.currentTimeMillis))
+    tmp.put(endTime, Long.box(System.currentTimeMillis))
     tmp.put(status, String.valueOf(result))
     new BasicProperties.Builder().headers(tmp).build
   }

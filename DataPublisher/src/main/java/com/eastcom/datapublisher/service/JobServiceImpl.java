@@ -3,6 +3,8 @@ package com.eastcom.datapublisher.service;
 import com.eastcom.common.bean.TaskType;
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
+import com.eastcom.common.utils.parser.JsonParser;
+import com.eastcom.datapublisher.bean.MBD_PUBLISH_CONF;
 import com.eastcom.datapublisher.interfaces.JobService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,10 @@ public class JobServiceImpl implements JobService<Message> {
     // service
     private static final String PUBLISH_HIVE_FTP = "PUBLISH_HIVE_FTP";
     private static final String PUBLISH_HIVE_HBASE = "PUBLISH_HIVE_HBASE";
+
+    private static final int PUBLISH_HIVE_FTP_TYPE = 1;
+    private static final int PUBLISH_HIVE_HBASE_TYPE = 2;
+
     @Autowired
     private TaskType taskType;
     @Resource(name = "PUBLISH_HIVE_FTP")
@@ -35,24 +41,26 @@ public class JobServiceImpl implements JobService<Message> {
 
     public void excute(Message message) {
         int jobType = 0;
-        MessageProperties messageProperties = message.getMessageProperties();
-        Map<String, Object> header = messageProperties.getHeaders();
+//        MessageProperties messageProperties = message.getMessageProperties();
+//        Map<String, Object> header = messageProperties.getHeaders();
+        String context = new String(message.getBody());
+        final MBD_PUBLISH_CONF mbdPublishConf = JsonParser.parseJsonToObject(context.getBytes(), MBD_PUBLISH_CONF.class);
         try {
-            jobType = (Integer) header.get(MessageService.Header.jobType);
-            Map<Integer, String> taskTypesMap = taskType.getTaskTypesMap();
-            if (taskTypesMap.containsKey(jobType)) {
-                String taskType = taskTypesMap.get(jobType);
-                switch (taskType) {
-                    case PUBLISH_HIVE_FTP:
+//            jobType = (Integer) header.get(MessageService.Header.jobType);
+//            Map<Integer, String> taskTypesMap = taskType.getTaskTypesMap();
+//            if (taskTypesMap.containsKey(jobType)) {
+//                String taskType = taskTypesMap.get(jobType);
+                switch (mbdPublishConf.getPubType()) {
+                    case PUBLISH_HIVE_FTP_TYPE:
                         publishFtpExecutor.doJob(message);
                         break;
-                    case PUBLISH_HIVE_HBASE:
+                    case PUBLISH_HIVE_HBASE_TYPE:
                         publishHbaseExecutor.doJob(message);
                         break;
                     default:
                         throw new Exception("invalid task type!");
                 }
-            }
+//            }
         } catch (Exception e) {
             logger.error("execute the task: {}, exception: {}.", jobType, e.getMessage());
         }

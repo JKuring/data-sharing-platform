@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hive:beans xmlns:hive="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--配置DataSource-->
+    <hive:bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+        <hive:property name="driverClassName" value="org.apache.hive.jdbc.HiveDriver"/>
+        <hive:property name="url" value="jdbc:hive://yp-hdp-apollo4200-6026:10000/default"/>
+        <!--<hive:property name="username" value="ipmsds2"/>-->
+        <!--<hive:property name="password" value="SHipmsds2!23$"/>-->
+    </hive:bean>
+
+</hive:beans>

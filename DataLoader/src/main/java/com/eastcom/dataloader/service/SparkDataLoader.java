@@ -3,7 +3,6 @@ package com.eastcom.dataloader.service;
 import com.eastcom.common.bean.SparkProperties;
 import com.eastcom.common.interfaces.service.Executor;
 import com.eastcom.common.interfaces.service.MessageService;
-import com.eastcom.common.message.MessageHead;
 import com.eastcom.common.message.SendMessageUtility;
 import com.eastcom.common.service.HttpRequestUtils;
 import com.eastcom.common.utils.MergeArrays;
@@ -55,7 +54,7 @@ public class SparkDataLoader implements Executor<Message> {
                         public void run() {
                             logger.debug("start the thread: {}.", Thread.currentThread().getName());
                             int result = Executor.SUCESSED;
-                            messageProperties.setHeader(MessageHead.startTime, System.currentTimeMillis());
+                            messageProperties.setHeader(MessageService.Header.startTime, System.currentTimeMillis());
                             String[] params = null;
                             try {
                                 // submit code to cluster
