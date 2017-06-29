@@ -45,11 +45,14 @@ public class HivePublishFTP implements Executor<Message> {
     @Resource(name = "pubFtpCmd")
     private String cmd;
 
+    private final String prefix = "PUBLISH_HIVE_";
+
     @Override
     public void doJob(Message message) {
         final MessageProperties messageProperties = message.getMessageProperties();
         final Map<String, Object> headMap = messageProperties.getHeaders();
         final String taskId = (String) headMap.get(MessageService.Header.taskId);
+        headMap.put(MessageService.Header.taskId, prefix + taskId);
         String context = new String(message.getBody());
         try {
             logger.info("start the task: {}.", taskId);
@@ -62,6 +65,7 @@ public class HivePublishFTP implements Executor<Message> {
                         int rs = Executor.SUCESSED;
                         String command = null;
                         int exitCode = -1;
+                        messageProperties.setHeader(MessageService.Header.startTime, System.currentTimeMillis());
                         try {
                             String parameters = getParameters(mbdPublishConf, headMap);
                             if (parameters == null)
