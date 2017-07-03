@@ -29,6 +29,8 @@ public class JobServiceImpl implements JobService<Message> {
     private static final String DELETE_DIR_HDFS = "DELETE_DIR_HDFS";
     private static final String CREATE_TABLE_HBASE = "CREATE_TABLE_HBASE";
     private static final String DELETE_TABLE_HBASE = "DELETE_TABLE_HBASE";
+    private static final String DELETE_TABLE_HIVE = "DELETE_TABLE_HIVE";
+
 
     @Autowired
     private TaskType taskType;
@@ -44,6 +46,9 @@ public class JobServiceImpl implements JobService<Message> {
 
     @Resource(name = "DELETE_TABLE_HBASE")
     private Executor delete_table_hbase;
+
+    @Resource(name = "DELETE_TABLE_HIVE")
+    private Executor delete_table_hive;
 
 
     public void excute(Message message) {
@@ -65,6 +70,8 @@ public class JobServiceImpl implements JobService<Message> {
                     case DELETE_TABLE_HBASE:
                         delete_table_hbase.doJob(message);
                         break;
+                    case DELETE_TABLE_HIVE:
+                        delete_table_hive.doJob(message);
                     default:
                         throw new Exception("invalid task type!");
                 }

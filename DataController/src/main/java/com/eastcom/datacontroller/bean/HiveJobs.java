@@ -9,6 +9,8 @@ public class HiveJobs {
 
     private String sql;
 
+    private String partition;
+
     public String getTableName() {
         return tableName;
     }
@@ -23,5 +25,13 @@ public class HiveJobs {
 
     public void setSql(String sql) {
         this.sql = sql;
+    }
+
+    public String getPartition() {
+        return partition;
+    }
+
+    public void setPartition(String partition) {
+        this.partition = partition;
     }
 }
