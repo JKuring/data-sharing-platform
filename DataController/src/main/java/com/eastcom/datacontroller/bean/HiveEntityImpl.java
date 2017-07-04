@@ -1,22 +1,24 @@
 package com.eastcom.datacontroller.bean;
 
-/**
- * Created by linghang.kong on 2017/6/27.
- */
-public class HiveJobs {
+import com.eastcom.datacontroller.interfaces.dto.HiveEntity;
 
-    private String[] tableName;
+/**
+ * Created by linghang.kong on 2017/7/4.
+ */
+public class HiveEntityImpl implements HiveEntity{
+
+    private String tableName;
     private String sql;
     private String partition;
 
-    public HiveJobs() {
+    public HiveEntityImpl() {
     }
 
-    public String[] getTableName() {
+    public String getTableName() {
         return tableName;
     }
 
-    public void setTableName(String[] tableName) {
+    public void setTableName(String tableName) {
         this.tableName = tableName;
     }
 
@@ -34,5 +36,15 @@ public class HiveJobs {
 
     public void setPartition(String partition) {
         this.partition = partition;
+    }
+
+    @Override
+    public String getName() {
+        return tableName;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.tableName = name;
     }
 }

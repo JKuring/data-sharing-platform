@@ -7,10 +7,9 @@
     <!--配置hive DataSource-->
     <!-- prototype 保证每次请求都是新的连接不超时，loginTimeout 保证连接自动断不积压连接 60 seconds-->
     <hive:bean id="hiveDriver" class="org.apache.hive.jdbc.HiveDriver"/>
-    <hive:bean id="hiveDataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource" scope="prototype">
-        <hive:constructor-arg name="driver" value="hiveDriver"/>
-        <hive:constructor-arg name="url" value="jdbc:hive://yp-hdp-apollo4200-6026:10000/default"/>
-        <hive:property name="loginTimeout" value="60"/>
+    <hive:bean id="hiveDataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <hive:constructor-arg name="driver" ref="hiveDriver"/>
+        <hive:constructor-arg name="url" value="jdbc:hive2://YP-HDP-APOLLO4200-6026:10000/default;principal=hive/YP-HDP-APOLLO4200-6026@BCHKDC"/>
     </hive:bean>
 
     <!-- 配置HiveCP-->
@@ -19,9 +18,18 @@
     每一次请求都会new 一个JdbcTemplate的hive jdbc connection-->
     <hdp:hive-client-factory id="hiveClientFactory" hive-data-source-ref="hiveDataSource"/>
 
-    <hdp:hive-template id="hiveTemplate" hive-client-factory-ref="hiveClientFactory" />
+    <hdp:hive-template id="hiveTemplate" hive-client-factory-ref="hiveClientFactory"/>
 
-    <hive:bean id="hiveDao" class="com.eastcom.datacontroller.dao.HiveDaoImpl" lazy-init="true"/>
+    <hive:bean id="hiveDao" class="com.eastcom.datacontroller.dao.HiveDaoImpl"/>
 
+    <!-- dropping statement -->
+    <hive:bean id="dropPartitionTemp" class="java.lang.String">
+        <hive:constructor-arg name="value" value="alter table [tableName] drop partition([partitionName])"/>
+    </hive:bean>
+
+    <!--Controller-->
+    <hive:bean id="DELETE_TABLE_HIVE" class="com.eastcom.datacontroller.service.HiveDeletePatitionController"/>
+
+    <hive:bean id="hiveEntity" class="com.eastcom.datacontroller.bean.HiveEntityImpl"/>
 
 </hive:beans>

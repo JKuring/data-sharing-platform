@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Created by linghang.kong on 2016/12/27.
  */
-public interface JobEntity<T> extends BaseEntity {
+public interface JobEntity<T> extends BaseEntity<String> {
 
     String getId();
 

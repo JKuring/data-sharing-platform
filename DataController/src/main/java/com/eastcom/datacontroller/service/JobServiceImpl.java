@@ -72,6 +72,7 @@ public class JobServiceImpl implements JobService<Message> {
                         break;
                     case DELETE_TABLE_HIVE:
                         delete_table_hive.doJob(message);
+                        break;
                     default:
                         throw new Exception("invalid task type!");
                 }

@@ -20,7 +20,6 @@ import java.util.List;
  * Created by linghang.kong on 2016/12/23.
  */
 @Service
-@Lazy
 public class HBaseServiceImpl implements HBaseService<JobEntity> {
 
     private static final Logger logger = LoggerFactory.getLogger(HBaseServiceImpl.class);

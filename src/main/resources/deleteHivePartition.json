@@ -1,0 +1,5 @@
+{
+  "tableName":["test_partition",""],
+  "sql":"",
+  "partition":"hour_partition='b'"
+}
