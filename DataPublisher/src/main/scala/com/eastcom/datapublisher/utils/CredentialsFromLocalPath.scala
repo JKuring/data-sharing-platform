@@ -39,12 +39,12 @@ class CredentialsFromLocalPath(conf: Configuration, srcPath: String, dstPath: St
       u.getCredentials
     } catch {
       case e: Exception => {
-        logging.error("failed to fetch hbase credentials.", e)
+        logging.error("Failed to fetch hbase credentials.", e)
         null
       }
     } finally {
       if (new File(dstPath).delete()) {
-        logging.info("succeeded to delete file!")
+        logging.info("ucceeded to delete file!")
       } else {
         FileUtils.deleteDirectory(new File(dstPath))
       }

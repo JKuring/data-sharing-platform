@@ -9,6 +9,8 @@ public class HiveJobs {
     private String sql;
     private String partition;
 
+    private boolean df = false;
+
     public HiveJobs() {
     }
 
@@ -34,5 +36,13 @@ public class HiveJobs {
 
     public void setPartition(String partition) {
         this.partition = partition;
+    }
+
+    public boolean isDf() {
+        return df;
+    }
+
+    public void setDf(boolean df) {
+        this.df = df;
     }
 }

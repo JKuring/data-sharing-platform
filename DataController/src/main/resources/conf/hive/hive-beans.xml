@@ -22,14 +22,23 @@
 
     <hive:bean id="hiveDao" class="com.eastcom.datacontroller.dao.HiveDaoImpl"/>
 
-    <!-- dropping statement -->
+    <!-- sql statement -->
     <hive:bean id="dropPartitionTemp" class="java.lang.String">
         <hive:constructor-arg name="value" value="alter table [tableName] drop partition([partitionName])"/>
+    </hive:bean>
+
+    <hive:bean id="showPartitionTemp" class="java.lang.String">
+        <hive:constructor-arg name="value" value="show partitions [tableName]"/>
+    </hive:bean>
+
+    <hive:bean id="partitionName" class="java.lang.String">
+        <hive:constructor-arg name="value" value="hour_partition="/>
     </hive:bean>
 
     <!--Controller-->
     <hive:bean id="DELETE_TABLE_HIVE" class="com.eastcom.datacontroller.service.HiveDeletePatitionController"/>
 
     <hive:bean id="hiveEntity" class="com.eastcom.datacontroller.bean.HiveEntityImpl"/>
+
 
 </hive:beans>

@@ -19,14 +19,14 @@ object DpsHbaseLauncher {
 
   def main(args: Array[String]): Unit = {
 
-    val localPath = "/tmp/token"
+//    val localPath = "/tmp/token"
 
 
     if (args == null || args.isEmpty)
       throw new DpsException("parameter list shoud be ( exportHdfsPath, hbaseTableName, configServiceUrl, zookeeper_hosts, zookeeper_port, timeid)")
 
 
-    val Array(configServiceUrl, tplCiCode, hdfsExportPath, hbaseTableName, timeid, path) = args
+    val Array(configServiceUrl, tplCiCode, hdfsExportPath, hbaseTableName, timeid, strToken) = args
 
     // 配置spark configuration
     val sparkConf = new SparkConf()
@@ -46,21 +46,21 @@ object DpsHbaseLauncher {
 
     // 创建 HBaseContext
     val conf = HBaseConfiguration.create()
-    val fileSystem = FileSystem.get(conf)
-    try {
-      fileSystem.copyToLocalFile(false, new Path(path), new Path(localPath))
-    } catch {
-      case e: Exception => {
-        logging.error(e)
-        Thread.sleep(1000l)
-        //
-        fileSystem.copyToLocalFile(false, new Path(path), new Path(localPath))
-      }
-    }
-    val credentialsFromLocalPath = new CredentialsFromLocalPath(conf, path, localPath)
-    val jobConf = new JobConf(conf)
-    jobConf.setCredentials(credentialsFromLocalPath.getCredential())
-    val hbaseContext = new HBaseContextCluster(sc, conf, credentialsFromLocalPath.getStrToken())
+//    val fileSystem = FileSystem.get(conf)
+//    try {
+//      fileSystem.copyToLocalFile(false, new Path(path), new Path(localPath))
+//    } catch {
+//      case e: Exception => {
+//        logging.error(e)
+//        Thread.sleep(1000l)
+//        //
+//        fileSystem.copyToLocalFile(false, new Path(path), new Path(localPath))
+//      }
+//    }
+//    val credentialsFromLocalPath = new CredentialsFromLocalPath(conf, path, localPath)
+//    val jobConf = new JobConf(conf)
+//    jobConf.setCredentials(credentialsFromLocalPath.getCredential())
+    val hbaseContext = new HBaseContextCluster(sc, conf, strToken)
     AppContext.+(AppContext.hbaseContext, hbaseContext)
 
     AppContext.timeid = timeid

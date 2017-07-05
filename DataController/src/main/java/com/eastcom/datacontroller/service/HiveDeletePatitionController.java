@@ -52,6 +52,7 @@ public class HiveDeletePatitionController implements Executor<Message> {
                         messageProperties.setHeader(MessageService.Header.startTime, System.currentTimeMillis());
                         try {
                             hiveService.delete(hiveJobs);
+                            logger.info("Finish deleting partition!");
                         } catch (Exception e) {
                             logger.error("Failed to drop the {} table,  partition: {}, Exception: {}.", hiveJobs.getTableName(), hiveJobs.getPartition(), e.getMessage());
                             result = Executor.FAILED;

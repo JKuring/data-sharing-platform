@@ -2,7 +2,6 @@ package com.eastcom.datacontroller.dao;
 
 import com.eastcom.datacontroller.interfaces.dao.HiveDao;
 import com.eastcom.datacontroller.interfaces.dto.HiveEntity;
-import com.sun.jersey.api.ParamException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +26,9 @@ public class HiveDaoImpl implements HiveDao<HiveEntity> {
 
     @Resource(name = "dropPartitionTemp")
     private String dropPartitionTemp;
+
+    @Resource(name = "showPartitionTemp")
+    private String showPartitionTemp;
 
     private String patternTableName;
     private String patternPartitionName;
@@ -56,6 +58,22 @@ public class HiveDaoImpl implements HiveDao<HiveEntity> {
     }
 
     @Override
+    public List<String> getPartitions(HiveEntity hiveEntity) {
+        try {
+            final String showSQL = showPartitionTemp.replaceFirst(patternTableName, hiveEntity.getTableName()).replaceFirst(patternPartitionName, hiveEntity.getPartition());
+                return this.template.execute(new HiveClientCallback<List<String>>() {
+                    @Override
+                    public List<String> doInHive(HiveClient hiveClient) throws Exception {
+                        return hiveClient.execute(showSQL);
+                    }
+                });
+        } catch (Exception e) {
+            logger.error("Failed to get the {} table, the partition: {}. Exception: {}.", hiveEntity.getTableName(), hiveEntity.getPartition(), e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
     public HiveEntity get(Class<HiveEntity> entityClazz, Serializable id) {
         return null;
     }
@@ -81,7 +99,7 @@ public class HiveDaoImpl implements HiveDao<HiveEntity> {
                         return hiveClient.execute(dropSQL);
                     }
                 });
-                logger.info("Finish to dropping the {} partition of the {} table.", entity.getPartition(), entity.getTableName());
+                logger.info("Finish dropping the {} partition of the {} table.", entity.getPartition(), entity.getTableName());
             } else {
                 throw new Exception(dropSQL+" sql is not a 'drop' or 'DROP' statement.");
             }

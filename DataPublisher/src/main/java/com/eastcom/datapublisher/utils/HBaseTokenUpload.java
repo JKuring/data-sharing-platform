@@ -52,4 +52,28 @@ public class HBaseTokenUpload {
             logger.error("", e.fillInStackTrace());
         }
     }
+
+    public String upload(){
+        try {
+            Configuration configuration = hBaseDao.getConfiguration();
+            try (Connection connection = ConnectionFactory.createConnection(configuration)) {
+                if (!connection.isClosed()) {
+                    logger.info("successful connection.");
+                    logger.info("hbase.security.authentication: " + configuration.get("hbase.security.authentication"));
+                    logger.info("hbase.regionserver.keytab.file: " + configuration.get("hbase.regionserver.keytab.file"));
+                    logger.info("hbase.regionserver.port: " + configuration.get("hbase.regionserver.port"));
+                    Token<AuthenticationTokenIdentifier> token =
+                            TokenUtil.obtainToken(connection);
+                    return token.encodeToUrlString();
+                }
+            } catch (Exception e) {
+                logger.error("", e.fillInStackTrace());
+            } finally {
+                logger.info("closed Connection.");
+            }
+        } catch (Exception e) {
+            logger.error("", e.fillInStackTrace());
+        }
+        return null;
+    }
 }

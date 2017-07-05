@@ -1,5 +1,6 @@
 {
-  "tableName":["test_partition",""],
+  "tableName":["test_partition"],
   "sql":"",
-  "partition":"hour_partition='b'"
+  "partition":"hour_partition='b'",
+  "df":true
 }

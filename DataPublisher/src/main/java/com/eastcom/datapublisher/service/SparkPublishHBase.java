@@ -49,8 +49,8 @@ public class SparkPublishHBase implements Executor<Message> {
     @Value("${global.sparkSubmitParamCiCode}")
     private String sparkSubmitCiCode;
 
-    @Value("${global.hbaseTokenInHDFSPath}")
-    private String hbaseTokenInHDFSPath;
+//    @Value("${global.hbaseTokenInHDFSPath}")
+//    private String hbaseTokenInHDFSPath;
 
     @Autowired
     private HBaseTokenUpload hBaseTokenUpload;
@@ -70,7 +70,7 @@ public class SparkPublishHBase implements Executor<Message> {
             final MBD_PUBLISH_CONF mbdPublishConf = JsonParser.parseJsonToObject(context.getBytes(), MBD_PUBLISH_CONF.class);
             sparkProperties = HttpRequestUtils.httpGet(configServiceUrl + sparkSubmitCiCode, SparkProperties.class);
             try {
-                this.hBaseTokenUpload.upload(new Path(hbaseTokenInHDFSPath));
+                final String strToken = this.hBaseTokenUpload.upload();
                 threadPoolTaskExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -80,7 +80,7 @@ public class SparkPublishHBase implements Executor<Message> {
                         messageProperties.setHeader(MessageService.Header.startTime, System.currentTimeMillis());
                         try {
                             try {
-                                params = MergeArrays.merge(sparkProperties.toParametersArray(), getParameters(mbdPublishConf, headMap, hbaseTokenInHDFSPath));
+                                params = MergeArrays.merge(sparkProperties.toParametersArray(), getParameters(mbdPublishConf, headMap, strToken));
                             } catch (Exception e) {
                                 throw new Exception("Parameters false!!!!!!!");
                             }
@@ -103,7 +103,7 @@ public class SparkPublishHBase implements Executor<Message> {
         }
     }
 
-    private String[] getParameters(MBD_PUBLISH_CONF mbdPublishConf, Map<String, Object> headMap,String path) {
+    private String[] getParameters(MBD_PUBLISH_CONF mbdPublishConf, Map<String, Object> headMap,String strToken) {
 
 //        Date publishTime = null;
 //        SimpleDateFormat originalFmt = new SimpleDateFormat("yyyyMMddHHmm");
@@ -117,6 +117,6 @@ public class SparkPublishHBase implements Executor<Message> {
         // Hbase  发布参数 :configServiceUrl , 取数模板 ciCode ，  HDFS 中间输出路径 , HBASE 表名 ,  取数时间 , zk 地址， zk端口
         return new String[]{configServiceUrl, mbdPublishConf.getRealTableName(),
                 mbdPublishConf.getHdfsExportPath(), mbdPublishConf.getHbaseTableName(),
-                (String) headMap.get(this.timeId), path};
+                (String) headMap.get(this.timeId), strToken};
     }
 }
