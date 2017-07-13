@@ -12,6 +12,8 @@ public class SparkProperties {
 
     private String driver_memory;
 
+    private String driver_cores;
+
     private String num_executors;
 
     private String executor_memory;
@@ -42,6 +44,14 @@ public class SparkProperties {
 
     public void setDriver_memory(String driver_memory) {
         this.driver_memory = driver_memory;
+    }
+
+    public String getDriver_cores() {
+        return driver_cores;
+    }
+
+    public void setDriver_cores(String driver_cores) {
+        this.driver_cores = driver_cores;
     }
 
     public String getNum_executors() {
@@ -112,6 +122,8 @@ public class SparkProperties {
         List<String> parameters = new ArrayList<>();
         parameters.add("--master");
         parameters.add(master);
+        parameters.add("--driver-cores");
+        parameters.add(driver_cores);
         parameters.add("--driver-memory");
         parameters.add(driver_memory);
         parameters.add("--num-executors");

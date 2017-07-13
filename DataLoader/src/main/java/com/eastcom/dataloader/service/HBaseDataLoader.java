@@ -20,6 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by linghang.kong on 2017/4/7.
@@ -57,7 +60,7 @@ public class HBaseDataLoader implements Executor<Message> {
                     jobEntity.setCreateTime(TimeTransform.getTimestamp(hBaseJobs.getTime()));
                     logger.info("the loading job name: {}.", jobName);
                     try {
-                        threadPoolTaskExecutor.execute(new Runnable() {
+                        Future future = threadPoolTaskExecutor.submit(new Runnable() {
                             @Override
                             public void run() {
                                 logger.debug("start the thread: {}.", Thread.currentThread().getName());
@@ -75,6 +78,14 @@ public class HBaseDataLoader implements Executor<Message> {
                                 }
                             }
                         });
+                        // job timeout
+                        try {
+                            future.get(hBaseJobs.getTtl()*1000, TimeUnit.MILLISECONDS);
+                        }catch (TimeoutException e){
+                            logger.warn("{} job timeout!",taskId);
+                            future.cancel(true);// 中断执行此任务的线程
+                        }
+
                     } catch (Exception e) {
                         logger.debug("Thread pool: {}.", e.getMessage());
                         throw e;

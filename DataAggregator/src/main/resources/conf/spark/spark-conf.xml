@@ -3,32 +3,32 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <spark:bean id="sparkConf" class="com.eastcom.common.bean.SparkProperties">
-        <spark:property name="master" value="yarn-cluster"/>
-        <spark:property name="driver_memory" value="2G"/>
-        <spark:property name="num_executors" value="30"/>
-        <spark:property name="executor_memory" value="2G"/>
-        <spark:property name="executor_cores" value="1"/>
-        <spark:property name="queue" value="root.bdoc.renter_1.renter_5.dev_75"/>
-        <!--jars-->
-        <!--SlsLauncher 中用到了com.eastcom.common.service.HttpRequestUtils类-->
-        <spark:property name="jars"
-                        value="../lib/common-1.0-SNAPSHOT.jar,../lib/amqp-client-3.6.5.jar"/>
-        <spark:property name="clazz" value="com.eastcom.aggregator.SssLauncher"/>
-        <spark:property name="paropertiesMap">
-            <spark:map key-type="java.lang.String" value-type="java.lang.String">
-                <spark:entry key="spark.task.maxFailures" value="10"/>
-                <spark:entry key="spark.storage.memoryFraction" value="0.3"/>
-                <spark:entry key="spark.shuffle.memoryFraction" value="0.2"/>
-                <spark:entry key="spark.storage.unrollFraction" value="0.6"/>
-                <spark:entry key="spark.default.parallelism" value="600"/>
-                <spark:entry key="spark.sql.autoBroadcastJoinThreshold" value="10485760"/>
-                <spark:entry key="spark.sql.shuffle.partitions" value="600"/>
-                <spark:entry key="spark.sql.broadcastTimeout" value="3600"/>
-            </spark:map>
-        </spark:property>
-        <spark:property name="jarName" value="../data-aggregator-1.0-SNAPSHOT.jar"/>
-    </spark:bean>
+    <!--<spark:bean id="sparkConf" class="com.eastcom.common.bean.SparkProperties">-->
+        <!--<spark:property name="master" value="yarn-cluster"/>-->
+        <!--<spark:property name="driver_memory" value="2G"/>-->
+        <!--<spark:property name="num_executors" value="30"/>-->
+        <!--<spark:property name="executor_memory" value="2G"/>-->
+        <!--<spark:property name="executor_cores" value="1"/>-->
+        <!--<spark:property name="queue" value="root.bdoc.renter_1.renter_5.dev_75"/>-->
+        <!--&lt;!&ndash;jars&ndash;&gt;-->
+        <!--&lt;!&ndash;SlsLauncher 中用到了com.eastcom.common.service.HttpRequestUtils类&ndash;&gt;-->
+        <!--<spark:property name="jars"-->
+                        <!--value="../lib/common-1.0-SNAPSHOT.jar,../lib/amqp-client-3.6.5.jar"/>-->
+        <!--<spark:property name="clazz" value="com.eastcom.aggregator.SssLauncher"/>-->
+        <!--<spark:property name="paropertiesMap">-->
+            <!--<spark:map key-type="java.lang.String" value-type="java.lang.String">-->
+                <!--<spark:entry key="spark.task.maxFailures" value="10"/>-->
+                <!--<spark:entry key="spark.storage.memoryFraction" value="0.3"/>-->
+                <!--<spark:entry key="spark.shuffle.memoryFraction" value="0.2"/>-->
+                <!--<spark:entry key="spark.storage.unrollFraction" value="0.6"/>-->
+                <!--<spark:entry key="spark.default.parallelism" value="600"/>-->
+                <!--<spark:entry key="spark.sql.autoBroadcastJoinThreshold" value="10485760"/>-->
+                <!--<spark:entry key="spark.sql.shuffle.partitions" value="600"/>-->
+                <!--<spark:entry key="spark.sql.broadcastTimeout" value="3600"/>-->
+            <!--</spark:map>-->
+        <!--</spark:property>-->
+        <!--<spark:property name="jarName" value="../data-aggregator-1.0-SNAPSHOT.jar"/>-->
+    <!--</spark:bean>-->
 
     <!--Aggregator-->
     <spark:bean id="sparkAggregator" name="AGGREGATE_SPARK" class="com.eastcom.aggregator.service.SparkAggregator"/>

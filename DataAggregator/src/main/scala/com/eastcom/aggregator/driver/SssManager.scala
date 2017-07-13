@@ -55,16 +55,16 @@ class SssManager(configServiceUrl: String, timeid: String, val mqConf: MQConf, v
         try {
           val startTime = new Date().getTime
           logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Start exec job with table [ ${node.getTplName} ] at time [ $timeid ] ...")
-          try {
+//          try {
             exec(node)
             result = Executor.SUCESSED
-          } catch {
-            case e: Exception => {
-              Thread.sleep(30000l)
-              exec(node)
-              result = Executor.SUCESSED
-            }
-          }
+//          } catch {
+//            case e: Exception => {
+//              Thread.sleep(30000l)
+//              exec(node)
+//              result = Executor.SUCESSED
+//            }
+//          }
           val eastime = (new Date().getTime - startTime) / 1000
           logging.info(s" [ SSS_JOB ] [ ${node.getType} ] Finish exec job with table [ ${node.getTplName} ] at time [ $timeid ] eastime [ $eastime ] s !")
         } catch {
@@ -97,6 +97,7 @@ class SssManager(configServiceUrl: String, timeid: String, val mqConf: MQConf, v
   }
 
   private def exec(node: SssNode): Unit = {
+    logging.info(s"Execute the job cicode: ${node.getTplCiCode}.");
     if (Context.hiveTypeOld == node.getType) {
       hiveOldExecutor.executor(node)
     } else if (Context.hbaseType == node.getType) {
@@ -104,6 +105,7 @@ class SssManager(configServiceUrl: String, timeid: String, val mqConf: MQConf, v
     } else if (Context.hiveType == node.getType) {
       hiveExecutor.executor(node)
     }
+    logging.info(s"Finish executing the job cicode: ${node.getTplCiCode}.");
   }
 
 

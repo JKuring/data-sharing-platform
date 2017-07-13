@@ -21,7 +21,6 @@ object DpsHbaseLauncher {
 
 //    val localPath = "/tmp/token"
 
-
     if (args == null || args.isEmpty)
       throw new DpsException("parameter list shoud be ( exportHdfsPath, hbaseTableName, configServiceUrl, zookeeper_hosts, zookeeper_port, timeid)")
 

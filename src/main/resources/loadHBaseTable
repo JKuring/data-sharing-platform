@@ -1,6 +1,7 @@
 //{
 //  "name": "http://10.222.20.134:6000/config/getByCiCode?ciCode=xdr_data:http",
-//  "time":"#minuteminus(100)#"
+//  "time":"#minuteminus(100)#",
+//  "ttl":"1800"
 //}
 {
   "id": "xdr_data:http",

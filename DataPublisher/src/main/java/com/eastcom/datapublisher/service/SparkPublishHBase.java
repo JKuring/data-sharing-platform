@@ -62,12 +62,12 @@ public class SparkPublishHBase implements Executor<Message> {
         final MessageProperties messageProperties = message.getMessageProperties();
         final Map<String, Object> headMap = messageProperties.getHeaders();
         final String taskId = (String) headMap.get(MessageService.Header.taskId);
-        headMap.put(MessageService.Header.taskId, prefix + taskId);
         String context = new String(message.getBody());
 
         try {
             logger.info("start the task: {}.", taskId);
             final MBD_PUBLISH_CONF mbdPublishConf = JsonParser.parseJsonToObject(context.getBytes(), MBD_PUBLISH_CONF.class);
+            headMap.put(MessageService.Header.taskId, prefix+mbdPublishConf.getCatalogId()+ "_" +taskId);
             sparkProperties = HttpRequestUtils.httpGet(configServiceUrl + sparkSubmitCiCode, SparkProperties.class);
             try {
                 final String strToken = this.hBaseTokenUpload.upload();

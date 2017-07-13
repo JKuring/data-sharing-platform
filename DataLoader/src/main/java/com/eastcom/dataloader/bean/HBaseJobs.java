@@ -10,6 +10,7 @@ public class HBaseJobs {
      */
     private String name;
     private String time;
+    private int ttl = Integer.MAX_VALUE;
 
 
     public HBaseJobs() {
@@ -29,5 +30,13 @@ public class HBaseJobs {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public int getTtl() {
+        return ttl;
+    }
+
+    public void setTtl(int ttl) {
+        this.ttl = ttl;
     }
 }
